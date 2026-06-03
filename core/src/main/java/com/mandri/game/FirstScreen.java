@@ -1,4 +1,4 @@
-package сщьcom.mandri.game;
+package com.mandri.game;
 
 import com.badlogic.gdx.Screen;
 
