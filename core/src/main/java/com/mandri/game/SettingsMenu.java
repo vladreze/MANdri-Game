@@ -33,6 +33,7 @@ public class SettingsMenu implements Screen {
 
         Label titleLabel = new Label("SETTINGS", skin);
         titleLabel.setFontScale(1.5f);
+        table.add(titleLabel).padBottom(50).row();
 
         stage.addActor(table);
 
