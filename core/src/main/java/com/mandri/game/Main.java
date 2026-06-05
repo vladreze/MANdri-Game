@@ -10,7 +10,7 @@ public class Main extends Game {
     @Override
     public void create() {
         UIManager.getInstance().loadUI();
-        this.setScreen(new MainMenuScreen());
+        this.setScreen(new MainMenuScreen(this));
     }
 
     @Override
