@@ -1,11 +1,26 @@
 package com.mandri.game;
 
 import com.badlogic.gdx.Game;
+import com.mandri.storage.UIManager;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
+
+
     @Override
     public void create() {
-        setScreen(new FirstScreen());
+        UIManager.getInstance().loadUI();
+        this.setScreen(new MainMenuScreen());
     }
+
+    @Override
+    public void render() {
+        super.render();
+    }
+
+    public void dispose(){
+        super.dispose();
+        UIManager.getInstance().dispose();
+    }
+
 }
