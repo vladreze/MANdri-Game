@@ -9,9 +9,9 @@ public class Main extends Game {
     private MainAssetsManager manager;
     @Override
     public void create() {
-        this.setScreen(new PlayScreen());
         manager = new MainAssetsManager();
         manager.loadResources();
+        this.setScreen(new PlayScreen(manager));
     }
 
     @Override
@@ -28,6 +28,5 @@ public class Main extends Game {
     public void dispose() {
         super.dispose();
         manager.disposeAll();
-        this.setScreen(new PlayScreen());
     }
 }

@@ -6,22 +6,28 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mandri.entities.Player;
+import com.mandri.storage.MainAssetsManager;
 
 public class PlayScreen implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Texture background;
     private Player player;
+    private final MainAssetsManager manager;
 
     private final float floorHeight = 100f;
 
+    public PlayScreen(MainAssetsManager manager){
+        this.manager = manager;
+    }
     @Override
     public void show() {
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
-        background = new Texture("space-bg.png");
-        player = new Player(400, 400);
+        background = manager.image.spaceBg();
+        player = new Player(400, 400, manager);
+        manager.music.playLevelMusic(1);
     }
 
     @Override

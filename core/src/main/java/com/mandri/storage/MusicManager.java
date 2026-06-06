@@ -35,8 +35,6 @@ public class MusicManager {
         manager.load("sounds/bonus.mp3", Sound.class);
         manager.load("sounds/bonus-big.mp3", Sound.class);
 
-        manager.finishLoading();
-
     }
     public void playMenuMusic(){
         music = manager.get("music/music-menu.mp3", Music.class);
@@ -61,23 +59,6 @@ public class MusicManager {
                 music.play();
         }
     }
-//    public void playSpaceMusic(){
-//        music = manager.get("music/music-space.mp3", Music.class);
-//        music.setLooping(true);
-//        music.play();
-//    }
-//
-//    public void playForestMusic(){
-//        music = manager.get("music/music-forest.mp3", Music.class);
-//        music.setLooping(true);
-//        music.play();
-//    }
-//
-//    public void playCaveMusic(){
-//        music = manager.get("music/music-cave.mp3", Music.class);
-//        music.setLooping(true);
-//        music.play();
-//    }
 
     public void playWalkSound(){
         manager.get("sounds/walking.mp3", Sound.class).play();

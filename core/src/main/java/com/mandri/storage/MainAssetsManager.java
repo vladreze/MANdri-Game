@@ -1,7 +1,6 @@
 package com.mandri.storage;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 
 public class MainAssetsManager {
     public final AssetManager manager= new AssetManager();
@@ -12,7 +11,8 @@ public class MainAssetsManager {
     public void loadResources(){
         music.loadMusic();
         image.loadImages();
-        music.playMenuMusic();
+        manager.finishLoading();
+        image.initAnimations();
     }
 
 
