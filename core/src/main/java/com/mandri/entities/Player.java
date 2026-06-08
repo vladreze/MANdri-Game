@@ -1,5 +1,6 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 import com.mandri.storage.MainAssetsManager;
 
 public class Player {
@@ -18,9 +18,9 @@ public class Player {
 
     private float x, y;
     private float velocityX, velocityY;
-    private final float SPEED = 300f;
-    private final float GRAVITY = -1000f;
-    private final float JUMP_FORCE = 500f;
+    private final float SPEED = 150f;
+    private final float GRAVITY = -600f;
+    private final float JUMP_FORCE = 300f;
 
     public Rectangle bounds;
     private boolean isGrounded = false;
@@ -37,12 +37,11 @@ public class Player {
         this.previousState = State.STANDING;
         this.stateTimer = 0;
         this.stepTimer = 0;
-        this.bounds = new Rectangle(x, y, 32, 32);
+        this.bounds = new Rectangle(x, y, 30, 30);
         this.manager = manager;
-
     }
 
-    public void update(float delta, float floorY, int screenWidth) {
+    public void update(float delta, TiledMapTileLayer layer, float screenWidth) {
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             velocityX = -SPEED;
@@ -60,27 +59,55 @@ public class Player {
             manager.music.playJumpSound();
         }
 
-        velocityY += GRAVITY * delta;
+        float oldX = x;
         x += velocityX * delta;
+        x = MathUtils.clamp(x, 0, screenWidth - 32); // Границы мира
+        bounds.setPosition(x, y);
+
+        if (checkCollision(bounds, layer)) {
+            x = oldX;
+            bounds.setPosition(x, y);
+            velocityX = 0;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
+            velocityY = JUMP_FORCE;
+            isGrounded = false;
+        }
+
+        float oldY = y;
+        velocityY += GRAVITY * delta;
         y += velocityY * delta;
+        bounds.setPosition(x, y);
 
-        x = MathUtils.clamp(x, 0, screenWidth - 32);
-
-        if (y <= floorY) {
-            y = floorY;
-            velocityY = 0;
-
-            if(!isGrounded){
-                manager.music.playLandSound();
+        if (checkCollision(bounds, layer)) {
+            if (velocityY < 0) {
+                isGrounded = true;
             }
-            isGrounded = true;
+            y = oldY;
+            bounds.setPosition(x, y);
+            velocityY = 0;
         } else {
             isGrounded = false;
         }
 
-        bounds.setPosition(x, y);
-
         updateState(delta);
+    }
+
+    private boolean checkCollision(Rectangle rect, TiledMapTileLayer layer) {
+        int startX = (int) (rect.x / 16);
+        int endX = (int) ((rect.x + rect.width - 0.1f) / 16);
+        int startY = (int) (rect.y / 16);
+        int endY = (int) ((rect.y + rect.height - 0.1f) / 16);
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+                if (layer.getCell(i, j) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void updateState(float delta) {
