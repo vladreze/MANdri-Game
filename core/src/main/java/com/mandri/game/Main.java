@@ -2,6 +2,7 @@ package com.mandri.game;
 
 import com.badlogic.gdx.Game;
 import com.mandri.storage.MainAssetsManager;
+import com.mandri.storage.UIManager;
 
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -11,12 +12,17 @@ public class Main extends Game {
     public void create() {
         manager = new MainAssetsManager();
         manager.loadResources();
-        this.setScreen(new PlayScreen(manager));
+        UIManager.getInstance().loadUI();
+        this.setScreen(new MainMenuScreen(this));
     }
 
     @Override
     public void render() {
         super.render();
+    }
+
+    public MainAssetsManager getManager() {
+        return manager;
     }
 
     @Override
@@ -28,5 +34,6 @@ public class Main extends Game {
     public void dispose() {
         super.dispose();
         manager.disposeAll();
+        UIManager.getInstance().dispose();
     }
 }

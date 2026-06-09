@@ -41,7 +41,7 @@ public class MainMenuScreen implements Screen {
         titleLabel.setFontScale(1.5f);
 
         PixelButton playButton = new PixelButton("START GAME", skin);
-        ButtonActions.playGame(playButton);
+        ButtonActions.playGame(playButton, game);
 
         PixelButton settingsButton = new PixelButton("SETTINGS", skin);
         ButtonActions.openSettings(settingsButton , game);

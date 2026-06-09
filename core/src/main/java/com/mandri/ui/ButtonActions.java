@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mandri.game.Main;
 import com.mandri.game.MainMenuScreen;
+import com.mandri.game.PlayScreen;
 import com.mandri.game.SettingsMenu;
 
 public class ButtonActions {
@@ -18,11 +19,11 @@ public class ButtonActions {
         });
     }
 
-    public static void playGame(PixelButton button){
+    public static void playGame(PixelButton button, Main game){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //PLAY GAME START LOGIC
+                game.setScreen(new PlayScreen(game.getManager()));
             }
         });
     }
