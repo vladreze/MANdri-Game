@@ -49,7 +49,7 @@ public class MainMenuScreen implements Screen {
         PixelButton exitButton = new PixelButton("EXIT", skin);
         ButtonActions.exitGame(exitButton);
 
-        table.add(titleLabel).padBottom(30).row();
+        table.add(titleLabel).padBottom(15).row();
         table.add(playButton).width(120).padBottom(10).row();
         table.add(settingsButton).width(120).padBottom(10).row();
         table.add(exitButton).width(120);
