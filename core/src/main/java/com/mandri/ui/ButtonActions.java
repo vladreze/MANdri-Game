@@ -23,6 +23,7 @@ public class ButtonActions {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.getManager().getMusic().stopMusic();
                 game.setScreen(new PlayScreen(game.getManager()));
             }
         });

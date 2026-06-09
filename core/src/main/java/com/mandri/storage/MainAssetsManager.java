@@ -15,7 +15,9 @@ public class MainAssetsManager {
         image.initAnimations();
     }
 
-
+    public MusicManager getMusic() {
+        return music;
+    }
 
     public void disposeAll(){
         music.disposeMusic();

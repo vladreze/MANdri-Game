@@ -104,4 +104,14 @@ public class MusicManager {
     public void disposeMusic(){
         manager.dispose();
     }
+
+    public void stopMusic(){
+        if (music != null && music.isPlaying()){
+            music.stop();
+        }
+    }
+
+
+
+
 }

@@ -58,8 +58,8 @@ public class MainMenuScreen implements Screen {
     }
 
     @Override
-    public void show() {
-
+    public void show(){
+        game.getManager().getMusic().playMenuMusic();
     }
 
     // Метод render викликається кожен кадр. "delta" — час у секундах від попереднього виклику.
