@@ -20,7 +20,7 @@ public class PlayScreen implements Screen {
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
-        background = new Texture("space-bg.png");
+        background = new Texture("maps/spaceMap/bgSpace.png");
         player = new Player(400, 400);
     }
 
