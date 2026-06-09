@@ -1,7 +1,10 @@
 package com.mandri.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mandri.game.Main;
 import com.mandri.game.MainMenuScreen;
@@ -48,17 +51,14 @@ public class ButtonActions {
         });
     }
 
-    public static void toggleMusic(PixelButton button, Main game){
+    public static void toggleMusic(Slider slider, Main game){
 
         MusicManager musicManager = game.getManager().getMusic();
 
-        button.addListener(new ClickListener() {
+        slider.addListener(new ChangeListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
-                boolean isCurrentlyEnabled = musicManager.isMusicEnabled();
-                boolean newState = !isCurrentlyEnabled;
-                musicManager.setMusicEnabled(newState);
-                button.setText(newState ? "MUSIC: ON" : "MUSIC: OFF");
+            public void changed(ChangeEvent event, Actor actor) {
+                musicManager.setVolume(slider.getValue());
             }
         });
     }

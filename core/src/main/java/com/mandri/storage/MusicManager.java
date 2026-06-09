@@ -7,7 +7,7 @@ import com.badlogic.gdx.audio.Sound;
 public class MusicManager {
     private final AssetManager manager;
     private Music music;
-    private boolean musicEnabled = true;
+    private float volume = 1.0f;
 
     public MusicManager(AssetManager manager){
         this.manager = manager;
@@ -40,7 +40,7 @@ public class MusicManager {
     public void playMenuMusic(){
         music = manager.get("music/music-menu.mp3", Music.class);
         music.setLooping(true);
-        music.setVolume(musicEnabled ? 1.0f : 0.0f);
+        music.setVolume(volume);
         music.play();
     }
     public void playLevelMusic(int n){
@@ -48,17 +48,21 @@ public class MusicManager {
             case 1:
                 music = manager.get("music/music-space.mp3", Music.class);
                 music.setLooping(true);
+                music.setVolume(volume);
                 music.play();
                 break;
             case 2:
                 music = manager.get("music/music-forest.mp3", Music.class);
                 music.setLooping(true);
+                music.setVolume(volume);
                 music.play();
                 break;
             case 3:
                 music = manager.get("music/music-cave.mp3", Music.class);
                 music.setLooping(true);
+                music.setVolume(volume);
                 music.play();
+
         }
     }
 
@@ -113,19 +117,14 @@ public class MusicManager {
         }
     }
 
-    public void setMusicEnabled(boolean enabled) {
-        this.musicEnabled = enabled;
+    public void setVolume(float volume) {
+        this.volume = volume;
         if (music != null) {
-            music.setVolume(enabled ? 1.0f : 0.0f);
+            music.setVolume(volume);
         }
     }
 
-    public boolean isMusicEnabled() {
-        return musicEnabled;
+    public float getVolume() {
+        return volume;
     }
-
-
-
-
-
 }
