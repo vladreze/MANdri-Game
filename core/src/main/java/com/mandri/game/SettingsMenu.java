@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.mandri.storage.MusicManager;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
 import com.mandri.ui.PixelButton;
@@ -37,6 +38,13 @@ public class SettingsMenu implements Screen {
         Label titleLabel = new Label("SETTINGS", skin);
         titleLabel.setFontScale(1.5f);
 
+        MusicManager musicManager = game.getManager().getMusic();
+        String musicStatus = musicManager.isMusicEnabled() ? "MUSIC: ON" : "MUSIC: OFF";
+        PixelButton musicToggleButton = new PixelButton(musicStatus, skin);
+        ButtonActions.toggleMusic(musicToggleButton, game);
+        musicToggleButton.setPosition(130, 50);
+        musicToggleButton.setSize(70, 30);
+
         PixelButton backButton = new PixelButton("<-", skin);
         backButton.setPosition(10, 120);
         backButton.setSize(20, 20);
@@ -45,6 +53,7 @@ public class SettingsMenu implements Screen {
         table.add(titleLabel).padBottom(80);
         stage.addActor(table);
         stage.addActor(backButton);
+        stage.addActor(musicToggleButton);
 
 
     }

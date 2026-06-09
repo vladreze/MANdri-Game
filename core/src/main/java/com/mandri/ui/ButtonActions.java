@@ -7,6 +7,7 @@ import com.mandri.game.Main;
 import com.mandri.game.MainMenuScreen;
 import com.mandri.game.PlayScreen;
 import com.mandri.game.SettingsMenu;
+import com.mandri.storage.MusicManager;
 
 public class ButtonActions {
 
@@ -44,6 +45,21 @@ public class ButtonActions {
            public void clicked(InputEvent event, float x, float y){
                game.setScreen(new MainMenuScreen(game));
            }
+        });
+    }
+
+    public static void toggleMusic(PixelButton button, Main game){
+
+        MusicManager musicManager = game.getManager().getMusic();
+
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                boolean isCurrentlyEnabled = musicManager.isMusicEnabled();
+                boolean newState = !isCurrentlyEnabled;
+                musicManager.setMusicEnabled(newState);
+                button.setText(newState ? "MUSIC: ON" : "MUSIC: OFF");
+            }
         });
     }
 }
