@@ -5,11 +5,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mandri.storage.UIManager;
+import com.mandri.ui.ButtonActions;
+import com.mandri.ui.PixelButton;
 
 public class SettingsMenu implements Screen {
     private Main game;
@@ -33,9 +36,16 @@ public class SettingsMenu implements Screen {
 
         Label titleLabel = new Label("SETTINGS", skin);
         titleLabel.setFontScale(1.5f);
-        table.add(titleLabel).padBottom(50).row();
 
+        PixelButton backButton = new PixelButton("<-", skin);
+        backButton.setPosition(10, 120);
+        backButton.setSize(20, 20);
+        ButtonActions.backAction(backButton, game);
+
+        table.add(titleLabel).padBottom(80);
         stage.addActor(table);
+        stage.addActor(backButton);
+
 
     }
 
