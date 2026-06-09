@@ -40,7 +40,7 @@ public class MainMenuScreen implements Screen {
         Label titleLabel = new Label("MANDRi", skin);
         titleLabel.setFontScale(1.5f);
 
-        PixelButton playButton = new PixelButton("NEW GAME", skin);
+        PixelButton playButton = new PixelButton("START GAME", skin);
         ButtonActions.playGame(playButton);
 
         PixelButton settingsButton = new PixelButton("SETTINGS", skin);
