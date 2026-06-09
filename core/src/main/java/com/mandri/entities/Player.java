@@ -70,11 +70,6 @@ public class Player {
             velocityX = 0;
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
-            velocityY = JUMP_FORCE;
-            isGrounded = false;
-        }
-
         float oldY = y;
         velocityY += GRAVITY * delta;
         y += velocityY * delta;
@@ -82,8 +77,12 @@ public class Player {
 
         if (checkCollision(bounds, layer)) {
             if (velocityY < 0) {
+                if (!isGrounded && velocityY < -50f) {
+                    manager.music.playLandSound();
+                }
                 isGrounded = true;
             }
+            else if(velocityY>0) manager.music.playHurtSound(1);
             y = oldY;
             bounds.setPosition(x, y);
             velocityY = 0;
