@@ -38,12 +38,12 @@ public class PlayScreen implements Screen {
     private final Main game;
 
     private float playerStartX = 160f;
-    private float playerStartY = 250f;
+    private float playerStartY = 85f;
 
     private ShaderProgram vignetteShader;
 
-    private final float playerCameraWidth = 480f;
-    private final float playerCameraHeight = 256f;
+    private final float playerCameraWidth = 320f;
+    private final float playerCameraHeight = 180f;
 
     private final float hudCameraWidth = 800f;
     private final float hudCameraHeight = 400f;
@@ -120,7 +120,7 @@ public class PlayScreen implements Screen {
         player.update(delta, collisionLayer, objectLayer,2720f);
 
         float cameraX = MathUtils.clamp(player.bounds.getX(), (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
-        float cameraY = MathUtils.clamp(player.bounds.getY(), (playerCameraHeight / 2), mapHeight - (playerCameraHeight / 2));
+        float cameraY = MathUtils.clamp(player.bounds.getY(), (playerCameraHeight / 2), mapHeight);
 
         camera.position.set(cameraX, cameraY, 0);
         camera.update();
@@ -165,7 +165,7 @@ public class PlayScreen implements Screen {
         hudStage.draw();
 
         if (player.isDead()) {
-            game.setScreen(new PlayScreen(game, manager));
+            game.setScreen(new MainMenuScreen(game));
         }
     }
 
