@@ -6,10 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.mandri.game.Main;
-import com.mandri.game.MainMenuScreen;
-import com.mandri.game.PlayScreen;
-import com.mandri.game.SettingsMenu;
+import com.mandri.game.*;
 import com.mandri.storage.MusicManager;
 
 public class ButtonActions {
@@ -62,4 +59,25 @@ public class ButtonActions {
             }
         });
     }
+
+    public static void toggleSoundEffects(Slider slider, Main game){
+        MusicManager musicManager = game.getManager().getMusic();
+        slider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                musicManager.setSoundEffectsvolume(slider.getValue());
+            }
+        });
+    }
+
+
+    public static void aboutScreen(PixelButton button, Main game){
+        button.addListener(new ClickListener() {
+           @Override
+           public void clicked(InputEvent event, float x, float y){
+               game.setScreen(new AboutScreen(game));
+           }
+        });
+    }
+
 }

@@ -58,19 +58,25 @@ public class SettingsMenu implements Screen {
         volumeSlider.setValue(musicManager.getVolume());
         ButtonActions.toggleMusic(volumeSlider, game);
 
-// SFX Label матиме X = 180, Y = 95
-// А майбутній SFX Slider матиме X = 180, Y = 75, ширина 110
+        Label soundEffectsvolumeLabel = new Label("SOUND EFFECTS" , skin);
+        soundEffectsvolumeLabel.setPosition(180, 100);
+
+        Slider soundEffectsvolumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, skin);
+        soundEffectsvolumeSlider.setSize(110, 15);
+        soundEffectsvolumeSlider.setPosition(180, 75);
+        soundEffectsvolumeSlider.setValue(musicManager.getSoundEffectsvolume());
+        ButtonActions.toggleSoundEffects(soundEffectsvolumeSlider, game);
 
         stage.addActor(table);
         stage.addActor(backButton);
         stage.addActor(aboutButton);
         stage.addActor(volumeLabel);
         stage.addActor(volumeSlider);
+        stage.addActor(soundEffectsvolumeLabel);
+        stage.addActor(soundEffectsvolumeSlider);
 
 
     }
-
-
 
     @Override
     public void show() {
