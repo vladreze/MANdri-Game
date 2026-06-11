@@ -19,6 +19,11 @@ public class ImageManager {
 //    public Animation<TextureRegion> spaceIdle_L;
 //    public Animation<TextureRegion> spaceIdle_R;
 
+    public TextureRegion fullHeart;
+    public TextureRegion poisonHeart;
+    public TextureRegion shieldHeart;
+    public TextureRegion emptyHeart;
+
     public TextureRegion spaceJump_F;
     public TextureRegion spaceJump_R;
     public TextureRegion spaceJump_L;
@@ -62,6 +67,10 @@ public class ImageManager {
     public void loadImages(){
 //        backgrounds
 //        manager.load("menu_bg.png", Texture.class);
+
+//      hearts
+        manager.load("level-ui/hearts.png", Texture.class);
+
         manager.load("space/space-bg.png", Texture.class);
 //        manager.load("forest_bg.png", Texture.class);
 //        manager.load("cave_bg.png", Texture.class);
@@ -83,6 +92,16 @@ public class ImageManager {
     }
 
     public void initAnimations(){
+//      hearts
+        Texture tHearts = manager.get("level-ui/hearts.png", Texture.class);
+
+        TextureRegion[][] heartFrames = TextureRegion.split(tHearts, 16, 16);
+
+        fullHeart = heartFrames[0][0];
+        poisonHeart = heartFrames[1][0];
+        shieldHeart = heartFrames[2][0];
+        emptyHeart = heartFrames[3][0];
+
 //        run
         Texture tSpaceRunR = manager.get("space/space_run_R.png", Texture.class);
         TextureRegion[][] texRunR = TextureRegion.split(tSpaceRunR, 32, 32);

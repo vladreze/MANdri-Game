@@ -1,9 +1,11 @@
 package com.mandri.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -16,6 +18,8 @@ import com.mandri.storage.MainAssetsManager;
 public class PlayScreen implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
+    private OrthographicCamera hudCamera;
+
     private Texture background;
     private Player player;
 
@@ -23,22 +27,44 @@ public class PlayScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
 
     private final MainAssetsManager manager;
+    private final Main game;
 
     private final float floorHeight = 64f;
 
-    public PlayScreen(MainAssetsManager manager){
+    private float playerStartX = 400f;
+    private float playerStartY = 400f;
+
+    private ShaderProgram vignetteShader;
+
+    public PlayScreen(Main game ,MainAssetsManager manager){
+        this.game = game;
         this.manager = manager;
     }
     @Override
     public void show() {
         batch = new SpriteBatch();
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 600, 256);
+
+        hudCamera = new OrthographicCamera();
+        hudCamera.setToOrtho(false, 800, 400);
+
         background = manager.image.spaceBg();
         map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
-        player = new Player(400, 400, manager);
+        player = new Player(playerStartX, playerStartY, manager);
         manager.music.playLevelMusic(1);
+
+        vignetteShader = new ShaderProgram(
+            Gdx.files.internal("shaders/default.vsh"),
+            Gdx.files.internal("shaders/vignette.fsh")
+        );
+
+        if (!vignetteShader.isCompiled()) {
+            Gdx.app.log("Shader Error", vignetteShader.getLog());
+            Gdx.app.exit();
+        }
     }
 
     @Override
@@ -57,9 +83,42 @@ public class PlayScreen implements Screen {
         camera.update();
 
         batch.setProjectionMatrix(camera.combined);
+
+        batch.setShader(vignetteShader);
         batch.begin();
+
         player.draw(batch);
         batch.end();
+
+        batch.setProjectionMatrix(hudCamera.combined);
+
+        batch.setShader(null);
+        batch.begin();
+
+        float startX = 20f;
+        final float startY = 362f;
+
+        float heartWidth = 24f;
+        float heartHeight = 24f;
+
+        float spacing = 6f;
+
+        int maxLives = 3;
+
+        for (int i = 0; i < maxLives; i++) {
+            float currentX = startX + i * (heartWidth + spacing);
+            if (i < player.liveCount) {
+                batch.draw(manager.image.fullHeart, currentX, startY, heartWidth, heartHeight);
+            } else  {
+                batch.draw(manager.image.emptyHeart, currentX, startY, heartWidth, heartHeight);
+            }
+        }
+
+        batch.end();
+
+        if (player.isDead()) {
+            game.setScreen(new PlayScreen(game, manager));
+        }
     }
 
     @Override
@@ -89,5 +148,6 @@ public class PlayScreen implements Screen {
         batch.dispose();
         map.dispose();
         renderer.dispose();
+        vignetteShader.dispose();
     }
 }
