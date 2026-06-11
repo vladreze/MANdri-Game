@@ -34,26 +34,37 @@ public class SettingsMenu implements Screen {
 
         Label titleLabel = new Label("SETTINGS", skin);
         titleLabel.setFontScale(1.5f);
-
-        MusicManager musicManager = game.getManager().getMusic();
-        Label volumeLabel = new Label("VOLUME", skin);
-        Slider volumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, skin);
-        ButtonActions.toggleMusic(volumeSlider, game);
-        volumeSlider.setValue(musicManager.getVolume());
-        volumeSlider.setPosition(100, 40);
-        volumeSlider.setSize(120, 10);
-
-
+        table.setFillParent(true);
+        table.top().padTop(15);
+        table.add(titleLabel).row();
 
         PixelButton backButton = new PixelButton("<-", skin);
-        backButton.setPosition(10, 120);
         backButton.setSize(20, 20);
+        backButton.setPosition(10, 150);
         ButtonActions.backAction(backButton, game);
 
-        table.add(titleLabel).padBottom(30).row();
-        table.add(volumeLabel).padBottom(20).row();
+        PixelButton aboutButton = new PixelButton("i" , skin);
+        aboutButton.setSize(20, 20);
+        aboutButton.setPosition(290, 10);
+        ButtonActions.aboutScreen(aboutButton, game);
+
+        Label volumeLabel = new Label("VOLUME", skin);
+        volumeLabel.setPosition(30, 100);
+
+        MusicManager musicManager = game.getManager().getMusic();
+        Slider volumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, skin);
+        volumeSlider.setSize(110, 15);
+        volumeSlider.setPosition(30, 75);
+        volumeSlider.setValue(musicManager.getVolume());
+        ButtonActions.toggleMusic(volumeSlider, game);
+
+// SFX Label матиме X = 180, Y = 95
+// А майбутній SFX Slider матиме X = 180, Y = 75, ширина 110
+
         stage.addActor(table);
         stage.addActor(backButton);
+        stage.addActor(aboutButton);
+        stage.addActor(volumeLabel);
         stage.addActor(volumeSlider);
 
 
