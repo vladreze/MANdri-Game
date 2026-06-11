@@ -42,6 +42,15 @@ public class ButtonActions {
         });
     }
 
+    public static void openMainMenu(PixelButton button, Main game){
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+    }
+
     public static void backAction(PixelButton button, Main game){
         button.addListener(new ClickListener() {
            @Override

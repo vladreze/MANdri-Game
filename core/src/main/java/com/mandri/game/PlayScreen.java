@@ -45,8 +45,8 @@ public class PlayScreen implements Screen {
     private final float playerCameraWidth = 320f;
     private final float playerCameraHeight = 180f;
 
-    private final float hudCameraWidth = 800f;
-    private final float hudCameraHeight = 400f;
+    private final float hudCameraWidth = 640f;
+    private final float hudCameraHeight = 360f;
 
     private float mapWidth;
     private float mapHeight;
@@ -97,18 +97,18 @@ public class PlayScreen implements Screen {
 
         renderer.getBatch().setShader(vignetteShader);
 
-        hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(playerCameraWidth, playerCameraHeight));
-
+        hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(hudCameraWidth, hudCameraHeight));
         Gdx.input.setInputProcessor(hudStage);
 
         Skin skin = UIManager.getInstance().getSkin();
-        PixelButton settingsButton = new PixelButton("MENU", skin);
-        ButtonActions.openSettings(settingsButton, game);
+        PixelButton menuBtn = new PixelButton("MENU", skin);
+        ButtonActions.openMainMenu(menuBtn, game);
 
-        settingsButton.setSize(20, 20);
-        settingsButton.setPosition(420, 10);
+        menuBtn.setSize(40, 40);
 
-        //hudStage.addActor(settingsButton);
+        menuBtn.setPosition(hudCameraWidth - 60, hudCameraHeight - 60);
+
+        hudStage.addActor(menuBtn);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class PlayScreen implements Screen {
         batch.begin();
 
         float startX = 20f;
-        final float startY = 362f;
+        final float startY = hudCameraHeight-40f;
 
         float heartWidth = 24f;
         float heartHeight = 24f;
@@ -170,10 +170,13 @@ public class PlayScreen implements Screen {
     }
 
     @Override
-    public void resize(int i, int i1) {
+    public void resize(int width, int height) {
         camera.viewportWidth = playerCameraWidth;
         camera.viewportHeight = playerCameraHeight;
         camera.update();
+        if (hudStage != null) {
+            hudStage.getViewport().update(width, height, true);
+        }
     }
 
     @Override
