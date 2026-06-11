@@ -31,8 +31,8 @@ public class PlayScreen implements Screen {
 
     private final float floorHeight = 64f;
 
-    private float playerStartX = 400f;
-    private float playerStartY = 400f;
+    private float playerStartX = 20f;
+    private float playerStartY = 250f;
 
     private ShaderProgram vignetteShader;
 
@@ -71,13 +71,13 @@ public class PlayScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
 
-        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Прошарок плиток 1");
-        player.update(delta, collisionLayer, 1120);
+        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
+        player.update(delta, collisionLayer, 2720f);
 
         renderer.setView(camera);
         renderer.render();
 
-        float cameraX = MathUtils.clamp(player.bounds.getX(), 300f, 1120f - 300f);
+        float cameraX = MathUtils.clamp(player.bounds.getX(), 300f, 2720f - 300f);
 
         camera.position.set(cameraX, 128f, 0);
         camera.update();
