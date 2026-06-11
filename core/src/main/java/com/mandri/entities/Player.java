@@ -1,5 +1,8 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.Gdx;
@@ -50,7 +53,7 @@ public class Player {
         this.manager = manager;
     }
 
-    public void update(float delta, TiledMapTileLayer layer, float screenWidth) {
+    public void update(float delta, TiledMapTileLayer layer, MapLayer objectLayer, float screenWidth) {
         if (isInvulnerable) {
             invulnerableTimer -= delta;
             if (invulnerableTimer <= 0) {
@@ -88,6 +91,8 @@ public class Player {
         x = MathUtils.clamp(x, 0, screenWidth - 32); // Границы мира
         bounds.setPosition(x, y);
 
+        checkTraps(objectLayer);
+
         if (checkCollision(bounds, layer)) {
             x = oldX;
             bounds.setPosition(x, y);
@@ -98,6 +103,8 @@ public class Player {
         velocityY += GRAVITY * delta;
         y += velocityY * delta;
         bounds.setPosition(x, y);
+
+        checkTraps(objectLayer);
 
         if (checkCollision(bounds, layer)) {
             if (velocityY < 0) {
@@ -131,6 +138,28 @@ public class Player {
             }
         }
         return false;
+    }
+
+    private void checkTraps(MapLayer objectLayer) {
+        if (objectLayer == null) return;
+        for (MapObject object : objectLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject rectangleObject = (RectangleMapObject) object;
+                Rectangle trapRect = rectangleObject.getRectangle();
+                String type = object.getProperties().get("type", String.class);
+                if ("Trap".equals(type)) {
+                    Rectangle adjustedTraRect = new Rectangle(
+                        trapRect.x + 2,
+                        trapRect.y,
+                        trapRect.width - 4,
+                        trapRect.height - 2
+                    );
+                    if (this.bounds.overlaps(adjustedTraRect)) {
+                        takeDamage();
+                    }
+                }
+            }
+        }
     }
 
     private void updateState(float delta) {
