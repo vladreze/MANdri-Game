@@ -6,19 +6,27 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mandri.entities.Player;
 import com.mandri.storage.MainAssetsManager;
+import com.mandri.storage.UIManager;
+import com.mandri.ui.ButtonActions;
+import com.mandri.ui.PixelButton;
 
 public class PlayScreen implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
+    private Stage hudStage;
 
     private Texture background;
     private Player player;
@@ -29,12 +37,19 @@ public class PlayScreen implements Screen {
     private final MainAssetsManager manager;
     private final Main game;
 
-    private final float floorHeight = 64f;
-
-    private float playerStartX = 20f;
+    private float playerStartX = 160f;
     private float playerStartY = 250f;
 
     private ShaderProgram vignetteShader;
+
+    private final float playerCameraWidth = 480f;
+    private final float playerCameraHeight = 256f;
+
+    private final float hudCameraWidth = 800f;
+    private final float hudCameraHeight = 400f;
+
+    private float mapWidth;
+    private float mapHeight;
 
     public PlayScreen(Main game ,MainAssetsManager manager){
         this.game = game;
@@ -45,13 +60,25 @@ public class PlayScreen implements Screen {
         batch = new SpriteBatch();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 600, 256);
+        camera.setToOrtho(false, playerCameraWidth, playerCameraHeight);
 
         hudCamera = new OrthographicCamera();
-        hudCamera.setToOrtho(false, 800, 400);
+        hudCamera.setToOrtho(false, hudCameraWidth, hudCameraHeight);
 
         background = manager.image.spaceBg();
+
         map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
+        MapProperties properties = map.getProperties();
+
+        int mapWidthInTiles = properties.get("width", Integer.class);
+        int tilePixelWidth = properties.get("tilewidth", Integer.class);
+
+        int mapHeightInTiles = properties.get("height", Integer.class);
+        int tilePixelHeight = properties.get("tileheight", Integer.class);
+
+        mapWidth = mapWidthInTiles * tilePixelWidth;
+        mapHeight = mapHeightInTiles * tilePixelHeight;
+
         renderer = new OrthogonalTiledMapRenderer(map);
         player = new Player(playerStartX, playerStartY, manager);
         manager.music.playLevelMusic(1);
@@ -61,10 +88,27 @@ public class PlayScreen implements Screen {
             Gdx.files.internal("shaders/vignette.fsh")
         );
 
+        vignetteShader.pedantic = false;
+
         if (!vignetteShader.isCompiled()) {
             Gdx.app.log("Shader Error", vignetteShader.getLog());
             Gdx.app.exit();
         }
+
+        renderer.getBatch().setShader(vignetteShader);
+
+        hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(playerCameraWidth, playerCameraHeight));
+
+        Gdx.input.setInputProcessor(hudStage);
+
+        Skin skin = UIManager.getInstance().getSkin();
+        PixelButton settingsButton = new PixelButton("MENU", skin);
+        ButtonActions.openSettings(settingsButton, game);
+
+        settingsButton.setSize(20, 20);
+        settingsButton.setPosition(420, 10);
+
+        //hudStage.addActor(settingsButton);
     }
 
     @Override
@@ -72,26 +116,27 @@ public class PlayScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
 
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
-        player.update(delta, collisionLayer, 2720f);
+        MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
+        player.update(delta, collisionLayer, objectLayer,2720f);
 
-        renderer.setView(camera);
-        renderer.render();
+        float cameraX = MathUtils.clamp(player.bounds.getX(), (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
+        float cameraY = MathUtils.clamp(player.bounds.getY(), (playerCameraHeight / 2), mapHeight - (playerCameraHeight / 2));
 
-        float cameraX = MathUtils.clamp(player.bounds.getX(), 300f, 2720f - 300f);
-
-        camera.position.set(cameraX, 128f, 0);
+        camera.position.set(cameraX, cameraY, 0);
         camera.update();
 
+        renderer.setView(camera);
+        vignetteShader.bind();
+        vignetteShader.setUniformf("u_resolution", Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
+        renderer.render();
+
         batch.setProjectionMatrix(camera.combined);
-
-        batch.setShader(vignetteShader);
+        batch.setShader(null);
         batch.begin();
-
         player.draw(batch);
         batch.end();
 
         batch.setProjectionMatrix(hudCamera.combined);
-
         batch.setShader(null);
         batch.begin();
 
@@ -116,6 +161,9 @@ public class PlayScreen implements Screen {
 
         batch.end();
 
+        hudStage.act(delta);
+        hudStage.draw();
+
         if (player.isDead()) {
             game.setScreen(new PlayScreen(game, manager));
         }
@@ -123,8 +171,8 @@ public class PlayScreen implements Screen {
 
     @Override
     public void resize(int i, int i1) {
-        camera.viewportWidth = 600;
-        camera.viewportHeight = 256;
+        camera.viewportWidth = playerCameraWidth;
+        camera.viewportHeight = playerCameraHeight;
         camera.update();
     }
 
