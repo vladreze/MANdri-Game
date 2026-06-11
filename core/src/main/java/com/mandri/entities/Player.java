@@ -1,5 +1,6 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
+import com.mandri.storage.MainAssetsManager;
 
 public class Player {
     public enum State { FALLING, JUMPING, STANDING, RUNNING }
@@ -17,60 +18,30 @@ public class Player {
 
     private float x, y;
     private float velocityX, velocityY;
-    private final float SPEED = 300f;
-    private final float GRAVITY = -1000f;
-    private final float JUMP_FORCE = 500f;
+    private final float SPEED = 150f;
+    private final float GRAVITY = -600f;
+    private final float JUMP_FORCE = 300f;
 
     public Rectangle bounds;
     private boolean isGrounded = false;
     private boolean runningRight = true;
     private float stateTimer;
 
-    private TextureRegion idleFront;
-    private TextureRegion jumpRight, jumpLeft;
-    private TextureRegion fallRight, fallLeft;
-    private Animation<TextureRegion> runRight, runLeft;
+    private float stepTimer;
+    private final MainAssetsManager manager;
 
-    private Array<Texture> texturesToDispose;
-
-    public Player(float startX, float startY) {
+    public Player(float startX, float startY, MainAssetsManager manager) {
         this.x = startX;
         this.y = startY;
         this.currentState = State.STANDING;
         this.previousState = State.STANDING;
         this.stateTimer = 0;
-        this.texturesToDispose = new Array<>();
-        this.bounds = new Rectangle(x, y, 32, 32);
-        loadAnimations();
+        this.stepTimer = 0;
+        this.bounds = new Rectangle(x, y, 30, 30);
+        this.manager = manager;
     }
 
-    private void loadAnimations() {
-        Texture tFront = new Texture("space/space_fall_F.png");
-        Texture tJumpR = new Texture("space/space_jump_R.png");
-        Texture tJumpL = new Texture("space/space_jump_L.png");
-        Texture tFallR = new Texture("space/space_fall_R.png");
-        Texture tFallL = new Texture("space/space_fall_L.png");
-
-        texturesToDispose.addAll(tFront, tJumpR, tJumpL, tFallR, tFallL);
-
-        idleFront = new TextureRegion(tFront);
-        jumpRight = new TextureRegion(tJumpR);
-        jumpLeft = new TextureRegion(tJumpL);
-        fallRight = new TextureRegion(tFallR);
-        fallLeft = new TextureRegion(tFallL);
-
-        Texture tRunR = new Texture("space/space_run_R.png");
-        texturesToDispose.add(tRunR);
-        TextureRegion[][] tmpR = TextureRegion.split(tRunR, 32, 32);
-        runRight = new Animation<>(0.15f, tmpR[0]);
-
-        Texture tRunL = new Texture("space/space_run_L.png");
-        texturesToDispose.add(tRunL);
-        TextureRegion[][] tmpL = TextureRegion.split(tRunL, 32, 32);
-        runLeft = new Animation<>(0.15f, tmpL[0]);
-    }
-
-    public void update(float delta, float floorY, int screenWidth) {
+    public void update(float delta, TiledMapTileLayer layer, float screenWidth) {
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             velocityX = -SPEED;
@@ -84,25 +55,59 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
             velocityY = JUMP_FORCE;
             isGrounded = false;
+
+            manager.music.playJumpSound();
         }
 
-        velocityY += GRAVITY * delta;
+        float oldX = x;
         x += velocityX * delta;
+        x = MathUtils.clamp(x, 0, screenWidth - 32); // Границы мира
+        bounds.setPosition(x, y);
+
+        if (checkCollision(bounds, layer)) {
+            x = oldX;
+            bounds.setPosition(x, y);
+            velocityX = 0;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
+            velocityY = JUMP_FORCE;
+            isGrounded = false;
+        }
+
+        float oldY = y;
+        velocityY += GRAVITY * delta;
         y += velocityY * delta;
+        bounds.setPosition(x, y);
 
-        x = MathUtils.clamp(x, 0, screenWidth - 32);
-
-        if (y <= floorY) {
-            y = floorY;
+        if (checkCollision(bounds, layer)) {
+            if (velocityY < 0) {
+                isGrounded = true;
+            }
+            y = oldY;
+            bounds.setPosition(x, y);
             velocityY = 0;
-            isGrounded = true;
         } else {
             isGrounded = false;
         }
 
-        bounds.setPosition(x, y);
-
         updateState(delta);
+    }
+
+    private boolean checkCollision(Rectangle rect, TiledMapTileLayer layer) {
+        int startX = (int) (rect.x / 16);
+        int endX = (int) ((rect.x + rect.width - 0.1f) / 16);
+        int startY = (int) (rect.y / 16);
+        int endY = (int) ((rect.y + rect.height - 0.1f) / 16);
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+                if (layer.getCell(i, j) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void updateState(float delta) {
@@ -114,8 +119,14 @@ public class Player {
             currentState = State.FALLING;
         } else if (velocityX != 0) {
             currentState = State.RUNNING;
+            stepTimer+=delta;
+            if(stepTimer> 0.1f){
+                manager.music.playWalkSound();
+                stepTimer = 0;
+            }
         } else {
             currentState = State.STANDING;
+            stepTimer = 0;
         }
 
         if (currentState == previousState) {
@@ -134,25 +145,22 @@ public class Player {
 
         switch (currentState) {
             case JUMPING:
-                region = runningRight ? jumpRight : jumpLeft;
+                if(velocityX == 0) region = manager.image.spaceJump_F;
+                else region = runningRight ? manager.image.spaceJump_R : manager.image.spaceJump_L;
                 break;
             case FALLING:
-                region = runningRight ? fallRight : fallLeft;
+                if(velocityX == 0) region = manager.image.spaceFall_F;
+                else region = runningRight ? manager.image.spaceFall_R : manager.image.spaceFall_L;
                 break;
             case RUNNING:
-                region = runningRight ? runRight.getKeyFrame(stateTimer, true) : runLeft.getKeyFrame(stateTimer, true);
+                region = runningRight ? manager.image.spaceRun_R.getKeyFrame(stateTimer, true)
+                    : manager.image.spaceRun_L.getKeyFrame(stateTimer, true);
                 break;
             case STANDING:
             default:
-                region = idleFront;
+                region = manager.image.spaceIdle_F.getKeyFrame(stateTimer, true);
                 break;
         }
         return region;
-    }
-
-    public void dispose() {
-        for (Texture t : texturesToDispose) {
-            t.dispose();
-        }
     }
 }
