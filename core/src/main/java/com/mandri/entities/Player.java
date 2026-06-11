@@ -17,10 +17,17 @@ public class Player {
     public State previousState;
 
     private float x, y;
+    private float spawnX, spawnY;
+
     private float velocityX, velocityY;
     private final float SPEED = 150f;
     private final float GRAVITY = -600f;
     private final float JUMP_FORCE = 300f;
+
+    public int liveCount = 3;
+    private boolean isInvulnerable = false;
+    private float invulnerableTimer = 0;
+    private final float INVINCIBILITY_TIME = 1.5f;
 
     public Rectangle bounds;
     private boolean isGrounded = false;
@@ -33,6 +40,8 @@ public class Player {
     public Player(float startX, float startY, MainAssetsManager manager) {
         this.x = startX;
         this.y = startY;
+        this.spawnX = startX;
+        this.spawnY = startY;
         this.currentState = State.STANDING;
         this.previousState = State.STANDING;
         this.stateTimer = 0;
@@ -42,6 +51,21 @@ public class Player {
     }
 
     public void update(float delta, TiledMapTileLayer layer, float screenWidth) {
+        if (isInvulnerable) {
+            invulnerableTimer -= delta;
+            if (invulnerableTimer <= 0) {
+                isInvulnerable = false;
+            }
+        }
+
+        if (y < -50) {
+            takeDamage();
+            if (!isDead()) {
+                this.x = spawnX;
+                this.y = spawnY;
+            }
+        }
+
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             velocityX = -SPEED;
@@ -136,7 +160,13 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(getFrame(), x, y);
+        if (isInvulnerable) {
+            if (invulnerableTimer % 0.2f > 0.1f) {
+                batch.draw(getFrame(), x, y);
+            }
+        } else {
+            batch.draw(getFrame(), x, y);
+        }
     }
 
     private TextureRegion getFrame() {
@@ -161,5 +191,21 @@ public class Player {
                 break;
         }
         return region;
+    }
+
+    public void takeDamage() {
+        if (!isInvulnerable && !isDead()) {
+            liveCount--;
+            manager.music.playHurtSound(1);
+
+            if (liveCount > 0) {
+                isInvulnerable = true;
+                invulnerableTimer = INVINCIBILITY_TIME;
+            }
+        }
+    }
+
+    public boolean isDead() {
+        return liveCount <= 0;
     }
 }
