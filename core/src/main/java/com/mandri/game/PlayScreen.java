@@ -166,6 +166,7 @@ public class PlayScreen implements Screen {
 
         if (player.isDead()) {
             game.setScreen(new MainMenuScreen(game));
+            manager.music.stopMusic();
         }
     }
 
@@ -200,5 +201,6 @@ public class PlayScreen implements Screen {
         map.dispose();
         renderer.dispose();
         vignetteShader.dispose();
+        manager.disposeAll();
     }
 }

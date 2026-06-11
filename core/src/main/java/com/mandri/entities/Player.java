@@ -113,7 +113,7 @@ public class Player {
                 }
                 isGrounded = true;
             }
-            else if(velocityY>0) manager.music.playHurtSound(1);
+
             y = oldY;
             bounds.setPosition(x, y);
             velocityY = 0;
@@ -149,10 +149,10 @@ public class Player {
                 String type = object.getProperties().get("type", String.class);
                 if ("Trap".equals(type)) {
                     Rectangle adjustedTraRect = new Rectangle(
-                        trapRect.x + 2,
+                        trapRect.x+2,
                         trapRect.y,
-                        trapRect.width - 4,
-                        trapRect.height - 2
+                        trapRect.width-2,
+                        trapRect.height
                     );
                     if (this.bounds.overlaps(adjustedTraRect)) {
                         takeDamage();
@@ -225,12 +225,16 @@ public class Player {
     public void takeDamage() {
         if (!isInvulnerable && !isDead()) {
             liveCount--;
-            manager.music.playHurtSound(1);
+            if(liveCount==2)manager.music.playHurtSound(1);
+            else if(liveCount==1) manager.music.playHurtSound(2);
 
             if (liveCount > 0) {
                 isInvulnerable = true;
                 invulnerableTimer = INVINCIBILITY_TIME;
             }
+        }
+        if(isDead()){
+            manager.music.playHurtSound(3);
         }
     }
 
