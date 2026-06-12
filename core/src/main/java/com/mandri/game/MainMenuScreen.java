@@ -4,16 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
+import com.mandri.ui.FontCreator;
 import com.mandri.ui.PixelButton;
 
 
@@ -37,7 +36,11 @@ public class MainMenuScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
 
-        Label titleLabel = new Label("MANDRi", skin);
+        BitmapFont fontForMainLabel = FontCreator.generateTextFont(24, 1f);
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = fontForMainLabel;
+
+        Label titleLabel = new Label("MANDRi", labelStyle);
         titleLabel.setFontScale(1.5f);
 
         PixelButton playButton = new PixelButton("START GAME", skin);
@@ -49,6 +52,8 @@ public class MainMenuScreen implements Screen {
         PixelButton exitButton = new PixelButton("EXIT", skin);
         ButtonActions.exitGame(exitButton);
 
+        PixelButton helpButton = new PixelButton("?", skin);
+        ButtonActions.helpScreen(helpButton, game);
 
         table.add(titleLabel).padBottom(15).row();
         table.add(playButton).width(120).padBottom(10).row();
