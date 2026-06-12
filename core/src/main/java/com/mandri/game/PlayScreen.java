@@ -37,8 +37,8 @@ public class PlayScreen implements Screen {
     private final MainAssetsManager manager;
     private final Main game;
 
-    private float playerStartX = 160f;
-    private float playerStartY = 85f;
+    private float playerStartX = 170f;
+    private float playerStartY = 105f;
 
     private ShaderProgram vignetteShader;
 
@@ -210,5 +210,6 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         vignetteShader.dispose();
         manager.disposeAll();
+        player.dispose();
     }
 }

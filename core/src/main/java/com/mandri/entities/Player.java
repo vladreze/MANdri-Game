@@ -1,5 +1,7 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -39,6 +41,8 @@ public class Player {
     private float stepTimer;
     private final MainAssetsManager manager;
 
+    private ShaderProgram damageShader;
+
     private Array<ActiveBreakable> activeBreakables = new Array<>();
 
     private class ActiveBreakable {
@@ -62,6 +66,16 @@ public class Player {
         this.stepTimer = 0;
         this.bounds = new Rectangle(x, y, 30, 30);
         this.manager = manager;
+
+        damageShader = new ShaderProgram(
+            Gdx.files.internal("shaders/default.vsh"),
+            Gdx.files.internal("shaders/damage.fsh")
+        );
+        damageShader.pedantic = false;
+
+        if (!damageShader.isCompiled()) {
+            Gdx.app.log("Shader Error", damageShader.getLog());
+        }
     }
 
     public void update(float delta, TiledMapTileLayer layer, MapLayer objectLayer, float screenWidth) {
@@ -254,9 +268,11 @@ public class Player {
 
     public void draw(SpriteBatch batch) {
         if (isInvulnerable) {
+            batch.setShader(damageShader);
             if (invulnerableTimer % 0.2f > 0.1f) {
                 batch.draw(getFrame(), x, y);
             }
+            batch.setShader(null);
         } else {
             batch.draw(getFrame(), x, y);
         }
@@ -308,5 +324,11 @@ public class Player {
 
     public boolean isShaking() {
         return activeBreakables.size > 0;
+    }
+
+    public void dispose() {
+        if (damageShader != null) {
+            damageShader.dispose();
+        }
     }
 }
