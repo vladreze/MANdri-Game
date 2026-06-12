@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -11,6 +12,7 @@ import com.mandri.storage.MusicManager;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
 import com.mandri.ui.PixelButton;
+import com.mandri.ui.PixelImageButton;
 
 public class SettingsMenu implements Screen {
     private Main game;
@@ -38,15 +40,18 @@ public class SettingsMenu implements Screen {
         table.top().padTop(15);
         table.add(titleLabel).row();
 
-        PixelButton backButton = new PixelButton("<-", skin);
+        Texture backIcon = new Texture(Gdx.files.internal("assets/ui/back-button.png"));
+
+        PixelImageButton backButton = new PixelImageButton(backIcon, skin);
         backButton.setSize(20, 20);
         backButton.setPosition(10, 150);
         ButtonActions.backAction(backButton, game);
 
-        PixelButton aboutButton = new PixelButton("i" , skin);
+        PixelButton aboutButton = new PixelButton("" , skin);
         aboutButton.setSize(20, 20);
         aboutButton.setPosition(290, 10);
         ButtonActions.aboutScreen(aboutButton, game);
+
 
         Label volumeLabel = new Label("VOLUME", skin);
         volumeLabel.setPosition(30, 100);

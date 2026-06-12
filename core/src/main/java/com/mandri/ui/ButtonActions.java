@@ -39,7 +39,7 @@ public class ButtonActions {
         });
     }
 
-    public static void backAction(PixelButton button, Main game){
+    public static void backAction(PixelImageButton button, Main game){
         button.addListener(new ClickListener() {
            @Override
            public void clicked(InputEvent event, float x, float y){
@@ -77,6 +77,15 @@ public class ButtonActions {
            public void clicked(InputEvent event, float x, float y){
                game.setScreen(new AboutScreen(game));
            }
+        });
+    }
+
+    public static void helpScreen(PixelButton button, Main game){
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new HelpScreen(game));
+            }
         });
     }
 
