@@ -1,9 +1,11 @@
 package com.mandri.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.MapLayer;
@@ -14,13 +16,17 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mandri.entities.Player;
 import com.mandri.storage.MainAssetsManager;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
+import com.mandri.ui.FontCreator;
 import com.mandri.ui.PixelButton;
+import com.mandri.ui.PixelImageButton;
 
 public class PlayScreen implements Screen {
     private SpriteBatch batch;
@@ -50,6 +56,9 @@ public class PlayScreen implements Screen {
 
     private float mapWidth;
     private float mapHeight;
+
+    private boolean isPaused = false;
+    private Table pauseTable;
 
     public PlayScreen(Main game ,MainAssetsManager manager){
         this.game = game;
@@ -101,37 +110,70 @@ public class PlayScreen implements Screen {
         Gdx.input.setInputProcessor(hudStage);
 
         Skin skin = UIManager.getInstance().getSkin();
-        PixelButton menuBtn = new PixelButton("MENU", skin);
-        ButtonActions.openMainMenu(menuBtn, game);
+        Texture pauseIcon = new Texture(Gdx.files.internal("assets/ui/pause-icon.png"));
 
-        menuBtn.setSize(40, 40);
+        PixelImageButton pauseButton = new PixelImageButton(pauseIcon, skin);
+        pauseButton.setSize(30, 30);
+        pauseButton.setPosition(hudCameraWidth - 60, hudCameraHeight - 60);
 
-        menuBtn.setPosition(hudCameraWidth - 60, hudCameraHeight - 60);
+        ButtonActions.pauseScreen(pauseButton, this);
+        hudStage.addActor(pauseButton);
 
-        hudStage.addActor(menuBtn);
+        pauseTable = new Table();
+        pauseTable.setFillParent(true);
+        pauseTable.setVisible(false);
+
+        BitmapFont fontForPauseLabel = FontCreator.generateTextFont(24, 1f);
+        Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
+        labelPauseTextStyle.font = fontForPauseLabel;
+        Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
+
+        BitmapFont fontForButtonsText = FontCreator.generateTextFont(16, 1f);
+
+        PixelButton resumeBtn = new PixelButton("RESUME", skin, fontForButtonsText);
+        ButtonActions.resumeScreen(resumeBtn, this);
+
+        PixelButton exitBtn = new PixelButton("EXIT", skin, fontForPauseLabel);
+        ButtonActions.openMainMenu(exitBtn, game);
+
+        pauseTable.add(pauseLabel).padBottom(30).row();
+        pauseTable.add(resumeBtn).padBottom(15).row();
+        pauseTable.add(exitBtn);
+
+        hudStage.addActor(pauseTable);
+
+
+
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
 
-        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
-        MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
-        player.update(delta, collisionLayer, objectLayer,2720f);
-
-        float cameraX = MathUtils.clamp(player.bounds.getX(), (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
-        float cameraY = MathUtils.clamp(player.bounds.getY(), (playerCameraHeight / 2), mapHeight);
-
-        camera.position.set(cameraX, cameraY, 0);
-
-        if (player.isShaking()) {
-            float shakePower = .5f;
-
-            camera.position.x += MathUtils.random(-shakePower, shakePower);
-            camera.position.y += MathUtils.random(-shakePower, shakePower);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            if (isPaused) resumeGame();
+            else pauseGame();
         }
 
-        camera.update();
+        if(!isPaused) {
+            TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
+            MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
+            player.update(delta, collisionLayer, objectLayer, 2720f);
+
+            float cameraX = MathUtils.clamp(player.bounds.getX(), (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
+            float cameraY = MathUtils.clamp(player.bounds.getY(), (playerCameraHeight / 2), mapHeight);
+
+            camera.position.set(cameraX, cameraY, 0);
+
+            if (player.isShaking()) {
+                float shakePower = .5f;
+
+                camera.position.x += MathUtils.random(-shakePower, shakePower);
+                camera.position.y += MathUtils.random(-shakePower, shakePower);
+            }
+
+            camera.update();
+        }
 
         renderer.setView(camera);
         vignetteShader.bind();
@@ -210,5 +252,15 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         vignetteShader.dispose();
         manager.disposeAll();
+    }
+
+    public void pauseGame() {
+        isPaused = true;
+        pauseTable.setVisible(true);
+    }
+
+    public void resumeGame() {
+        isPaused = false;
+        pauseTable.setVisible(false);
     }
 }

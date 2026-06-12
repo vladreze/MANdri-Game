@@ -116,4 +116,23 @@ public class ButtonActions {
         });
     }
 
+    public static void pauseScreen(PixelImageButton button, PlayScreen screen) {
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                screen.pauseGame();
+            }
+        });
+    }
+
+    public static void resumeScreen(PixelButton button, PlayScreen screen) {
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                screen.resumeGame();
+            }
+        });
+    }
+
+
 }
