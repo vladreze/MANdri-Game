@@ -34,7 +34,7 @@ public class ButtonActions {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-               game.setScreen(new SettingsMenu(game));
+                game.setScreen(new SettingsMenu(game));
             }
         });
     }
@@ -49,6 +49,14 @@ public class ButtonActions {
     }
 
     public static void backAction(PixelImageButton button, Main game){
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+    }
+
     public static void openMainMenu(PixelButton button, Main game){
         button.addListener(new ClickListener() {
             @Override
@@ -61,10 +69,10 @@ public class ButtonActions {
 
     public static void backAction(PixelButton button, Main game){
         button.addListener(new ClickListener() {
-           @Override
-           public void clicked(InputEvent event, float x, float y){
-               game.setScreen(new MainMenuScreen(game));
-           }
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new MainMenuScreen(game));
+            }
         });
     }
 
@@ -90,13 +98,12 @@ public class ButtonActions {
         });
     }
 
-
     public static void aboutScreen(PixelImageButton button, Main game){
         button.addListener(new ClickListener() {
-           @Override
-           public void clicked(InputEvent event, float x, float y){
-               game.setScreen(new AboutScreen(game));
-           }
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new AboutScreen(game));
+            }
         });
     }
 
