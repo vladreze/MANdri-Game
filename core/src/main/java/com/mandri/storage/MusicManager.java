@@ -8,6 +8,7 @@ public class MusicManager {
     private final AssetManager manager;
     private Music music;
     private float volume = 1.0f;
+    private float soundEffectsvolume = 1.0f;
 
     public MusicManager(AssetManager manager){
         this.manager = manager;
@@ -67,44 +68,44 @@ public class MusicManager {
     }
 
     public void playWalkSound(){
-        manager.get("sounds/walking.mp3", Sound.class).play();
+        manager.get("sounds/walking.mp3", Sound.class).play(soundEffectsvolume);
     }
 
     public void playJumpSound(){
-        manager.get("sounds/jump.mp3", Sound.class).play();
+        manager.get("sounds/jump.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playLandSound(){
-        manager.get("sounds/landing.mp3", Sound.class).play();
+        manager.get("sounds/landing.mp3", Sound.class).play(soundEffectsvolume);
 
     }
     public void playHurtSound(int n){
         switch (n){
             case 1:
-                manager.get("sounds/hurt1.mp3", Sound.class).play();
+                manager.get("sounds/hurt1.mp3", Sound.class).play(soundEffectsvolume);
                 break;
             case 2:
-                manager.get("sounds/hurt2.mp3", Sound.class).play();
+                manager.get("sounds/hurt2.mp3", Sound.class).play(soundEffectsvolume);
                 break;
             case 3:
-                manager.get("sounds/hurt3.mp3", Sound.class).play();
+                manager.get("sounds/hurt3.mp3", Sound.class).play(soundEffectsvolume);
         }
 
     }
     public void playBeeSound(){
-        manager.get("sounds/bee.mp3", Sound.class).play();
+        manager.get("sounds/bee.mp3", Sound.class).play(soundEffectsvolume);
 
     }
     public void playSpaceshipSound(){
-        manager.get("sounds/spaceship.mp3", Sound.class).play();
+        manager.get("sounds/spaceship.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playEnemyHurtSound(){
-        manager.get("sounds/enemy-hurt.mp3", Sound.class).play();
+        manager.get("sounds/enemy-hurt.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playBonusSound(){
-        manager.get("sounds/bonus.mp3", Sound.class).play();
+        manager.get("sounds/bonus.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playBigBonusSound(){
-        manager.get("sounds/bonus-big.mp3", Sound.class).play();
+        manager.get("sounds/bonus-big.mp3", Sound.class).play(soundEffectsvolume);
     }
 
     public void disposeMusic(){
@@ -126,5 +127,14 @@ public class MusicManager {
 
     public float getVolume() {
         return volume;
+    }
+
+    public float getSoundEffectsvolume() {
+        return soundEffectsvolume;
+    }
+
+    public void setSoundEffectsvolume(float soundEffectsvolume){
+        this.soundEffectsvolume = soundEffectsvolume;
+
     }
 }
