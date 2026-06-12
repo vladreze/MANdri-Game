@@ -140,7 +140,7 @@ public class PlayScreen implements Screen {
         float currentCameraY = camera.position.y;
         float targetY = cameraY;
 
-        float alpha = 10f * delta;
+        float alpha = 7.5f * delta;
 
         float smoothCameraX = MathUtils.lerp(currentCameraX, targetX, alpha);
         float smoothCameraY = MathUtils.lerp(currentCameraY, targetY, alpha);
