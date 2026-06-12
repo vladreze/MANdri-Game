@@ -28,7 +28,6 @@ public class PlayScreen implements Screen {
     private OrthographicCamera hudCamera;
     private Stage hudStage;
 
-    private Texture background;
     private Player player;
 
     private TiledMap map;
