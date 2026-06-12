@@ -123,6 +123,14 @@ public class PlayScreen implements Screen {
         float cameraY = MathUtils.clamp(player.bounds.getY(), (playerCameraHeight / 2), mapHeight);
 
         camera.position.set(cameraX, cameraY, 0);
+
+        if (player.isShaking()) {
+            float shakePower = .5f;
+
+            camera.position.x += MathUtils.random(-shakePower, shakePower);
+            camera.position.y += MathUtils.random(-shakePower, shakePower);
+        }
+
         camera.update();
 
         renderer.setView(camera);

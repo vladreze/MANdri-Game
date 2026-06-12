@@ -7,11 +7,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.mandri.storage.MainAssetsManager;
 
 public class Player {
@@ -40,6 +39,18 @@ public class Player {
     private float stepTimer;
     private final MainAssetsManager manager;
 
+    private Array<ActiveBreakable> activeBreakables = new Array<>();
+
+    private class ActiveBreakable {
+        RectangleMapObject object;
+        float timer;
+
+        public ActiveBreakable(RectangleMapObject object, float timer) {
+            this.object = object;
+            this.timer = timer;
+        }
+    }
+
     public Player(float startX, float startY, MainAssetsManager manager) {
         this.x = startX;
         this.y = startY;
@@ -60,6 +71,8 @@ public class Player {
                 isInvulnerable = false;
             }
         }
+
+        handleBreakables(delta, objectLayer, layer);
 
         if (y < -50) {
             takeDamage();
@@ -88,7 +101,7 @@ public class Player {
 
         float oldX = x;
         x += velocityX * delta;
-        x = MathUtils.clamp(x, 0, screenWidth - 32); // Границы мира
+        x = MathUtils.clamp(x, 0, screenWidth - 32);
         bounds.setPosition(x, y);
 
         checkTraps(objectLayer);
@@ -149,15 +162,66 @@ public class Player {
                 String type = object.getProperties().get("type", String.class);
                 if ("Trap".equals(type)) {
                     Rectangle adjustedTraRect = new Rectangle(
-                        trapRect.x+2,
+                        trapRect.x + 2,
                         trapRect.y,
-                        trapRect.width-2,
+                        trapRect.width-3,
                         trapRect.height
                     );
                     if (this.bounds.overlaps(adjustedTraRect)) {
                         takeDamage();
                     }
                 }
+            }
+        }
+    }
+
+    private void handleBreakables(float delta, MapLayer objectLayer, TiledMapTileLayer tileLayer) {
+        if (objectLayer == null || tileLayer == null) return;
+
+        for (MapObject object : objectLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject rectObject = (RectangleMapObject) object;
+                String type = object.getProperties().get("type", String.class);
+
+                Rectangle originalRect = rectObject.getRectangle();
+
+                Rectangle adjustedRect = new Rectangle(
+                    originalRect.x,
+                    originalRect.y,
+                    originalRect.width,
+                    originalRect.height + 4
+                );
+
+                if ("Breakable".equals(type) && this.bounds.overlaps(adjustedRect)) {
+                    boolean alreadyActive = false;
+                    for (ActiveBreakable ab : activeBreakables) {
+                        if (ab.object == rectObject) {
+                            alreadyActive = true;
+                            break;
+                        }
+                    }
+                    if (!alreadyActive) {
+                        Float delayProp = object.getProperties().get("delay", Float.class);
+                        float delay = (delayProp != null) ? delayProp : 2.0f;
+                        activeBreakables.add(new ActiveBreakable(rectObject, delay));
+                    }
+                }
+            }
+        }
+
+        for (int i = activeBreakables.size - 1; i >= 0; i--) {
+            ActiveBreakable ab = activeBreakables.get(i);
+            ab.timer -= delta;
+
+            if (ab.timer <= 0) {
+                Rectangle rect = ab.object.getRectangle();
+                int tileX = (int) ((rect.x + 2) / 16);
+                int tileY = (int) ((rect.y + 2) / 16);
+                tileLayer.setCell(tileX, tileY, null);
+                objectLayer.getObjects().remove(ab.object);
+                activeBreakables.removeIndex(i);
+
+                // manager.music.playBreakSound();
             }
         }
     }
@@ -240,5 +304,9 @@ public class Player {
 
     public boolean isDead() {
         return liveCount <= 0;
+    }
+
+    public boolean isShaking() {
+        return activeBreakables.size > 0;
     }
 }
