@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mandri.entities.Player;
 import com.mandri.storage.MainAssetsManager;
@@ -59,6 +61,7 @@ public class PlayScreen implements Screen {
 
     private boolean isPaused = false;
     private Table pauseTable;
+    private Texture dimBackground;
 
     public PlayScreen(Main game ,MainAssetsManager manager){
         this.game = game;
@@ -123,15 +126,25 @@ public class PlayScreen implements Screen {
         pauseTable.setFillParent(true);
         pauseTable.setVisible(false);
 
-        BitmapFont fontForPauseLabel = FontCreator.generateTextFont(24, 1f);
+        Pixmap pixmap = new Pixmap(1,1,Pixmap.Format.RGBA8888);
+        pixmap.setColor(0f, 0f, 0f, 0.8f);
+        pixmap.fill();
+        dimBackground = new Texture(pixmap);
+        pixmap.dispose();
+
+        pauseTable.setBackground(new TextureRegionDrawable(dimBackground));
+
+        BitmapFont fontForPauseLabel = FontCreator.generateTextFont(28, 1f);
         Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
         labelPauseTextStyle.font = fontForPauseLabel;
         Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
 
-        BitmapFont fontForButtonsText = FontCreator.generateTextFont(16, 1f);
+        BitmapFont fontForButtonsText = FontCreator.generateTextFont(24, 1f);
 
         PixelButton resumeBtn = new PixelButton("RESUME", skin, fontForButtonsText);
         ButtonActions.resumeScreen(resumeBtn, this);
+
+
 
         PixelButton exitBtn = new PixelButton("EXIT", skin, fontForPauseLabel);
         ButtonActions.openMainMenu(exitBtn, game);
@@ -252,6 +265,9 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         vignetteShader.dispose();
         manager.disposeAll();
+        if (dimBackground != null) {
+            dimBackground.dispose();
+        }
     }
 
     public void pauseGame() {
