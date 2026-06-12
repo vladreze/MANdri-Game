@@ -52,9 +52,6 @@ public class MainMenuScreen implements Screen {
         PixelButton exitButton = new PixelButton("EXIT", skin);
         ButtonActions.exitGame(exitButton);
 
-        PixelButton helpButton = new PixelButton("?", skin);
-        ButtonActions.helpScreen(helpButton, game);
-
         table.add(titleLabel).padBottom(15).row();
         table.add(playButton).width(120).padBottom(10).row();
         table.add(settingsButton).width(120).padBottom(10).row();

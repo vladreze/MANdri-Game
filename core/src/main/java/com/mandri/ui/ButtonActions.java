@@ -39,6 +39,15 @@ public class ButtonActions {
         });
     }
 
+    public static void openSettingsForIconButtons(PixelImageButton button, Main game){
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SettingsMenu(game));
+            }
+        });
+    }
+
     public static void backAction(PixelImageButton button, Main game){
         button.addListener(new ClickListener() {
            @Override
@@ -71,7 +80,7 @@ public class ButtonActions {
     }
 
 
-    public static void aboutScreen(PixelButton button, Main game){
+    public static void aboutScreen(PixelImageButton button, Main game){
         button.addListener(new ClickListener() {
            @Override
            public void clicked(InputEvent event, float x, float y){
@@ -80,7 +89,7 @@ public class ButtonActions {
         });
     }
 
-    public static void helpScreen(PixelButton button, Main game){
+    public static void helpScreen(PixelImageButton button, Main game){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

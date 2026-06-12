@@ -47,10 +47,19 @@ public class SettingsMenu implements Screen {
         backButton.setPosition(10, 150);
         ButtonActions.backAction(backButton, game);
 
-        PixelButton aboutButton = new PixelButton("" , skin);
+        Texture aboutIcon = new Texture(Gdx.files.internal("assets/ui/info-button.png"));
+
+        PixelImageButton aboutButton = new PixelImageButton(aboutIcon , skin);
         aboutButton.setSize(20, 20);
         aboutButton.setPosition(290, 10);
         ButtonActions.aboutScreen(aboutButton, game);
+
+        Texture helpIcon = new Texture(Gdx.files.internal("assets/ui/help-button.png"));
+
+        PixelImageButton helpButton = new PixelImageButton(helpIcon, skin);
+        helpButton.setSize(20, 20);
+        helpButton.setPosition(265, 10);
+        ButtonActions.helpScreen(helpButton, game);
 
 
         Label volumeLabel = new Label("VOLUME", skin);
@@ -75,6 +84,7 @@ public class SettingsMenu implements Screen {
         stage.addActor(table);
         stage.addActor(backButton);
         stage.addActor(aboutButton);
+        stage.addActor(helpButton);
         stage.addActor(volumeLabel);
         stage.addActor(volumeSlider);
         stage.addActor(soundEffectsvolumeLabel);
