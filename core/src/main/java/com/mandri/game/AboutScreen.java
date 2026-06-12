@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -15,6 +16,7 @@ import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
 import com.mandri.ui.FontCreator;
 import com.mandri.ui.PixelButton;
+import com.mandri.ui.PixelImageButton;
 
 public class AboutScreen implements Screen {
     private Main game;
@@ -45,11 +47,12 @@ public class AboutScreen implements Screen {
         Label.LabelStyle textCopyRightStyle = new Label.LabelStyle();
         textCopyRightStyle.font = textCopyRightFont;
 
-        PixelButton backButton = new PixelButton("<-", skin);
+        Texture backIcon = new Texture(Gdx.files.internal("assets/ui/back-button.png"));
+
+        PixelImageButton backButton = new PixelImageButton(backIcon, skin);
         backButton.setSize(20, 20);
         backButton.setPosition(10, 150);
-        ButtonActions.openSettings(backButton, game);
-        stage.addActor(backButton);
+        ButtonActions.backAction(backButton, game);
 
         Table scrollContainer = new Table();
         scrollContainer.top();
@@ -94,6 +97,7 @@ public class AboutScreen implements Screen {
         mainTable.add(scrollPane).width(305).height(140).padTop(25);
 
         stage.addActor(mainTable);
+        stage.addActor(backButton);
 
     }
 

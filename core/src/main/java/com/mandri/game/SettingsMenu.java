@@ -5,12 +5,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mandri.storage.MusicManager;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
+import com.mandri.ui.FontCreator;
 import com.mandri.ui.PixelButton;
 import com.mandri.ui.PixelImageButton;
 
@@ -34,7 +36,15 @@ public class SettingsMenu implements Screen {
         Table table = new Table();
         table.setFillParent(true);
 
-        Label titleLabel = new Label("SETTINGS", skin);
+        BitmapFont textMainFont = FontCreator.generateTextFont(24, 1f);
+        Label.LabelStyle styleMainFont = new Label.LabelStyle();
+        styleMainFont.font = textMainFont;
+
+        BitmapFont textFont = FontCreator.generateTextFont(16, 1f);
+        Label.LabelStyle styleTextFont = new Label.LabelStyle();
+        styleTextFont.font = textFont;
+
+        Label titleLabel = new Label("SETTINGS", styleMainFont);
         titleLabel.setFontScale(1.5f);
         table.setFillParent(true);
         table.top().padTop(15);
@@ -62,22 +72,22 @@ public class SettingsMenu implements Screen {
         ButtonActions.helpScreen(helpButton, game);
 
 
-        Label volumeLabel = new Label("VOLUME", skin);
-        volumeLabel.setPosition(30, 100);
+        Label volumeLabel = new Label("VOLUME", styleTextFont);
+        volumeLabel.setPosition(30, 80);
 
         MusicManager musicManager = game.getManager().getMusic();
         Slider volumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, skin);
         volumeSlider.setSize(110, 15);
-        volumeSlider.setPosition(30, 75);
+        volumeSlider.setPosition(30, 55);
         volumeSlider.setValue(musicManager.getVolume());
         ButtonActions.toggleMusic(volumeSlider, game);
 
-        Label soundEffectsvolumeLabel = new Label("SOUND EFFECTS" , skin);
-        soundEffectsvolumeLabel.setPosition(180, 100);
+        Label soundEffectsvolumeLabel = new Label("SOUND EFFECTS" , styleTextFont);
+        soundEffectsvolumeLabel.setPosition(180, 80);
 
         Slider soundEffectsvolumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, skin);
         soundEffectsvolumeSlider.setSize(110, 15);
-        soundEffectsvolumeSlider.setPosition(180, 75);
+        soundEffectsvolumeSlider.setPosition(180, 55);
         soundEffectsvolumeSlider.setValue(musicManager.getSoundEffectsvolume());
         ButtonActions.toggleSoundEffects(soundEffectsvolumeSlider, game);
 
