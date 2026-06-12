@@ -1,5 +1,7 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
@@ -43,6 +45,9 @@ public class Player {
 
     private ShaderProgram damageShader;
 
+    private ParticleEffect groundParticleEffect;
+    private ParticleEffect jetpackParticleEffect;
+
     private Array<ActiveBreakable> activeBreakables = new Array<>();
 
     private class ActiveBreakable {
@@ -76,6 +81,21 @@ public class Player {
         if (!damageShader.isCompiled()) {
             Gdx.app.log("Shader Error", damageShader.getLog());
         }
+
+        groundParticleEffect = new ParticleEffect();
+        jetpackParticleEffect = new ParticleEffect();
+
+        groundParticleEffect.load(
+            Gdx.files.internal("assets/particles/ground.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        groundParticleEffect.scaleEffect(1f);
+
+        jetpackParticleEffect.load(
+            Gdx.files.internal("assets/particles/jetpack.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        jetpackParticleEffect.scaleEffect(0.6f);
     }
 
     public void update(float delta, TiledMapTileLayer layer, MapLayer objectLayer, float screenWidth) {
@@ -96,6 +116,9 @@ public class Player {
             }
         }
 
+        jetpackParticleEffect.setPosition(x + 10, y + 12);
+        groundParticleEffect.setPosition(x + bounds.width / 2, y);
+
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             velocityX = -SPEED;
@@ -109,6 +132,8 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
             velocityY = JUMP_FORCE;
             isGrounded = false;
+
+            jetpackParticleEffect.start();
 
             manager.music.playJumpSound();
         }
@@ -136,8 +161,10 @@ public class Player {
         if (checkCollision(bounds, layer)) {
             if (velocityY < 0) {
                 if (!isGrounded && velocityY < -50f) {
+                    groundParticleEffect.start();
                     manager.music.playLandSound();
                 }
+                jetpackParticleEffect.allowCompletion();
                 isGrounded = true;
             }
 
@@ -148,6 +175,8 @@ public class Player {
             isGrounded = false;
         }
 
+        groundParticleEffect.update(delta);
+        jetpackParticleEffect.update(delta);
         updateState(delta);
     }
 
@@ -270,12 +299,15 @@ public class Player {
         if (isInvulnerable) {
             batch.setShader(damageShader);
             if (invulnerableTimer % 0.2f > 0.1f) {
+                jetpackParticleEffect.draw(batch);
                 batch.draw(getFrame(), x, y);
             }
             batch.setShader(null);
         } else {
+            jetpackParticleEffect.draw(batch);
             batch.draw(getFrame(), x, y);
         }
+        groundParticleEffect.draw(batch);
     }
 
     private TextureRegion getFrame() {
@@ -329,6 +361,12 @@ public class Player {
     public void dispose() {
         if (damageShader != null) {
             damageShader.dispose();
+        }
+        if (groundParticleEffect != null) {
+            groundParticleEffect.dispose();
+        }
+        if (jetpackParticleEffect != null) {
+            jetpackParticleEffect.dispose();
         }
     }
 }

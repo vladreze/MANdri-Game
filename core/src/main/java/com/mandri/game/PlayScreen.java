@@ -64,8 +64,6 @@ public class PlayScreen implements Screen {
         hudCamera = new OrthographicCamera();
         hudCamera.setToOrtho(false, hudCameraWidth, hudCameraHeight);
 
-        background = manager.image.spaceBg();
-
         map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
         MapProperties properties = map.getProperties();
 
@@ -121,7 +119,18 @@ public class PlayScreen implements Screen {
         float cameraX = MathUtils.clamp(player.bounds.getX(), (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
         float cameraY = MathUtils.clamp(player.bounds.getY(), (playerCameraHeight / 2), mapHeight);
 
-        camera.position.set(cameraX, cameraY, 0);
+        float currentCameraX = camera.position.x;
+        float targetX = cameraX;
+
+        float currentCameraY = camera.position.y;
+        float targetY = cameraY;
+
+        float alpha = 10f * delta;
+
+        float smoothCameraX = MathUtils.lerp(currentCameraX, targetX, alpha);
+        float smoothCameraY = MathUtils.lerp(currentCameraY, targetY, alpha);
+
+        camera.position.set(smoothCameraX, smoothCameraY, 0);
 
         if (player.isShaking()) {
             float shakePower = .5f;
