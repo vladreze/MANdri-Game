@@ -41,6 +41,10 @@ public class PlayScreen implements Screen {
 
     private ShaderProgram vignetteShader;
 
+    private int displayedLives = 3;
+    private final float HEART_DELAY = 0.5f;
+    private float heartTimer = 0f;
+
     private final float playerCameraWidth = 320f;
     private final float playerCameraHeight = 180f;
 
@@ -112,6 +116,17 @@ public class PlayScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
 
+        if (player.liveCount < displayedLives) {
+            heartTimer += delta;
+            if (heartTimer >= HEART_DELAY) {
+                displayedLives--;
+                heartTimer = 0f;
+            }
+        } else {
+            displayedLives = player.liveCount;
+            heartTimer = 0f;
+        }
+
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
         MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
         player.update(delta, collisionLayer, objectLayer,2720f);
@@ -166,11 +181,15 @@ public class PlayScreen implements Screen {
 
         int maxLives = 3;
 
+
+
         for (int i = 0; i < maxLives; i++) {
             float currentX = startX + i * (heartWidth + spacing);
             if (i < player.liveCount) {
                 batch.draw(manager.image.fullHeart, currentX, startY, heartWidth, heartHeight);
-            } else  {
+            } else if (i < displayedLives) {
+                batch.draw(manager.image.poisonHeart, currentX, startY, heartWidth, heartHeight);
+            } else {
                 batch.draw(manager.image.emptyHeart, currentX, startY, heartWidth, heartHeight);
             }
         }

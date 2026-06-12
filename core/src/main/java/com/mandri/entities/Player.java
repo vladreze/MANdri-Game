@@ -89,7 +89,7 @@ public class Player {
             Gdx.files.internal("assets/particles/ground.p"),
             Gdx.files.internal("assets/particles/")
         );
-        groundParticleEffect.scaleEffect(1f);
+        groundParticleEffect.scaleEffect(0.7f);
 
         jetpackParticleEffect.load(
             Gdx.files.internal("assets/particles/jetpack.p"),
