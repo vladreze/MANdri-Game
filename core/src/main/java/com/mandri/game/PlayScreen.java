@@ -6,13 +6,19 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mandri.entities.Enemy;
+import com.mandri.entities.Item;
 import com.mandri.entities.Player;
+import com.mandri.entities.Rocket;
 import com.mandri.storage.MainAssetsManager;
 
 public class PlayScreen implements Screen {
@@ -22,6 +28,13 @@ public class PlayScreen implements Screen {
 
     private Texture background;
     private Player player;
+
+    //Mobs Rocket Parts
+    private Array<Enemy> enemies;
+    private Array<Item> rocketParts;
+    private Rocket rocket;
+    private int partColl;
+    private final int TOTAL_PARTS = 3;
 
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -54,6 +67,30 @@ public class PlayScreen implements Screen {
         map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
         player = new Player(playerStartX, playerStartY, manager);
+        enemies = new Array<Enemy>();
+        rocketParts=new Array<Item>();
+        MapLayer spawnLayer = map.getLayers().get("spawns");
+        if(spawnLayer!=null){
+            for(MapObject object:spawnLayer.getObjects()){
+                String name=object.getName();
+                String type=object.getProperties().get("type", String.class);
+                String className=object.getProperties().get("class", String.class);
+
+                Float x=object.getProperties().get("x", Float.class);
+                Float y=object.getProperties().get("y", Float.class);
+                if(x!= null&&y!= null){
+                    if("Mob".equals(type)||"Mob".equals(className)){
+                        enemies.add(new Enemy(x,y,manager));
+                    }
+                    else if("RocketPart1".equals(name)||"RocketPart2".equals(name)||"RocketPart3".equals(name)){
+                        rocketParts.add(new Item(null,name,x,y));
+                    }
+                    else if("LevelExit".equals(type)||"LevelExit".equals(className)){
+                        rocket=new Rocket(x,y,manager);
+                    }
+                }
+            }
+        }
         manager.music.playLevelMusic(1);
 
         vignetteShader = new ShaderProgram(
@@ -74,6 +111,12 @@ public class PlayScreen implements Screen {
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
         player.update(delta, collisionLayer, 2720f);
 
+        for(Enemy  e:enemies){
+            e.update(delta, collisionLayer);
+        }
+        if(rocket!=null){
+            rocket.update(delta);
+        }
         renderer.setView(camera);
         renderer.render();
 
@@ -87,6 +130,16 @@ public class PlayScreen implements Screen {
         batch.setShader(vignetteShader);
         batch.begin();
 
+        if(rocket!=null){
+            rocket.draw(batch);
+        }
+        for(Item part:rocketParts){
+            part.draw(batch, manager);
+        }
+        for(Enemy  e:enemies){
+            e.draw(batch);
+        }
+
         player.draw(batch);
         batch.end();
 
@@ -94,6 +147,7 @@ public class PlayScreen implements Screen {
 
         batch.setShader(null);
         batch.begin();
+
 
         float startX = 20f;
         final float startY = 362f;
