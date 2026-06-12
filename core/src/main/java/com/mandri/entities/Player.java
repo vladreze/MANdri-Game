@@ -1,14 +1,16 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.mandri.storage.MainAssetsManager;
 
 public class Player {
@@ -17,10 +19,17 @@ public class Player {
     public State previousState;
 
     private float x, y;
+    private float spawnX, spawnY;
+
     private float velocityX, velocityY;
     private final float SPEED = 150f;
     private final float GRAVITY = -600f;
     private final float JUMP_FORCE = 300f;
+
+    public int liveCount = 3;
+    private boolean isInvulnerable = false;
+    private float invulnerableTimer = 0;
+    private final float INVINCIBILITY_TIME = 1.5f;
 
     public Rectangle bounds;
     private boolean isGrounded = false;
@@ -30,9 +39,23 @@ public class Player {
     private float stepTimer;
     private final MainAssetsManager manager;
 
+    private Array<ActiveBreakable> activeBreakables = new Array<>();
+
+    private class ActiveBreakable {
+        RectangleMapObject object;
+        float timer;
+
+        public ActiveBreakable(RectangleMapObject object, float timer) {
+            this.object = object;
+            this.timer = timer;
+        }
+    }
+
     public Player(float startX, float startY, MainAssetsManager manager) {
         this.x = startX;
         this.y = startY;
+        this.spawnX = startX;
+        this.spawnY = startY;
         this.currentState = State.STANDING;
         this.previousState = State.STANDING;
         this.stateTimer = 0;
@@ -41,7 +64,24 @@ public class Player {
         this.manager = manager;
     }
 
-    public void update(float delta, TiledMapTileLayer layer, float screenWidth) {
+    public void update(float delta, TiledMapTileLayer layer, MapLayer objectLayer, float screenWidth) {
+        if (isInvulnerable) {
+            invulnerableTimer -= delta;
+            if (invulnerableTimer <= 0) {
+                isInvulnerable = false;
+            }
+        }
+
+        handleBreakables(delta, objectLayer, layer);
+
+        if (y < -50) {
+            takeDamage();
+            if (!isDead()) {
+                this.x = spawnX;
+                this.y = spawnY;
+            }
+        }
+
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             velocityX = -SPEED;
@@ -61,8 +101,10 @@ public class Player {
 
         float oldX = x;
         x += velocityX * delta;
-        x = MathUtils.clamp(x, 0, screenWidth - 32); // Границы мира
+        x = MathUtils.clamp(x, 0, screenWidth - 32);
         bounds.setPosition(x, y);
+
+        checkTraps(objectLayer);
 
         if (checkCollision(bounds, layer)) {
             x = oldX;
@@ -75,6 +117,8 @@ public class Player {
         y += velocityY * delta;
         bounds.setPosition(x, y);
 
+        checkTraps(objectLayer);
+
         if (checkCollision(bounds, layer)) {
             if (velocityY < 0) {
                 if (!isGrounded && velocityY < -50f) {
@@ -82,7 +126,7 @@ public class Player {
                 }
                 isGrounded = true;
             }
-            else if(velocityY>0) manager.music.playHurtSound(1);
+
             y = oldY;
             bounds.setPosition(x, y);
             velocityY = 0;
@@ -107,6 +151,79 @@ public class Player {
             }
         }
         return false;
+    }
+
+    private void checkTraps(MapLayer objectLayer) {
+        if (objectLayer == null) return;
+        for (MapObject object : objectLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject rectangleObject = (RectangleMapObject) object;
+                Rectangle trapRect = rectangleObject.getRectangle();
+                String type = object.getProperties().get("type", String.class);
+                if ("Trap".equals(type)) {
+                    Rectangle adjustedTraRect = new Rectangle(
+                        trapRect.x + 2,
+                        trapRect.y,
+                        trapRect.width-3,
+                        trapRect.height
+                    );
+                    if (this.bounds.overlaps(adjustedTraRect)) {
+                        takeDamage();
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleBreakables(float delta, MapLayer objectLayer, TiledMapTileLayer tileLayer) {
+        if (objectLayer == null || tileLayer == null) return;
+
+        for (MapObject object : objectLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject rectObject = (RectangleMapObject) object;
+                String type = object.getProperties().get("type", String.class);
+
+                Rectangle originalRect = rectObject.getRectangle();
+
+                Rectangle adjustedRect = new Rectangle(
+                    originalRect.x,
+                    originalRect.y,
+                    originalRect.width,
+                    originalRect.height + 4
+                );
+
+                if ("Breakable".equals(type) && this.bounds.overlaps(adjustedRect)) {
+                    boolean alreadyActive = false;
+                    for (ActiveBreakable ab : activeBreakables) {
+                        if (ab.object == rectObject) {
+                            alreadyActive = true;
+                            break;
+                        }
+                    }
+                    if (!alreadyActive) {
+                        Float delayProp = object.getProperties().get("delay", Float.class);
+                        float delay = (delayProp != null) ? delayProp : 2.0f;
+                        activeBreakables.add(new ActiveBreakable(rectObject, delay));
+                    }
+                }
+            }
+        }
+
+        for (int i = activeBreakables.size - 1; i >= 0; i--) {
+            ActiveBreakable ab = activeBreakables.get(i);
+            ab.timer -= delta;
+
+            if (ab.timer <= 0) {
+                Rectangle rect = ab.object.getRectangle();
+                int tileX = (int) ((rect.x + 2) / 16);
+                int tileY = (int) ((rect.y + 2) / 16);
+                tileLayer.setCell(tileX, tileY, null);
+                objectLayer.getObjects().remove(ab.object);
+                activeBreakables.removeIndex(i);
+
+                // manager.music.playBreakSound();
+            }
+        }
     }
 
     private void updateState(float delta) {
@@ -136,7 +253,13 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(getFrame(), x, y);
+        if (isInvulnerable) {
+            if (invulnerableTimer % 0.2f > 0.1f) {
+                batch.draw(getFrame(), x, y);
+            }
+        } else {
+            batch.draw(getFrame(), x, y);
+        }
     }
 
     private TextureRegion getFrame() {
@@ -161,5 +284,29 @@ public class Player {
                 break;
         }
         return region;
+    }
+
+    public void takeDamage() {
+        if (!isInvulnerable && !isDead()) {
+            liveCount--;
+            if(liveCount==2)manager.music.playHurtSound(1);
+            else if(liveCount==1) manager.music.playHurtSound(2);
+
+            if (liveCount > 0) {
+                isInvulnerable = true;
+                invulnerableTimer = INVINCIBILITY_TIME;
+            }
+        }
+        if(isDead()){
+            manager.music.playHurtSound(3);
+        }
+    }
+
+    public boolean isDead() {
+        return liveCount <= 0;
+    }
+
+    public boolean isShaking() {
+        return activeBreakables.size > 0;
     }
 }

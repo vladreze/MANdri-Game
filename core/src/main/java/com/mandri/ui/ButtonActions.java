@@ -25,7 +25,7 @@ public class ButtonActions {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.getManager().getMusic().stopMusic();
-                game.setScreen(new PlayScreen(game.getManager()));
+                game.setScreen(new PlayScreen(game, game.getManager()));
             }
         });
     }
@@ -49,6 +49,17 @@ public class ButtonActions {
     }
 
     public static void backAction(PixelImageButton button, Main game){
+    public static void openMainMenu(PixelButton button, Main game){
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.getManager().getMusic().stopMusic();
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+    }
+
+    public static void backAction(PixelButton button, Main game){
         button.addListener(new ClickListener() {
            @Override
            public void clicked(InputEvent event, float x, float y){
