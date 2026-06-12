@@ -52,7 +52,7 @@ public class AboutScreen implements Screen {
         PixelImageButton backButton = new PixelImageButton(backIcon, skin);
         backButton.setSize(20, 20);
         backButton.setPosition(10, 150);
-        ButtonActions.backAction(backButton, game);
+        ButtonActions.openSettingsForIconButtons(backButton, game);
 
         Table scrollContainer = new Table();
         scrollContainer.top();

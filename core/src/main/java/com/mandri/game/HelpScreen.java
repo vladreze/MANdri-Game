@@ -63,11 +63,11 @@ public class HelpScreen implements Screen {
         jumpLabel.setFontScale(0.7f);
         table.add(jumpLabel).padBottom(8).row();
 
-        Label pauseLabel = new Label("ESC / P - Pause Game", textStyle);
+        Label pauseLabel = new Label("ESC - Pause Game", textStyle);
         pauseLabel.setFontScale(0.7f);
         table.add(pauseLabel).padBottom(15).row();
 
-        Label tipLabel = new Label("TIP: Avoid enemies and collect bonuses to unlock new biomes!", textStyle);
+        Label tipLabel = new Label("Avoid enemies and collect bonuses to unlock new biomes ( levels )", textStyle);
         tipLabel.setFontScale(0.6f);
         tipLabel.setWrap(true);
         tipLabel.setAlignment(Align.center);

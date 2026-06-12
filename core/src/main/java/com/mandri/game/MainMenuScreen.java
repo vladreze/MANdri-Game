@@ -36,20 +36,22 @@ public class MainMenuScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
 
-        BitmapFont fontForMainLabel = FontCreator.generateTextFont(24, 1f);
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = fontForMainLabel;
+        BitmapFont fontForMainLabel = FontCreator.generateTextFont(28, 1f);
+        Label.LabelStyle labelMainTextlStyle = new Label.LabelStyle();
+        labelMainTextlStyle.font = fontForMainLabel;
 
-        Label titleLabel = new Label("MANDRi", labelStyle);
+        BitmapFont fontForButtonsText = FontCreator.generateTextFont(16, 1f);
+
+        Label titleLabel = new Label("MANDRi", labelMainTextlStyle);
         titleLabel.setFontScale(1.5f);
 
-        PixelButton playButton = new PixelButton("START GAME", skin);
+        PixelButton playButton = new PixelButton("START GAME", skin, fontForButtonsText);
         ButtonActions.playGame(playButton, game);
 
-        PixelButton settingsButton = new PixelButton("SETTINGS", skin);
+        PixelButton settingsButton = new PixelButton("SETTINGS", skin, fontForButtonsText);
         ButtonActions.openSettings(settingsButton , game);
 
-        PixelButton exitButton = new PixelButton("EXIT", skin);
+        PixelButton exitButton = new PixelButton("EXIT", skin, fontForButtonsText);
         ButtonActions.exitGame(exitButton);
 
         table.add(titleLabel).padBottom(15).row();
