@@ -47,6 +47,8 @@ public class Player {
 
     private ParticleEffect groundParticleEffect;
     private ParticleEffect jetpackParticleEffect;
+    private ParticleEffect damageParticleEffect;
+    private ParticleEffect fallingParticleEffect;
 
     private Array<ActiveBreakable> activeBreakables = new Array<>();
 
@@ -84,18 +86,35 @@ public class Player {
 
         groundParticleEffect = new ParticleEffect();
         jetpackParticleEffect = new ParticleEffect();
+        damageParticleEffect = new ParticleEffect();
+        fallingParticleEffect = new ParticleEffect();
 
         groundParticleEffect.load(
             Gdx.files.internal("assets/particles/ground.p"),
             Gdx.files.internal("assets/particles/")
         );
-        groundParticleEffect.scaleEffect(0.7f);
+        groundParticleEffect.scaleEffect(1f);
 
         jetpackParticleEffect.load(
             Gdx.files.internal("assets/particles/jetpack.p"),
             Gdx.files.internal("assets/particles/")
         );
-        jetpackParticleEffect.scaleEffect(0.6f);
+        jetpackParticleEffect.scaleEffect(.85f);
+
+        damageParticleEffect.load(
+            Gdx.files.internal("assets/particles/damage.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        damageParticleEffect.scaleEffect(1f);
+
+        fallingParticleEffect.load(
+            Gdx.files.internal("assets/particles/fall.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        fallingParticleEffect.scaleEffect(.5f);
+
+        groundParticleEffect.allowCompletion();
+        damageParticleEffect.allowCompletion();
     }
 
     public void update(float delta, TiledMapTileLayer layer, MapLayer objectLayer, float screenWidth) {
@@ -116,8 +135,13 @@ public class Player {
             }
         }
 
-        jetpackParticleEffect.setPosition(x + 10, y + 12);
-        groundParticleEffect.setPosition(x + bounds.width / 2, y);
+        float jetpackOffsetX = runningRight ? 10f : 20f;
+        jetpackParticleEffect.setPosition(x + jetpackOffsetX, y + 12);
+
+        groundParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
+        damageParticleEffect.setPosition(x + bounds.width / 2, y + bounds.height / 2);
+
+        fallingParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
 
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -161,7 +185,7 @@ public class Player {
         if (checkCollision(bounds, layer)) {
             if (velocityY < 0) {
                 if (!isGrounded && velocityY < -50f) {
-                    groundParticleEffect.start();
+                    groundParticleEffect.reset();
                     manager.music.playLandSound();
                 }
                 jetpackParticleEffect.allowCompletion();
@@ -177,6 +201,8 @@ public class Player {
 
         groundParticleEffect.update(delta);
         jetpackParticleEffect.update(delta);
+        damageParticleEffect.update(delta);
+        fallingParticleEffect.update(delta);
         updateState(delta);
     }
 
@@ -288,6 +314,14 @@ public class Player {
             stepTimer = 0;
         }
 
+        if (currentState == State.FALLING && previousState != State.FALLING) {
+            fallingParticleEffect.start();
+            jetpackParticleEffect.allowCompletion();
+        }
+        if (previousState == State.FALLING && currentState != State.FALLING) {
+            fallingParticleEffect.allowCompletion();
+        }
+
         if (currentState == previousState) {
             stateTimer += delta;
         } else {
@@ -296,18 +330,19 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
+        jetpackParticleEffect.draw(batch);
+        fallingParticleEffect.draw(batch);
         if (isInvulnerable) {
             batch.setShader(damageShader);
             if (invulnerableTimer % 0.2f > 0.1f) {
-                jetpackParticleEffect.draw(batch);
                 batch.draw(getFrame(), x, y);
             }
             batch.setShader(null);
         } else {
-            jetpackParticleEffect.draw(batch);
             batch.draw(getFrame(), x, y);
         }
         groundParticleEffect.draw(batch);
+        damageParticleEffect.draw(batch);
     }
 
     private TextureRegion getFrame() {
@@ -337,6 +372,7 @@ public class Player {
     public void takeDamage() {
         if (!isInvulnerable && !isDead()) {
             liveCount--;
+            damageParticleEffect.reset();
             if(liveCount==2)manager.music.playHurtSound(1);
             else if(liveCount==1) manager.music.playHurtSound(2);
 
@@ -367,6 +403,12 @@ public class Player {
         }
         if (jetpackParticleEffect != null) {
             jetpackParticleEffect.dispose();
+        }
+        if (damageParticleEffect != null) {
+            damageParticleEffect.dispose();
+        }
+        if (fallingParticleEffect != null) {
+            fallingParticleEffect.dispose();
         }
     }
 }
