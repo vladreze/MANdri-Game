@@ -1,6 +1,8 @@
 package com.mandri.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -11,7 +13,7 @@ import com.mandri.storage.MusicManager;
 
 public class ButtonActions {
 
-    public static void exitGame(PixelButton button) {
+    public static void exitGame(Actor button) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
@@ -20,7 +22,7 @@ public class ButtonActions {
         });
     }
 
-    public static void playGame(PixelButton button, Main game){
+    public static void playGame(Actor button, Main game){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -30,47 +32,38 @@ public class ButtonActions {
         });
     }
 
-    public static void openSettings(PixelButton button, Main game){
+    public static void openSettings(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsMenu(game));
+                game.setScreen(new SettingsMenu(game, previousScreen));
             }
         });
     }
 
-    public static void openSettingsForIconButtons(PixelImageButton button, Main game){
+    public static void openSettingsForIconButtons(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsMenu(game));
+                game.setScreen(new SettingsMenu(game, previousScreen));
             }
         });
     }
 
-    public static void backAction(PixelImageButton button, Main game){
+    public static void backActionDynamic(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(previousScreen);
             }
         });
     }
 
-    public static void openMainMenu(PixelButton button, Main game){
+    public static void openMainMenu(Actor button, Main game){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.getManager().getMusic().stopMusic();
-                game.setScreen(new MainMenuScreen(game));
-            }
-        });
-    }
-
-    public static void backAction(PixelButton button, Main game){
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y){
                 game.setScreen(new MainMenuScreen(game));
             }
         });
@@ -98,22 +91,74 @@ public class ButtonActions {
         });
     }
 
-    public static void aboutScreen(PixelImageButton button, Main game){
+    public static void aboutScreen(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new AboutScreen(game));
+                game.setScreen(new AboutScreen(game, previousScreen));
             }
         });
     }
 
-    public static void helpScreen(PixelImageButton button, Main game){
+    public static void helpScreen(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new HelpScreen(game));
+                game.setScreen(new HelpScreen(game, previousScreen));
             }
         });
     }
+
+    public static void pauseScreen(Actor button, PlayScreen screen) {
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                screen.pauseGame();
+            }
+        });
+    }
+
+    public static void resumeScreen(Actor button, PlayScreen screen) {
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                screen.resumeGame();
+            }
+        });
+    }
+
+    public static void addHover(Actor actor){
+        actor.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    actor.setColor(Color.YELLOW);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                if (pointer == -1) {
+                    actor.setColor(Color.WHITE);
+                }
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                actor.setColor(Color.GRAY);
+                return super.touchDown(event, x, y, pointer, button);
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                super.touchUp(event, x, y, pointer, button);
+                if (isOver()) {
+                    actor.setColor(Color.YELLOW);
+                } else {
+                    actor.setColor(Color.WHITE);
+                }
+            }
+        });
+    }
+
 
 }

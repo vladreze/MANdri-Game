@@ -19,6 +19,8 @@ public class ImageManager {
 //    public Animation<TextureRegion> spaceIdle_L;
 //    public Animation<TextureRegion> spaceIdle_R;
 
+    public TextureRegion whitePixel;
+
     public TextureRegion fullHeart;
     public TextureRegion poisonHeart;
     public TextureRegion shieldHeart;
@@ -78,6 +80,7 @@ public class ImageManager {
     public Animation<TextureRegion> caveRun_L;
 
     public void loadImages(){
+        manager.load("particles/particle.png", Texture.class);
 //        backgrounds
 //        manager.load("menu_bg.png", Texture.class);
 
@@ -127,6 +130,8 @@ public class ImageManager {
         rocketPart1 = new TextureRegion(manager.get("space/space_Part_1.png", Texture.class));
         rocketPart2 = new TextureRegion(manager.get("space/space_Part_2.png", Texture.class));
         rocketPart3 = new TextureRegion(manager.get("space/space_Part_3.png", Texture.class));
+        Texture tWhitePixel = manager.get("particles/particle.png", Texture.class);
+        whitePixel = new TextureRegion(tWhitePixel);
 
 //      hearts
         Texture tHearts = manager.get("level-ui/hearts.png", Texture.class);
