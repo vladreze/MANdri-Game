@@ -18,7 +18,7 @@ public class MusicManager {
         //music
         manager.load("music/music-cave.mp3", Music.class);
         manager.load("music/music-forest.mp3", Music.class);
-        manager.load("music/music-space.mp3", Music.class);
+//        manager.load("music/music-space.mp3", Music.class);
 
         manager.load("music/music-space-1.mp3", Music.class);
 
@@ -49,7 +49,7 @@ public class MusicManager {
     public void playLevelMusic(int n){
         switch (n){
             case 1:
-                music = manager.get("music/music-space.mp3", Music.class);
+                music = manager.get("music/music-space-1.mp3", Music.class);
                 music.setLooping(true);
                 music.setVolume(volume);
                 music.play();
