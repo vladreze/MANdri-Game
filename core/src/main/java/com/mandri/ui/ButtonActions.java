@@ -25,6 +25,16 @@ public class ButtonActions {
         });
     }
 
+    public static void exitGameConfirmaiton(Actor button, Main game){
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ConfirmationExitFromGameScreen(game));
+            }
+        });
+
+    }
+
     public static void playGame(Actor button, Main game){
         button.addListener(new ClickListener() {
             @Override
