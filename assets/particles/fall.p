@@ -5,8 +5,8 @@ active: false
 lowMin: 3000.0
 lowMax: 3000.0
 - Count - 
-min: 10
-max: 20
+min: 15
+max: 30
 - Emission - 
 lowMin: 30.0
 lowMax: 30.0
@@ -38,10 +38,10 @@ active: false
 - Spawn Shape - 
 shape: line
 - Spawn Width - 
-lowMin: 15.0
-lowMax: 15.0
-highMin: 20.0
-highMax: 20.0
+lowMin: 20.0
+lowMax: 20.0
+highMin: 25.0
+highMax: 25.0
 relative: false
 scalingCount: 1
 scaling0: 1.0

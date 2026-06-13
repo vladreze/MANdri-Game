@@ -316,6 +316,7 @@ public class Player {
 
         if (currentState == State.FALLING && previousState != State.FALLING) {
             fallingParticleEffect.start();
+            jetpackParticleEffect.allowCompletion();
         }
         if (previousState == State.FALLING && currentState != State.FALLING) {
             fallingParticleEffect.allowCompletion();
