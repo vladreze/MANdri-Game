@@ -54,6 +54,8 @@ public class PlayScreen implements Screen {
     private final float HEART_DELAY = .75f;
     private float heartTimer = 0f;
 
+    private Input input;
+
     private float HEART_ANIMATION_DELAY = 5f;
     private float heartAnimationTimer = 0f;
 
@@ -65,6 +67,11 @@ public class PlayScreen implements Screen {
 
     private float mapWidth;
     private float mapHeight;
+
+    private float transitionAlpha = 1f;
+
+    private boolean isFadingIn = true;
+    private boolean isFadingOut = false;
 
     private boolean isPaused = false;
     private Table pauseTable;
@@ -325,9 +332,36 @@ public class PlayScreen implements Screen {
         hudStage.act(delta);
         hudStage.draw();
 
-        if (player.isDead()) {
-            game.setScreen(new MainMenuScreen(game));
+        if (player.isDead() && !isFadingOut) {
+            manager.music.playHurtSound(3);
+            isFadingOut = true;
+            manager.getMusic().stopMusic();
             manager.music.stopMusic();
+        }
+
+        if (isFadingIn) {
+            transitionAlpha -= delta * .5f;
+            if (transitionAlpha <= 0) {
+                transitionAlpha = 0;
+                isFadingIn = false;
+            }
+        } else if (isFadingOut) {
+            transitionAlpha += delta * .5f;
+            if (transitionAlpha >= 1f) {
+                transitionAlpha = 1f;
+                isFadingOut = false;
+                game.setScreen(new MainMenuScreen(game));
+                return;
+            }
+        }
+
+        if (transitionAlpha > 0) {
+            Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+            batch.begin();
+            batch.setColor(0, 0, 0, transitionAlpha);
+            batch.draw(manager.image.whitePixel, 0, 0, hudCameraWidth, hudCameraHeight);
+            batch.setColor(1, 1, 1, 1);
+            batch.end();
         }
     }
 

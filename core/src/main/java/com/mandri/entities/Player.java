@@ -144,22 +144,24 @@ public class Player {
         fallingParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
 
         velocityX = 0;
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            velocityX = -SPEED;
-            runningRight = false;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            velocityX = SPEED;
-            runningRight = true;
-        }
+        if (!isDead()) {
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                velocityX = -SPEED;
+                runningRight = false;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                velocityX = SPEED;
+                runningRight = true;
+            }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
-            velocityY = JUMP_FORCE;
-            isGrounded = false;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
+                velocityY = JUMP_FORCE;
+                isGrounded = false;
 
-            jetpackParticleEffect.start();
+                jetpackParticleEffect.start();
 
-            manager.music.playJumpSound();
+                manager.music.playJumpSound();
+            }
         }
 
         float oldX = x;
@@ -381,9 +383,9 @@ public class Player {
                 invulnerableTimer = INVINCIBILITY_TIME;
             }
         }
-        if(isDead()){
-            manager.music.playHurtSound(3);
-        }
+//        if(isDead()){
+//            manager.music.playHurtSound(3);
+//        }
     }
 
     public boolean isDead() {
