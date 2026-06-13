@@ -230,7 +230,7 @@ public class PlayScreen implements Screen {
 
             hotbarTable = new Table();
             hotbarTable.setFillParent(true);
-            hotbarTable.bottom().padBottom(20);
+            hotbarTable.bottom().padBottom(15);
 
             for (int i = 0; i < 4; i++) {
                 ImageButton.ImageButtonStyle slotStyle = new ImageButton.ImageButtonStyle();

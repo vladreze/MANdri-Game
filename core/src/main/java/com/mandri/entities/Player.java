@@ -277,10 +277,12 @@ public class Player {
 
                 if ("Breakable".equals(type) && this.bounds.overlaps(adjustedRect)) {
                     boolean alreadyActive = false;
-                    for (ActiveBreakable ab : activeBreakables) {
-                        if (ab.object == rectObject) {
-                            alreadyActive = true;
-                            break;
+                    if (this.currentState == State.FALLING && this.bounds.y > adjustedRect.y) {
+                        for (ActiveBreakable ab : activeBreakables) {
+                            if (ab.object == rectObject) {
+                                alreadyActive = true;
+                                break;
+                            }
                         }
                     }
                     if (!alreadyActive) {
