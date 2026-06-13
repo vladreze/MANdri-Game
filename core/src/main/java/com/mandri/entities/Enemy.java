@@ -42,7 +42,7 @@ public class Enemy {
         this.spawnX = startX;
         this.spawnY = startY;
         this.currentState = State.ALIVE;
-        this.bounds = new Rectangle(x, y, 30, 30);
+        this.bounds = new Rectangle(x, y, 15, 15);
         this.manager = manager;
 
         damageShader = new ShaderProgram(

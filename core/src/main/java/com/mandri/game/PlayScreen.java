@@ -353,9 +353,10 @@ public class PlayScreen implements Screen {
 
                 if (player.bounds.overlaps(e.bounds) && !e.isDead) {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > e.bounds.y) {
+                        manager.music.playBonusSound();
                         player.bounce();
                         e.isDead = true;
-                        e.velocityY = player.JUMP_FORCE / 1.25f;
+                        e.velocityY = player.JUMP_FORCE * 1.05f;
                         e.currentState = Enemy.State.DEAD;
                     }
                    else player.takeDamage("mob");
@@ -370,6 +371,7 @@ public class PlayScreen implements Screen {
                 Item part = rocketParts.get(i);
                 if (player.bounds.overlaps(part.bounds)) {
                     boolean added = inventory.addItem(part);
+                    manager.music.playBigBonusSound();
                     if (added){
                         rocketParts.removeIndex(i);
                         updateInventoryUI();
