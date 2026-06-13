@@ -28,6 +28,7 @@ public class PlayScreen implements Screen {
     private OrthographicCamera hudCamera;
     private Stage hudStage;
 
+    private Texture bgTexture;
     private Player player;
 
     private TiledMap map;
@@ -67,6 +68,9 @@ public class PlayScreen implements Screen {
 
         hudCamera = new OrthographicCamera();
         hudCamera.setToOrtho(false, hudCameraWidth, hudCameraHeight);
+
+        bgTexture = new Texture(Gdx.files.internal("assets/maps/spaceMap/bgSpace.png"));
+        bgTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge);
 
         map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
         MapProperties properties = map.getProperties();
@@ -155,8 +159,24 @@ public class PlayScreen implements Screen {
         }
 
         camera.update();
-
         renderer.setView(camera);
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+
+        float parallaxSpeed = 0.2f;
+        float bgU = (camera.position.x * parallaxSpeed) / bgTexture.getWidth();
+        float bgHeight = playerCameraHeight;
+        float bgWidth = playerCameraWidth;
+        float backgroundStartX = camera.position.x - (playerCameraWidth / 2);
+        float backgroundStartY = camera.position.y - (playerCameraHeight / 2);
+
+        batch.draw(bgTexture,
+            backgroundStartX, backgroundStartY, bgWidth, bgHeight,
+            bgU, 0, bgU + (bgWidth / bgTexture.getWidth()), 1);
+
+        batch.end();
+
         vignetteShader.bind();
         vignetteShader.setUniformf("u_resolution", Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
         renderer.render();
@@ -238,5 +258,6 @@ public class PlayScreen implements Screen {
         vignetteShader.dispose();
         manager.disposeAll();
         player.dispose();
+        bgTexture.dispose();
     }
 }
