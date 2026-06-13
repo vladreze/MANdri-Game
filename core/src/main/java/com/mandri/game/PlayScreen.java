@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -18,17 +19,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mandri.entities.Enemy;
-import com.mandri.entities.Item;
-import com.mandri.entities.Player;
-import com.mandri.entities.Rocket;
+import com.mandri.entities.*;
 import com.mandri.storage.MainAssetsManager;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
@@ -92,6 +88,12 @@ public class PlayScreen implements Screen {
     private boolean isInitialized = false;
     private Texture pauseIcon;
 
+    private InventoryLogic inventory;
+    private Table hotbarTable;
+    private Table mainInventoryTable;
+    private boolean isInventoryOpen = false;
+    private TextureRegionDrawable emptySlotDrawable;
+
     public PlayScreen(Main game, MainAssetsManager manager) {
         this.game = game;
         this.manager = manager;
@@ -99,98 +101,96 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        if (!isInitialized){
+        if (!isInitialized) {
             batch = new SpriteBatch();
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, playerCameraWidth, playerCameraHeight);
+            camera = new OrthographicCamera();
+            camera.setToOrtho(false, playerCameraWidth, playerCameraHeight);
 
-        hudCamera = new OrthographicCamera();
-        hudCamera.setToOrtho(false, hudCameraWidth, hudCameraHeight);
+            hudCamera = new OrthographicCamera();
+            hudCamera.setToOrtho(false, hudCameraWidth, hudCameraHeight);
 
-        bgTexture = new Texture(Gdx.files.internal("assets/maps/spaceMap/bgSpace.png"));
-        bgTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge);
+            bgTexture = new Texture(Gdx.files.internal("assets/maps/spaceMap/bgSpace.png"));
+            bgTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge);
 
-        map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
-        MapProperties properties = map.getProperties();
+            map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
+            MapProperties properties = map.getProperties();
 
-        int mapWidthInTiles = properties.get("width", Integer.class);
-        int tilePixelWidth = properties.get("tilewidth", Integer.class);
+            int mapWidthInTiles = properties.get("width", Integer.class);
+            int tilePixelWidth = properties.get("tilewidth", Integer.class);
 
-        int mapHeightInTiles = properties.get("height", Integer.class);
-        int tilePixelHeight = properties.get("tileheight", Integer.class);
+            int mapHeightInTiles = properties.get("height", Integer.class);
+            int tilePixelHeight = properties.get("tileheight", Integer.class);
 
-        mapWidth = mapWidthInTiles * tilePixelWidth;
-        mapHeight = mapHeightInTiles * tilePixelHeight;
+            mapWidth = mapWidthInTiles * tilePixelWidth;
+            mapHeight = mapHeightInTiles * tilePixelHeight;
 
-        renderer = new OrthogonalTiledMapRenderer(map);
-        player = new Player(playerStartX, playerStartY, manager);
-        enemies = new Array<Enemy>();
-        rocketParts=new Array<Item>();
-        MapLayer spawnLayer = map.getLayers().get("spawns");
-        if(spawnLayer!=null){
-            for(MapObject object:spawnLayer.getObjects()){
-                String type=object.getProperties().get("type", String.class);
-                String className=object.getProperties().get("class", String.class);
+            renderer = new OrthogonalTiledMapRenderer(map);
+            player = new Player(playerStartX, playerStartY, manager);
+            enemies = new Array<Enemy>();
+            rocketParts = new Array<Item>();
+            MapLayer spawnLayer = map.getLayers().get("spawns");
+            if (spawnLayer != null) {
+                for (MapObject object : spawnLayer.getObjects()) {
+                    String type = object.getProperties().get("type", String.class);
+                    String className = object.getProperties().get("class", String.class);
 
-                Float x=object.getProperties().get("x", Float.class);
-                Float y=object.getProperties().get("y", Float.class);
+                    Float x = object.getProperties().get("x", Float.class);
+                    Float y = object.getProperties().get("y", Float.class);
 
-                if(x!= null&&y!= null){
-                    if("Mob".equals(type)||"Mob".equals(className)){
-                        enemies.add(new Enemy(x,y,manager));
-                    }
-                    else if("RocketPart1".equals(type)||"RocketPart2".equals(type)||"RocketPart3".equals(type)){
-                        rocketParts.add(new Item(manager, type, x, y));
-                    }
-                    else if("LevelExit".equals(type)||"LevelExit".equals(className)){
-                        rocket=new Rocket(x,y,manager);
+                    if (x != null && y != null) {
+                        if ("Mob".equals(type) || "Mob".equals(className)) {
+                            enemies.add(new Enemy(x, y, manager));
+                        } else if ("RocketPart1".equals(type) || "RocketPart2".equals(type) || "RocketPart3".equals(type)) {
+                            rocketParts.add(new Item(manager, type, x, y));
+                        } else if ("LevelExit".equals(type) || "LevelExit".equals(className)) {
+                            rocket = new Rocket(x, y, manager);
+                        }
                     }
                 }
             }
-        }
-        manager.music.playLevelMusic(1);
+            manager.music.playLevelMusic(1);
 
-        vignetteShader = new ShaderProgram(
-            Gdx.files.internal("shaders/default.vsh"),
-            Gdx.files.internal("shaders/vignette.fsh")
-        );
+            vignetteShader = new ShaderProgram(
+                Gdx.files.internal("shaders/default.vsh"),
+                Gdx.files.internal("shaders/vignette.fsh")
+            );
 
-        vignetteShader.pedantic = false;
+            vignetteShader.pedantic = false;
 
-        if (!vignetteShader.isCompiled()) {
-            Gdx.app.log("Shader Error", vignetteShader.getLog());
-            Gdx.app.exit();
-        }
+            if (!vignetteShader.isCompiled()) {
+                Gdx.app.log("Shader Error", vignetteShader.getLog());
+                Gdx.app.exit();
+            }
 
-        renderer.getBatch().setShader(vignetteShader);
+            renderer.getBatch().setShader(vignetteShader);
 
-        hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(hudCameraWidth, hudCameraHeight));
+            hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(hudCameraWidth, hudCameraHeight));
 
-        Skin skin = UIManager.getInstance().getSkin();
+            Skin skin = UIManager.getInstance().getSkin();
 
-        BitmapFont fontPauseText = FontCreator.generateTextFont(24, 1f);
-        Label.LabelStyle textPauseStyle = new Label.LabelStyle();
-        textPauseStyle.font = fontPauseText;
+            BitmapFont fontPauseText = FontCreator.generateTextFont(24, 1f);
+            Label.LabelStyle textPauseStyle = new Label.LabelStyle();
+            textPauseStyle.font = fontPauseText;
 
-        Label pauseButton = new Label("||", textPauseStyle);
-        pauseButton.setSize(30, 30);
-        pauseButton.setPosition(hudCameraWidth - 40, hudCameraHeight - 40);
-        ButtonActions.pauseScreen(pauseButton, this);
-        ButtonActions.addHover(pauseButton);
-        hudStage.addActor(pauseButton);
+            Label pauseButton = new Label("||", textPauseStyle);
+            pauseButton.setSize(30, 30);
+            pauseButton.setPosition(hudCameraWidth - 40, hudCameraHeight - 40);
+            ButtonActions.pauseScreen(pauseButton, this);
+            ButtonActions.addHover(pauseButton);
+            hudStage.addActor(pauseButton);
 
-        pauseTable = new Table();
-        pauseTable.setFillParent(true);
-        pauseTable.setVisible(false);
+            pauseTable = new Table();
+            pauseTable.setFillParent(true);
+            pauseTable.setVisible(false);
 
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(0f, 0f, 0f, 0.8f);
-        pixmap.fill();
-        dimBackground = new Texture(pixmap);
-        pixmap.dispose();
+            Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+            pixmap.setColor(0f, 0f, 0f, 0.8f);
+            pixmap.fill();
+            dimBackground = new Texture(pixmap);
+            pixmap.dispose();
 
-        pauseTable.setBackground(new TextureRegionDrawable(dimBackground));
+            pauseTable.setBackground(new TextureRegionDrawable(dimBackground));
 
             BitmapFont fontForPauseLabel = FontCreator.generateTextFont(35, 1f);
             Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
@@ -218,13 +218,60 @@ public class PlayScreen implements Screen {
             pauseTable.add(settingsTextBtn).padBottom(15).row();
             pauseTable.add(exitTextBtn).padBottom(15).row();
 
+            inventory = new InventoryLogic();
+
+            Pixmap slotPixmap = new Pixmap(40, 40, Pixmap.Format.RGBA8888);
+            slotPixmap.setColor(0.1f, 0.1f, 0.1f, 0.6f);
+            slotPixmap.fill();
+            slotPixmap.setColor(0.6f, 0.6f, 0.6f, 1f);
+            slotPixmap.drawRectangle(0, 0, 40, 40);
+            emptySlotDrawable = new TextureRegionDrawable(new Texture(slotPixmap));
+            slotPixmap.dispose();
+
+            hotbarTable = new Table();
+            hotbarTable.setFillParent(true);
+            hotbarTable.bottom().padBottom(20);
+
+            for (int i = 0; i < 4; i++) {
+                ImageButton.ImageButtonStyle slotStyle = new ImageButton.ImageButtonStyle();
+//                Button.ButtonStyle slotStyle = new Button.ButtonStyle();
+                slotStyle.up = emptySlotDrawable;
+
+//                Button button = new Button(slotStyle);
+
+                ImageButton button = new ImageButton(slotStyle);
+                hotbarTable.add(button).width(40).height(40).pad(2);
+            }
+
+            mainInventoryTable = new Table();
+            mainInventoryTable.setFillParent(true);
+            mainInventoryTable.center();
+            mainInventoryTable.setVisible(false);
+
+            for (int i = 0; i < 16; i++) {
+                if (i > 0 && i % 4 == 0) mainInventoryTable.row();
+
+                ImageButton.ImageButtonStyle slotStyle = new ImageButton.ImageButtonStyle();
+//                Button.ButtonStyle slotStyle = new Button.ButtonStyle();
+                slotStyle.up = emptySlotDrawable;
+
+//                Button button = new Button(slotStyle);
+
+                ImageButton button = new ImageButton(slotStyle);
+                mainInventoryTable.add(button).width(40).height(40).pad(2);
+            }
+
+            hudStage.addActor(hotbarTable);
+            hudStage.addActor(mainInventoryTable);
+
             hudStage.addActor(pauseTable);
 
-        isInitialized = true;
-    }
+
+
+            isInitialized = true;
+        }
 
         Gdx.input.setInputProcessor(hudStage);
-
     }
 
     @Override
@@ -292,7 +339,7 @@ public class PlayScreen implements Screen {
             float smoothCameraX = MathUtils.lerp(currentCameraX, targetX, alpha);
             float smoothCameraY = MathUtils.lerp(currentCameraY, targetY, alpha);
 
-        camera.update();
+            camera.update();
 
             for(int i = enemies.size - 1; i >= 0; i--) {
                 Enemy e = enemies.get(i);
@@ -317,6 +364,28 @@ public class PlayScreen implements Screen {
 
             if(rocket!=null){
                 rocket.update(delta);
+            }
+
+            for (int i = rocketParts.size - 1; i >= 0; i--) {
+                Item part = rocketParts.get(i);
+                if (player.bounds.overlaps(part.bounds)) {
+                    boolean added = inventory.addItem(part);
+                    if (added){
+                        rocketParts.removeIndex(i);
+                        updateInventoryUI();
+                    }
+                }
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                isInventoryOpen = !isInventoryOpen;
+                mainInventoryTable.setVisible(isInventoryOpen);
+                hotbarTable.setVisible(!isInventoryOpen);
+                player.isInventoryOpen = isInventoryOpen;
+                if (isInventoryOpen) {
+                    updateInventoryUI();
+                }
+                else isPaused = false;
             }
 
             camera.position.set(smoothCameraX, smoothCameraY, 0);
@@ -404,6 +473,13 @@ public class PlayScreen implements Screen {
 
         batch.end();
 
+        if (isInventoryOpen) {
+            Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+            batch.begin();
+            batch.draw(dimBackground, 0, 0, hudCameraWidth, hudCameraHeight);
+            batch.end();
+        }
+
         hudStage.act(delta);
         hudStage.draw();
 
@@ -465,6 +541,32 @@ public class PlayScreen implements Screen {
 
     }
 
+    private void updateInventoryUI() {
+        Item[] items = inventory.getSlots();
+        for (int i = 0; i < 4; i++) {
+            ImageButton button = (ImageButton) hotbarTable.getCells().get(i).getActor();
+            Item item = items[i];
+            if (item != null) {
+                TextureRegionDrawable drawable = new TextureRegionDrawable(getTextureForItem(item));
+                drawable.setMinWidth(32);
+                drawable.setMinHeight(32);
+                button.getStyle().imageUp = drawable;
+            } else button.getStyle().imageUp = emptySlotDrawable;
+        }
+        for (int i = 0; i < 16; i++) {
+            ImageButton button = (ImageButton) mainInventoryTable.getCells().get(i).getActor();
+            Item item = items[i];
+            if (item != null) {
+                TextureRegionDrawable drawable = new TextureRegionDrawable(getTextureForItem(item));
+                drawable.setMinWidth(32);
+                drawable.setMinHeight(32);
+                button.getStyle().imageUp = drawable;
+            } else {
+                button.getStyle().imageUp = emptySlotDrawable;
+            }
+        }
+    }
+
     @Override
     public void dispose() {
         batch.dispose();
@@ -486,5 +588,12 @@ public class PlayScreen implements Screen {
     public void resumeGame() {
         isPaused = false;
         pauseTable.setVisible(false);
+    }
+
+    private TextureRegion getTextureForItem(Item item) {
+        if (item.getName().equals("RocketPart1")) return manager.image.rocketPart1;
+        if (item.getName().equals("RocketPart2")) return manager.image.rocketPart2;
+        if (item.getName().equals("RocketPart3")) return manager.image.rocketPart3;
+        return manager.image.whitePixel;
     }
 }

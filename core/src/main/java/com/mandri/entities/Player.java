@@ -32,6 +32,7 @@ public class Player {
 
     public int liveCount = 3;
     private boolean isInvulnerable = false;
+    public boolean isInventoryOpen = false;
     private float invulnerableTimer = 0;
     private final float INVINCIBILITY_TIME = 1.5f;
 
@@ -148,7 +149,7 @@ public class Player {
         fallingParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
 
         velocityX = 0;
-        if (!isDead()) {
+        if (!isDead() && !isInventoryOpen) {
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 velocityX = -SPEED;
                 runningRight = false;
@@ -387,7 +388,6 @@ public class Player {
         velocityY = JUMP_FORCE * 0.8f;
         currentState = State.JUMPING;
         isGrounded = false;
-        jetpackParticleEffect.reset();
     }
 
     public void takeDamage(String trapType) {
