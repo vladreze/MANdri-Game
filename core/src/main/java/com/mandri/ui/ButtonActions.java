@@ -12,7 +12,7 @@ import com.mandri.storage.MusicManager;
 
 public class ButtonActions {
 
-    public static void exitGame(PixelButton button) {
+    public static void exitGame(Actor button) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
@@ -21,7 +21,7 @@ public class ButtonActions {
         });
     }
 
-    public static void playGame(PixelButton button, Main game){
+    public static void playGame(Actor button, Main game){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -31,7 +31,7 @@ public class ButtonActions {
         });
     }
 
-    public static void openSettings(PixelButton button, Main game, Screen previousScreen){
+    public static void openSettings(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -40,7 +40,7 @@ public class ButtonActions {
         });
     }
 
-    public static void openSettingsForIconButtons(PixelImageButton button, Main game, Screen previousScreen){
+    public static void openSettingsForIconButtons(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -49,7 +49,7 @@ public class ButtonActions {
         });
     }
 
-    public static void backActionDynamic(PixelImageButton button, Main game, Screen previousScreen){
+    public static void backActionDynamic(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
@@ -58,7 +58,7 @@ public class ButtonActions {
         });
     }
 
-    public static void openMainMenu(PixelButton button, Main game){
+    public static void openMainMenu(Actor button, Main game){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -90,7 +90,7 @@ public class ButtonActions {
         });
     }
 
-    public static void aboutScreen(PixelImageButton button, Main game, Screen previousScreen){
+    public static void aboutScreen(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
@@ -99,7 +99,7 @@ public class ButtonActions {
         });
     }
 
-    public static void helpScreen(PixelImageButton button, Main game, Screen previousScreen){
+    public static void helpScreen(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -108,7 +108,7 @@ public class ButtonActions {
         });
     }
 
-    public static void pauseScreen(PixelImageButton button, PlayScreen screen) {
+    public static void pauseScreen(Actor button, PlayScreen screen) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -117,7 +117,7 @@ public class ButtonActions {
         });
     }
 
-    public static void resumeScreen(PixelButton button, PlayScreen screen) {
+    public static void resumeScreen(Actor button, PlayScreen screen) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

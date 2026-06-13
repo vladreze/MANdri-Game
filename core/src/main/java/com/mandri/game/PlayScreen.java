@@ -140,21 +140,22 @@ public class PlayScreen implements Screen {
             labelPauseTextStyle.font = fontForPauseLabel;
             Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
 
-            BitmapFont fontForButtonsText = FontCreator.generateTextFont(28, 1f);
+            BitmapFont fontText = FontCreator.generateTextFont(24, 1f);
+            Label.LabelStyle textStyle = new Label.LabelStyle();
+            textStyle.font = fontText;
 
-            PixelButton resumeBtn = new PixelButton("RESUME", skin, fontForButtonsText);
-            ButtonActions.resumeScreen(resumeBtn, this);
+            Label resumeTextBtn = new Label("RESUME", textStyle);
+            Label settingsTextBtn = new Label("SETTINGS", textStyle);
+            Label exitTextBtn = new Label("EXIT", textStyle);
 
-            PixelButton settingsBtn = new PixelButton("SETTINGS", skin, fontForButtonsText);
-            ButtonActions.openSettings(settingsBtn, game, this);
-
-            PixelButton exitBtn = new PixelButton("EXIT", skin, fontForPauseLabel);
-            ButtonActions.openMainMenu(exitBtn, game);
+            ButtonActions.resumeScreen(resumeTextBtn, this);
+            ButtonActions.openSettings(settingsTextBtn, game, this);
+            ButtonActions.openMainMenu(exitTextBtn, game);
 
             pauseTable.add(pauseLabel).padBottom(30).row();
-            pauseTable.add(resumeBtn).padBottom(15).row();
-            pauseTable.add(settingsBtn).padBottom(15).row();
-            pauseTable.add(exitBtn);
+            pauseTable.add(resumeTextBtn).padBottom(15).row();
+            pauseTable.add(settingsTextBtn).padBottom(15).row();
+            pauseTable.add(exitTextBtn).padBottom(15).row();
 
             hudStage.addActor(pauseTable);
             isInitialized = true;
