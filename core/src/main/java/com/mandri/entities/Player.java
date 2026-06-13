@@ -28,7 +28,7 @@ public class Player {
     private float velocityX, velocityY;
     private final float SPEED = 150f;
     private final float GRAVITY = -600f;
-    private final float JUMP_FORCE = 300f;
+    public final float JUMP_FORCE = 300f;
 
     public int liveCount = 3;
     private boolean isInvulnerable = false;
@@ -40,9 +40,9 @@ public class Player {
     private boolean runningRight = true;
     private float stateTimer;
 
-    float playerDamageRed;
-    float playerDamageGreen;
-    float playerDamageBlue;
+    private float playerDamageRed;
+    private float playerDamageGreen;
+    private float playerDamageBlue;
 
     private float stepTimer;
     private final MainAssetsManager manager;
@@ -132,7 +132,7 @@ public class Player {
         handleBreakables(delta, objectLayer, layer);
 
         if (y < -50) {
-            takeDamage(16);
+            takeDamage("trap-thorn");
             if (!isDead()) {
                 this.x = spawnX;
                 this.y = spawnY;
@@ -236,7 +236,7 @@ public class Player {
                 Rectangle trapRect = rectangleObject.getRectangle();
                 String type = object.getProperties().get("type", String.class);
 
-                if ("Trap".equals(type)) {
+                if (type != null && type.contains("trap")) {
                     Rectangle adjustedTraRect = new Rectangle(
                         trapRect.x + 2,
                         trapRect.y,
@@ -245,7 +245,12 @@ public class Player {
                     );
 
                     if (this.bounds.overlaps(adjustedTraRect)) {
-                        takeDamage(trapRect.width);
+                        if (type.equals("trap-poison")) {
+                            takeDamage("trap-poison");
+                        }
+                        else if (type.equals("trap-thorn")) {
+                            takeDamage("trap-thorn");
+                        }
                     }
                 }
             }
@@ -378,7 +383,14 @@ public class Player {
         return region;
     }
 
-    public void takeDamage(float trapWidth) {
+    public void bounce() {
+        velocityY = JUMP_FORCE * 0.8f;
+        currentState = State.JUMPING;
+        isGrounded = false;
+        jetpackParticleEffect.reset();
+    }
+
+    public void takeDamage(String trapType) {
         if (!isInvulnerable && !isDead()) {
             liveCount--;
             damageParticleEffect.reset();
@@ -388,14 +400,14 @@ public class Player {
                 isInvulnerable = true;
                 invulnerableTimer = INVINCIBILITY_TIME;
             }
-            switch ((int) trapWidth) {
-                case 16: {
+            switch (trapType) {
+                case "trap-thorn": {
                     playerDamageRed = .5f;
                     playerDamageGreen = -.2f;
                     playerDamageBlue = -.2f;
                     break;
                 }
-                case 32: {
+                case "trap-poison": {
                     playerDamageRed = -.2f;
                     playerDamageGreen = .5f;
                     playerDamageBlue = -.2f;

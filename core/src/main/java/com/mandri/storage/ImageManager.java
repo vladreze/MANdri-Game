@@ -36,6 +36,19 @@ public class ImageManager {
     public Animation<TextureRegion> spaceRun_R;
     public Animation<TextureRegion> spaceRun_L;
 
+    //MOBS
+    public TextureRegion spaceMobAlive;
+    public TextureRegion spaceMobDead;
+    //Rocket
+    public TextureRegion rocketFlying;
+    public TextureRegion rocketFixed;
+    public TextureRegion rocketBroken;
+    //Rocket parts
+    public TextureRegion rocketPart1;
+    public TextureRegion rocketPart2;
+    public TextureRegion rocketPart3;
+
+
 //    forest
     public Animation<TextureRegion> forestIdle_F;
     public Animation<TextureRegion> forestIdle_L;
@@ -90,11 +103,33 @@ public class ImageManager {
         manager.load("space/space_jump_R.png", Texture.class);
         manager.load("space/space_run_L.png", Texture.class);
         manager.load("space/space_run_R.png", Texture.class);
+        //MOB SPACE
+        manager.load("space/space_Mob_Alive.png", Texture.class);
+        manager.load("space/space_Mob_Dead.png", Texture.class);
+        //Rocket
+        manager.load("space/space_Rocket_broken.png", Texture.class);
+        manager.load("space/space_Rocket_fixed.png", Texture.class);
+        manager.load("space/space_Rocket_flying.png", Texture.class);
+        //Rocket parts
+        manager.load("space/space_Part_1.png", Texture.class);
+        manager.load("space/space_Part_2.png", Texture.class);
+        manager.load("space/space_Part_3.png", Texture.class);
 //        forest
 //        cave
     }
 
     public void initAnimations(){
+//      MOBS
+        spaceMobAlive=new TextureRegion(manager.get("space/space_Mob_Alive.png", Texture.class));
+        spaceMobDead = new TextureRegion(manager.get("space/space_Mob_Dead.png", Texture.class));
+//      Rocket
+        rocketBroken = new TextureRegion(manager.get("space/space_Rocket_broken.png", Texture.class));
+        rocketFixed = new TextureRegion(manager.get("space/space_Rocket_fixed.png", Texture.class));
+        rocketFlying = new TextureRegion(manager.get("space/space_Rocket_flying.png", Texture.class));
+//      Rocket   PARTS
+        rocketPart1 = new TextureRegion(manager.get("space/space_Part_1.png", Texture.class));
+        rocketPart2 = new TextureRegion(manager.get("space/space_Part_2.png", Texture.class));
+        rocketPart3 = new TextureRegion(manager.get("space/space_Part_3.png", Texture.class));
         Texture tWhitePixel = manager.get("particles/particle.png", Texture.class);
         whitePixel = new TextureRegion(tWhitePixel);
 

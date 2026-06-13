@@ -10,19 +10,25 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mandri.entities.Enemy;
+import com.mandri.entities.Item;
 import com.mandri.entities.Player;
+import com.mandri.entities.Rocket;
 import com.mandri.storage.MainAssetsManager;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
@@ -38,6 +44,13 @@ public class PlayScreen implements Screen {
 
     private Texture bgTexture;
     private Player player;
+
+    //Mobs Rocket Parts
+    private Array<Enemy> enemies;
+    private Array<Item> rocketParts;
+    private Rocket rocket;
+    private int partColl;
+    private final int TOTAL_PARTS = 3;
 
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -114,6 +127,30 @@ public class PlayScreen implements Screen {
 
         renderer = new OrthogonalTiledMapRenderer(map);
         player = new Player(playerStartX, playerStartY, manager);
+        enemies = new Array<Enemy>();
+        rocketParts=new Array<Item>();
+        MapLayer spawnLayer = map.getLayers().get("spawns");
+        if(spawnLayer!=null){
+            for(MapObject object:spawnLayer.getObjects()){
+                String type=object.getProperties().get("type", String.class);
+                String className=object.getProperties().get("class", String.class);
+
+                Float x=object.getProperties().get("x", Float.class);
+                Float y=object.getProperties().get("y", Float.class);
+
+                if(x!= null&&y!= null){
+                    if("Mob".equals(type)||"Mob".equals(className)){
+                        enemies.add(new Enemy(x,y,manager));
+                    }
+                    else if("RocketPart1".equals(type)||"RocketPart2".equals(type)||"RocketPart3".equals(type)){
+                        rocketParts.add(new Item(manager, type, x, y));
+                    }
+                    else if("LevelExit".equals(type)||"LevelExit".equals(className)){
+                        rocket=new Rocket(x,y,manager);
+                    }
+                }
+            }
+        }
         manager.music.playLevelMusic(1);
 
         vignetteShader = new ShaderProgram(
@@ -279,6 +316,33 @@ public class PlayScreen implements Screen {
             float smoothCameraX = MathUtils.lerp(currentCameraX, targetX, alpha);
             float smoothCameraY = MathUtils.lerp(currentCameraY, targetY, alpha);
 
+        camera.update();
+
+            for(int i = enemies.size - 1; i >= 0; i--) {
+                Enemy e = enemies.get(i);
+
+                if (e.isDead && e.deathTimer >= e.DEATH_TIME) {
+                    enemies.removeIndex(i);
+                    continue;
+                }
+
+                e.update(delta, collisionLayer);
+
+                if (player.bounds.overlaps(e.bounds) && !e.isDead) {
+                    if (player.currentState == Player.State.FALLING && player.bounds.y > e.bounds.y) {
+                        player.bounce();
+                        e.isDead = true;
+                        e.velocityY = player.JUMP_FORCE / 1.25f;
+                        e.currentState = Enemy.State.DEAD;
+                    }
+                   else player.takeDamage("mob");
+                }
+            }
+
+            if(rocket!=null){
+                rocket.update(delta);
+            }
+
             camera.position.set(smoothCameraX, smoothCameraY, 0);
 
             if (player.isShaking()) {
@@ -315,6 +379,17 @@ public class PlayScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.setShader(null);
         batch.begin();
+
+        if(rocket!=null){
+            rocket.draw(batch);
+        }
+        for(Item part:rocketParts){
+            part.draw(batch, manager);
+        }
+        for(Enemy  e:enemies){
+            e.draw(batch);
+        }
+
         player.draw(batch);
         batch.end();
 
@@ -390,7 +465,7 @@ public class PlayScreen implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize (int width, int height) {
         camera.viewportWidth = playerCameraWidth;
         camera.viewportHeight = playerCameraHeight;
         camera.update();
