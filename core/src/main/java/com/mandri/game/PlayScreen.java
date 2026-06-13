@@ -152,8 +152,8 @@ public class PlayScreen implements Screen {
             ButtonActions.openMainMenu(exitBtn, game);
 
             pauseTable.add(pauseLabel).padBottom(30).row();
-            pauseTable.add(settingsBtn).padBottom(30).row();
-            pauseTable.add(resumeBtn).padBottom(15).row();
+            pauseTable.add(resumeBtn).padBottom(30).row();
+            pauseTable.add(settingsBtn).padBottom(15).row();
             pauseTable.add(exitBtn);
 
             hudStage.addActor(pauseTable);
