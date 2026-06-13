@@ -40,6 +40,10 @@ public class Player {
     private boolean runningRight = true;
     private float stateTimer;
 
+    float playerDamageRed;
+    float playerDamageGreen;
+    float playerDamageBlue;
+
     private float stepTimer;
     private final MainAssetsManager manager;
 
@@ -128,7 +132,7 @@ public class Player {
         handleBreakables(delta, objectLayer, layer);
 
         if (y < -50) {
-            takeDamage();
+            takeDamage(16);
             if (!isDead()) {
                 this.x = spawnX;
                 this.y = spawnY;
@@ -231,6 +235,7 @@ public class Player {
                 RectangleMapObject rectangleObject = (RectangleMapObject) object;
                 Rectangle trapRect = rectangleObject.getRectangle();
                 String type = object.getProperties().get("type", String.class);
+
                 if ("Trap".equals(type)) {
                     Rectangle adjustedTraRect = new Rectangle(
                         trapRect.x + 2,
@@ -238,8 +243,9 @@ public class Player {
                         trapRect.width-3,
                         trapRect.height
                     );
+
                     if (this.bounds.overlaps(adjustedTraRect)) {
-                        takeDamage();
+                        takeDamage(trapRect.width);
                     }
                 }
             }
@@ -336,6 +342,7 @@ public class Player {
         fallingParticleEffect.draw(batch);
         if (isInvulnerable) {
             batch.setShader(damageShader);
+            damageShader.setUniformf("damage_color", playerDamageRed, playerDamageGreen, playerDamageBlue);
             if (invulnerableTimer % 0.2f > 0.1f) {
                 batch.draw(getFrame(), x, y);
             }
@@ -371,16 +378,34 @@ public class Player {
         return region;
     }
 
-    public void takeDamage() {
+    public void takeDamage(float trapWidth) {
         if (!isInvulnerable && !isDead()) {
             liveCount--;
             damageParticleEffect.reset();
             if(liveCount==2)manager.music.playHurtSound(1);
             else if(liveCount==1) manager.music.playHurtSound(2);
-
             if (liveCount > 0) {
                 isInvulnerable = true;
                 invulnerableTimer = INVINCIBILITY_TIME;
+            }
+            switch ((int) trapWidth) {
+                case 16: {
+                    playerDamageRed = .5f;
+                    playerDamageGreen = -.2f;
+                    playerDamageBlue = -.2f;
+                    break;
+                }
+                case 32: {
+                    playerDamageRed = -.2f;
+                    playerDamageGreen = .5f;
+                    playerDamageBlue = -.2f;
+                    break;
+                }
+                default: {
+                    playerDamageRed = .5f;
+                    playerDamageGreen = -.2f;
+                    playerDamageBlue = -.2f;
+                }
             }
         }
 //        if(isDead()){
