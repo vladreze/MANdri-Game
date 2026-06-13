@@ -2,9 +2,9 @@
 <map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="170" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="156">
  <tileset firstgid="1" source="../forestMap/forest.tsx"/>
  <tileset firstgid="33" source="space.tsx"/>
- <imagelayer id="2" name="Прошарок зображення 1">
-  <image source="bgSpace.png" width="2720" height="256"/>
- </imagelayer>
+<!--  <imagelayer id="2" name="Прошарок зображення 1"> -->
+<!--   <image source="bgSpace.png" width="2720" height="256"/> -->
+<!--  </imagelayer> -->
  <layer id="1" name="ground" width="170" height="16">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

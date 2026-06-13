@@ -1,5 +1,9 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -39,6 +43,13 @@ public class Player {
     private float stepTimer;
     private final MainAssetsManager manager;
 
+    private ShaderProgram damageShader;
+
+    private ParticleEffect groundParticleEffect;
+    private ParticleEffect jetpackParticleEffect;
+    private ParticleEffect damageParticleEffect;
+    private ParticleEffect fallingParticleEffect;
+
     private Array<ActiveBreakable> activeBreakables = new Array<>();
 
     private class ActiveBreakable {
@@ -62,6 +73,48 @@ public class Player {
         this.stepTimer = 0;
         this.bounds = new Rectangle(x, y, 30, 30);
         this.manager = manager;
+
+        damageShader = new ShaderProgram(
+            Gdx.files.internal("shaders/default.vsh"),
+            Gdx.files.internal("shaders/damage.fsh")
+        );
+        damageShader.pedantic = false;
+
+        if (!damageShader.isCompiled()) {
+            Gdx.app.log("Shader Error", damageShader.getLog());
+        }
+
+        groundParticleEffect = new ParticleEffect();
+        jetpackParticleEffect = new ParticleEffect();
+        damageParticleEffect = new ParticleEffect();
+        fallingParticleEffect = new ParticleEffect();
+
+        groundParticleEffect.load(
+            Gdx.files.internal("assets/particles/ground.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        groundParticleEffect.scaleEffect(1f);
+
+        jetpackParticleEffect.load(
+            Gdx.files.internal("assets/particles/jetpack.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        jetpackParticleEffect.scaleEffect(.85f);
+
+        damageParticleEffect.load(
+            Gdx.files.internal("assets/particles/damage.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        damageParticleEffect.scaleEffect(1f);
+
+        fallingParticleEffect.load(
+            Gdx.files.internal("assets/particles/fall.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        fallingParticleEffect.scaleEffect(.5f);
+
+        groundParticleEffect.allowCompletion();
+        damageParticleEffect.allowCompletion();
     }
 
     public void update(float delta, TiledMapTileLayer layer, MapLayer objectLayer, float screenWidth) {
@@ -82,6 +135,14 @@ public class Player {
             }
         }
 
+        float jetpackOffsetX = runningRight ? 10f : 20f;
+        jetpackParticleEffect.setPosition(x + jetpackOffsetX, y + 12);
+
+        groundParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
+        damageParticleEffect.setPosition(x + bounds.width / 2, y + bounds.height / 2);
+
+        fallingParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
+
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             velocityX = -SPEED;
@@ -95,6 +156,8 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
             velocityY = JUMP_FORCE;
             isGrounded = false;
+
+            jetpackParticleEffect.start();
 
             manager.music.playJumpSound();
         }
@@ -122,8 +185,10 @@ public class Player {
         if (checkCollision(bounds, layer)) {
             if (velocityY < 0) {
                 if (!isGrounded && velocityY < -50f) {
+                    groundParticleEffect.reset();
                     manager.music.playLandSound();
                 }
+                jetpackParticleEffect.allowCompletion();
                 isGrounded = true;
             }
 
@@ -134,6 +199,10 @@ public class Player {
             isGrounded = false;
         }
 
+        groundParticleEffect.update(delta);
+        jetpackParticleEffect.update(delta);
+        damageParticleEffect.update(delta);
+        fallingParticleEffect.update(delta);
         updateState(delta);
     }
 
@@ -245,6 +314,14 @@ public class Player {
             stepTimer = 0;
         }
 
+        if (currentState == State.FALLING && previousState != State.FALLING) {
+            fallingParticleEffect.start();
+            jetpackParticleEffect.allowCompletion();
+        }
+        if (previousState == State.FALLING && currentState != State.FALLING) {
+            fallingParticleEffect.allowCompletion();
+        }
+
         if (currentState == previousState) {
             stateTimer += delta;
         } else {
@@ -253,13 +330,19 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
+        jetpackParticleEffect.draw(batch);
+        fallingParticleEffect.draw(batch);
         if (isInvulnerable) {
+            batch.setShader(damageShader);
             if (invulnerableTimer % 0.2f > 0.1f) {
                 batch.draw(getFrame(), x, y);
             }
+            batch.setShader(null);
         } else {
             batch.draw(getFrame(), x, y);
         }
+        groundParticleEffect.draw(batch);
+        damageParticleEffect.draw(batch);
     }
 
     private TextureRegion getFrame() {
@@ -289,6 +372,7 @@ public class Player {
     public void takeDamage() {
         if (!isInvulnerable && !isDead()) {
             liveCount--;
+            damageParticleEffect.reset();
             if(liveCount==2)manager.music.playHurtSound(1);
             else if(liveCount==1) manager.music.playHurtSound(2);
 
@@ -308,5 +392,27 @@ public class Player {
 
     public boolean isShaking() {
         return activeBreakables.size > 0;
+    }
+
+    public void dispose() {
+        if (damageShader != null) {
+            damageShader.dispose();
+        }
+        if (groundParticleEffect != null) {
+            groundParticleEffect.dispose();
+        }
+        if (jetpackParticleEffect != null) {
+            jetpackParticleEffect.dispose();
+        }
+        if (damageParticleEffect != null) {
+            damageParticleEffect.dispose();
+        }
+        if (fallingParticleEffect != null) {
+            fallingParticleEffect.dispose();
+        }
+    }
+
+    public boolean isRunningRight() {
+        return runningRight;
     }
 }
