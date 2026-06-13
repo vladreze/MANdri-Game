@@ -2,6 +2,7 @@ package com.mandri.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,10 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mandri.storage.MusicManager;
 import com.mandri.storage.UIManager;
-import com.mandri.ui.ButtonActions;
-import com.mandri.ui.FontCreator;
-import com.mandri.ui.PixelButton;
-import com.mandri.ui.PixelImageButton;
+import com.mandri.ui.*;
 
 public class SettingsMenu implements Screen {
     private Main game;
@@ -77,7 +75,10 @@ public class SettingsMenu implements Screen {
         volumeLabel.setPosition(30, 80);
 
         MusicManager musicManager = game.getManager().getMusic();
-        Slider volumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, skin);
+
+        Slider.SliderStyle sliderStyle = SliderStyle.sliderStyle(skin, Color.GRAY);
+
+        Slider volumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, sliderStyle);
         volumeSlider.setSize(110, 15);
         volumeSlider.setPosition(30, 55);
         volumeSlider.setValue(musicManager.getVolume());
@@ -86,7 +87,7 @@ public class SettingsMenu implements Screen {
         Label soundEffectsvolumeLabel = new Label("SOUND EFFECTS" , styleTextFont);
         soundEffectsvolumeLabel.setPosition(180, 80);
 
-        Slider soundEffectsvolumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, skin);
+        Slider soundEffectsvolumeSlider = new Slider(0.0f, 1.0f, 0.1f, false, sliderStyle);
         soundEffectsvolumeSlider.setSize(110, 15);
         soundEffectsvolumeSlider.setPosition(180, 55);
         soundEffectsvolumeSlider.setValue(musicManager.getSoundEffectsvolume());
