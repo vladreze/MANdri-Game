@@ -124,11 +124,16 @@ public class PlayScreen implements Screen {
         hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(hudCameraWidth, hudCameraHeight));
 
         Skin skin = UIManager.getInstance().getSkin();
-        pauseIcon = new Texture(Gdx.files.internal("assets/ui/pause-icon.png"));
-        PixelImageButton pauseButton = new PixelImageButton(pauseIcon, skin);
+
+        BitmapFont fontPauseText = FontCreator.generateTextFont(24, 1f);
+        Label.LabelStyle textPauseStyle = new Label.LabelStyle();
+        textPauseStyle.font = fontPauseText;
+
+        Label pauseButton = new Label("||", textPauseStyle);
         pauseButton.setSize(30, 30);
-        pauseButton.setPosition(hudCameraWidth - 60, hudCameraHeight - 60);
+        pauseButton.setPosition(hudCameraWidth - 40, hudCameraHeight - 40);
         ButtonActions.pauseScreen(pauseButton, this);
+        ButtonActions.addHover(pauseButton);
         hudStage.addActor(pauseButton);
 
         pauseTable = new Table();
