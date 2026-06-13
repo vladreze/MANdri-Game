@@ -143,31 +143,33 @@ public class PlayScreen implements Screen {
 
         pauseTable.setBackground(new TextureRegionDrawable(dimBackground));
 
-        BitmapFont fontForPauseLabel = FontCreator.generateTextFont(35, 1f);
-        Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
-        labelPauseTextStyle.font = fontForPauseLabel;
-        Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
+            BitmapFont fontForPauseLabel = FontCreator.generateTextFont(35, 1f);
+            Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
+            labelPauseTextStyle.font = fontForPauseLabel;
+            Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
 
-        BitmapFont fontForButtonsText = FontCreator.generateTextFont(28, 1f);
+            BitmapFont fontText = FontCreator.generateTextFont(24, 1f);
+            Label.LabelStyle textStyle = new Label.LabelStyle();
+            textStyle.font = fontText;
 
-        PixelButton resumeBtn = new PixelButton("RESUME", skin, fontForButtonsText);
-        ButtonActions.resumeScreen(resumeBtn, this);
-        ButtonActions.addHover(resumeBtn);
+            Label resumeTextBtn = new Label("RESUME", textStyle);
+            Label settingsTextBtn = new Label("SETTINGS", textStyle);
+            Label exitTextBtn = new Label("EXIT", textStyle);
 
-        PixelButton settingsBtn = new PixelButton("SETTINGS", skin, fontForButtonsText);
-        ButtonActions.openSettings(settingsBtn, game, this);
-        ButtonActions.addHover(settingsBtn);
+            ButtonActions.resumeScreen(resumeTextBtn, this);
+            ButtonActions.openSettings(settingsTextBtn, game, this);
+            ButtonActions.openMainMenu(exitTextBtn, game);
 
-        PixelButton exitBtn = new PixelButton("EXIT", skin, fontForPauseLabel);
-        ButtonActions.openMainMenu(exitBtn, game);
-        ButtonActions.addHover(exitBtn);
+            ButtonActions.addHover(resumeTextBtn);
+            ButtonActions.addHover(settingsTextBtn);
+            ButtonActions.addHover(exitTextBtn);
 
-        pauseTable.add(pauseLabel).padBottom(30).row();
-        pauseTable.add(resumeBtn).padBottom(15).row();
-        pauseTable.add(settingsBtn).padBottom(15).row();
-        pauseTable.add(exitBtn);
+            pauseTable.add(pauseLabel).padBottom(30).row();
+            pauseTable.add(resumeTextBtn).padBottom(15).row();
+            pauseTable.add(settingsTextBtn).padBottom(15).row();
+            pauseTable.add(exitTextBtn).padBottom(15).row();
 
-        hudStage.addActor(pauseTable);
+            hudStage.addActor(pauseTable);
 
         isInitialized = true;
     }
