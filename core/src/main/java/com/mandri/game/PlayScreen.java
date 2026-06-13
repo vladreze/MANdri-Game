@@ -62,6 +62,7 @@ public class PlayScreen implements Screen {
     private boolean isPaused = false;
     private Table pauseTable;
     private Texture dimBackground;
+    private boolean isInitialized = false;
 
     public PlayScreen(Main game ,MainAssetsManager manager){
         this.game = game;
@@ -69,91 +70,96 @@ public class PlayScreen implements Screen {
     }
     @Override
     public void show() {
-        batch = new SpriteBatch();
+        if(!isInitialized) {
+            batch = new SpriteBatch();
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, playerCameraWidth, playerCameraHeight);
+            camera = new OrthographicCamera();
+            camera.setToOrtho(false, playerCameraWidth, playerCameraHeight);
 
-        hudCamera = new OrthographicCamera();
-        hudCamera.setToOrtho(false, hudCameraWidth, hudCameraHeight);
+            hudCamera = new OrthographicCamera();
+            hudCamera.setToOrtho(false, hudCameraWidth, hudCameraHeight);
 
-        background = manager.image.spaceBg();
+            background = manager.image.spaceBg();
 
-        map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
-        MapProperties properties = map.getProperties();
+            map = new TmxMapLoader().load("assets/maps/spaceMap/space.tmx");
+            MapProperties properties = map.getProperties();
 
-        int mapWidthInTiles = properties.get("width", Integer.class);
-        int tilePixelWidth = properties.get("tilewidth", Integer.class);
+            int mapWidthInTiles = properties.get("width", Integer.class);
+            int tilePixelWidth = properties.get("tilewidth", Integer.class);
 
-        int mapHeightInTiles = properties.get("height", Integer.class);
-        int tilePixelHeight = properties.get("tileheight", Integer.class);
+            int mapHeightInTiles = properties.get("height", Integer.class);
+            int tilePixelHeight = properties.get("tileheight", Integer.class);
 
-        mapWidth = mapWidthInTiles * tilePixelWidth;
-        mapHeight = mapHeightInTiles * tilePixelHeight;
+            mapWidth = mapWidthInTiles * tilePixelWidth;
+            mapHeight = mapHeightInTiles * tilePixelHeight;
 
-        renderer = new OrthogonalTiledMapRenderer(map);
-        player = new Player(playerStartX, playerStartY, manager);
-        manager.music.playLevelMusic(1);
+            renderer = new OrthogonalTiledMapRenderer(map);
+            player = new Player(playerStartX, playerStartY, manager);
+            manager.music.playLevelMusic(1);
 
-        vignetteShader = new ShaderProgram(
-            Gdx.files.internal("shaders/default.vsh"),
-            Gdx.files.internal("shaders/vignette.fsh")
-        );
+            vignetteShader = new ShaderProgram(
+                Gdx.files.internal("shaders/default.vsh"),
+                Gdx.files.internal("shaders/vignette.fsh")
+            );
 
-        vignetteShader.pedantic = false;
+            vignetteShader.pedantic = false;
 
-        if (!vignetteShader.isCompiled()) {
-            Gdx.app.log("Shader Error", vignetteShader.getLog());
-            Gdx.app.exit();
+            if (!vignetteShader.isCompiled()) {
+                Gdx.app.log("Shader Error", vignetteShader.getLog());
+                Gdx.app.exit();
+            }
+
+            renderer.getBatch().setShader(vignetteShader);
+
+            hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(hudCameraWidth, hudCameraHeight));
+
+            Skin skin = UIManager.getInstance().getSkin();
+            Texture pauseIcon = new Texture(Gdx.files.internal("assets/ui/pause-icon.png"));
+
+            PixelImageButton pauseButton = new PixelImageButton(pauseIcon, skin);
+            pauseButton.setSize(30, 30);
+            pauseButton.setPosition(hudCameraWidth - 60, hudCameraHeight - 60);
+
+            ButtonActions.pauseScreen(pauseButton, this);
+            hudStage.addActor(pauseButton);
+
+            pauseTable = new Table();
+            pauseTable.setFillParent(true);
+            pauseTable.setVisible(false);
+
+            Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+            pixmap.setColor(0f, 0f, 0f, 0.8f);
+            pixmap.fill();
+            dimBackground = new Texture(pixmap);
+            pixmap.dispose();
+
+            pauseTable.setBackground(new TextureRegionDrawable(dimBackground));
+
+            BitmapFont fontForPauseLabel = FontCreator.generateTextFont(28, 1f);
+            Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
+            labelPauseTextStyle.font = fontForPauseLabel;
+            Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
+
+            BitmapFont fontForButtonsText = FontCreator.generateTextFont(24, 1f);
+
+            PixelButton resumeBtn = new PixelButton("RESUME", skin, fontForButtonsText);
+            ButtonActions.resumeScreen(resumeBtn, this);
+
+            PixelButton settingsBtn = new PixelButton("SETTINGS", skin, fontForButtonsText);
+            ButtonActions.openSettings(settingsBtn, game, this);
+
+            PixelButton exitBtn = new PixelButton("EXIT", skin, fontForPauseLabel);
+            ButtonActions.openMainMenu(exitBtn, game);
+
+            pauseTable.add(pauseLabel).padBottom(30).row();
+            pauseTable.add(settingsBtn).padBottom(30).row();
+            pauseTable.add(resumeBtn).padBottom(15).row();
+            pauseTable.add(exitBtn);
+
+            hudStage.addActor(pauseTable);
+            isInitialized = true;
         }
-
-        renderer.getBatch().setShader(vignetteShader);
-
-        hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(hudCameraWidth, hudCameraHeight));
-        Gdx.input.setInputProcessor(hudStage);
-
-        Skin skin = UIManager.getInstance().getSkin();
-        Texture pauseIcon = new Texture(Gdx.files.internal("assets/ui/pause-icon.png"));
-
-        PixelImageButton pauseButton = new PixelImageButton(pauseIcon, skin);
-        pauseButton.setSize(30, 30);
-        pauseButton.setPosition(hudCameraWidth - 60, hudCameraHeight - 60);
-
-        ButtonActions.pauseScreen(pauseButton, this);
-        hudStage.addActor(pauseButton);
-
-        pauseTable = new Table();
-        pauseTable.setFillParent(true);
-        pauseTable.setVisible(false);
-
-        Pixmap pixmap = new Pixmap(1,1,Pixmap.Format.RGBA8888);
-        pixmap.setColor(0f, 0f, 0f, 0.8f);
-        pixmap.fill();
-        dimBackground = new Texture(pixmap);
-        pixmap.dispose();
-
-        pauseTable.setBackground(new TextureRegionDrawable(dimBackground));
-
-        BitmapFont fontForPauseLabel = FontCreator.generateTextFont(28, 1f);
-        Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
-        labelPauseTextStyle.font = fontForPauseLabel;
-        Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
-
-        BitmapFont fontForButtonsText = FontCreator.generateTextFont(24, 1f);
-
-        PixelButton resumeBtn = new PixelButton("RESUME", skin, fontForButtonsText);
-        ButtonActions.resumeScreen(resumeBtn, this);
-
-
-
-        PixelButton exitBtn = new PixelButton("EXIT", skin, fontForPauseLabel);
-        ButtonActions.openMainMenu(exitBtn, game);
-
-        pauseTable.add(pauseLabel).padBottom(30).row();
-        pauseTable.add(resumeBtn).padBottom(15).row();
-        pauseTable.add(exitBtn);
-
-        hudStage.addActor(pauseTable);
+       Gdx.input.setInputProcessor(hudStage);
 
 
 

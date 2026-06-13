@@ -24,14 +24,16 @@ public class HelpScreen implements Screen {
     private FitViewport viewport;
     private OrthographicCamera camera;
 
-    public HelpScreen(Main game){
+    private Screen previousScreen;
+
+    public HelpScreen(Main game, Screen previousScreen){
         this.game = game;
+        this.previousScreen = previousScreen;
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(320, 180, camera);
 
         stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
 
         Skin skin = UIManager.getInstance().getSkin();
 
@@ -40,7 +42,7 @@ public class HelpScreen implements Screen {
         PixelImageButton backButton = new PixelImageButton(backIcon, skin);
         backButton.setSize(20, 20);
         backButton.setPosition(10, 150);
-        ButtonActions.openSettingsForIconButtons(backButton, game);
+        ButtonActions.backActionDynamic(backButton, game, previousScreen);
 
 
         Table table = new Table();
@@ -82,6 +84,7 @@ public class HelpScreen implements Screen {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(stage);
 
     }
 

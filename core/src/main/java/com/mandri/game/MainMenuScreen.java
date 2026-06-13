@@ -29,7 +29,6 @@ public class MainMenuScreen implements Screen {
         viewport = new FitViewport(320, 180, camera);
 
         stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
 
         Skin skin = UIManager.getInstance().getSkin();
 
@@ -49,7 +48,7 @@ public class MainMenuScreen implements Screen {
         ButtonActions.playGame(playButton, game);
 
         PixelButton settingsButton = new PixelButton("SETTINGS", skin, fontForButtonsText);
-        ButtonActions.openSettings(settingsButton , game);
+        ButtonActions.openSettings(settingsButton , game, this);
 
         PixelButton exitButton = new PixelButton("EXIT", skin, fontForButtonsText);
         ButtonActions.exitGame(exitButton);
@@ -64,6 +63,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show(){
+        Gdx.input.setInputProcessor(stage);
         game.getManager().getMusic().playMenuMusic();
     }
 
