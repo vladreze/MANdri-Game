@@ -31,13 +31,28 @@ public class MusicManager {
         manager.load("sounds/hurt1.mp3", Sound.class);
         manager.load("sounds/hurt2.mp3", Sound.class);
         manager.load("sounds/hurt3.mp3", Sound.class);
+        manager.load("sounds/grab.mp3", Sound.class);
+        manager.load("sounds/punch-monster.mp3", Sound.class);
 
         manager.load("sounds/bee.mp3", Sound.class);
         manager.load("sounds/enemy-hurt.mp3", Sound.class);
+        manager.load("sounds/monster-punch-player.mp3", Sound.class);
+        manager.load("sounds/monster-walk.mp3", Sound.class);
+
         manager.load("sounds/spaceship.mp3", Sound.class);
+        manager.load("sounds/rocket-break.mp3", Sound.class);
 
         manager.load("sounds/bonus.mp3", Sound.class);
         manager.load("sounds/bonus-big.mp3", Sound.class);
+        manager.load("sounds/game-over.mp3", Sound.class);
+
+        manager.load("sounds/slime-block.mp3", Sound.class);
+        manager.load("sounds/cracking-block.mp3", Sound.class);
+        manager.load("sounds/thorn-block.mp3", Sound.class);
+
+//        manager.load("sounds/text-type(long).mp3", Sound.class);
+//        manager.load("sounds/text-type.mp3", Sound.class);
+
 
     }
     public void playMenuMusic(){
@@ -45,6 +60,9 @@ public class MusicManager {
         music.setLooping(true);
         music.setVolume(volume);
         music.play();
+    }
+    public void playGameOverSound(){
+        manager.get("sounds/game-over.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playLevelMusic(int n){
         switch (n){
@@ -92,6 +110,34 @@ public class MusicManager {
                 manager.get("sounds/hurt3.mp3", Sound.class).play(soundEffectsvolume);
         }
 
+    }
+
+    public void playGrabSound(){
+        manager.get("sounds/grab.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playPunchSound(){
+        manager.get("sounds/punch-monster.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playSlimeBlockSound(){
+        manager.get("sounds/slime-block.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playCrackingBlockSound(){
+        manager.get("sounds/cracking-block.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playThornBlockSound(){
+        manager.get("sounds/thorn-block.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playMonsterWalkSound(){
+        manager.get("sounds/monster-walk.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playMonsterPunchSound(){
+        manager.get("sounds/monster-punch-player.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playRocketBreakSound(){
+        manager.get("sounds/rocket-break.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playTypeSound(){
+        manager.get("sounds/text-type(long).mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playBeeSound(){
         manager.get("sounds/bee.mp3", Sound.class).play(soundEffectsvolume);

@@ -247,9 +247,11 @@ public class Player {
                     if (this.bounds.overlaps(adjustedTraRect)) {
                         if (type.equals("trap-poison")) {
                             takeDamage("trap-poison");
+//                            manager.music.playSlimeBlockSound();
                         }
                         else if (type.equals("trap-thorn")) {
                             takeDamage("trap-thorn");
+//                            manager.music.playThornBlockSound();
                         }
                     }
                 }
@@ -303,7 +305,7 @@ public class Player {
                 objectLayer.getObjects().remove(ab.object);
                 activeBreakables.removeIndex(i);
 
-                // manager.music.playBreakSound();
+                 manager.music.playCrackingBlockSound();
             }
         }
     }
@@ -394,6 +396,7 @@ public class Player {
         if (!isInvulnerable && !isDead()) {
             liveCount--;
             damageParticleEffect.reset();
+            manager.music.playMonsterPunchSound();
             if(liveCount==2)manager.music.playHurtSound(1);
             else if(liveCount==1) manager.music.playHurtSound(2);
             if (liveCount > 0) {
@@ -405,12 +408,14 @@ public class Player {
                     playerDamageRed = .5f;
                     playerDamageGreen = -.2f;
                     playerDamageBlue = -.2f;
+                    manager.music.playThornBlockSound();
                     break;
                 }
                 case "trap-poison": {
                     playerDamageRed = -.2f;
                     playerDamageGreen = .5f;
                     playerDamageBlue = -.2f;
+                    manager.music.playSlimeBlockSound();
                     break;
                 }
                 default: {

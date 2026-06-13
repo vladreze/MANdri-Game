@@ -36,6 +36,8 @@ public class Enemy {
     public float deathTimer = 0;
     public float DEATH_TIME = 2.5f;
 
+    private float walkTimer = 0f;
+
     public Enemy(float startX, float startY, MainAssetsManager manager) {
         this.x = startX;
         this.y = startY;
@@ -59,6 +61,11 @@ public class Enemy {
             y += velocityY * delta;
             this.bounds.setPosition(x, y);
             return;
+        }
+        walkTimer+=delta;
+        if(walkTimer> 0.95f){
+            manager.music.playMonsterWalkSound();
+            walkTimer = 0f;
         }
         if(runningRight==true){
             velocityX=SPEED;

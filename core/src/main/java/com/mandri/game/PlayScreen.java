@@ -310,6 +310,8 @@ public class PlayScreen implements Screen {
                         e.isDead = true;
                         e.velocityY = player.JUMP_FORCE / 1.25f;
                         e.currentState = Enemy.State.DEAD;
+//                        manager.music.playEnemyHurtSound();
+                        manager.music.playPunchSound();
                     }
                    else player.takeDamage("mob");
                 }
@@ -426,6 +428,7 @@ public class PlayScreen implements Screen {
                 transitionAlpha = 1f;
                 isFadingOut = false;
                 game.setScreen(new MainMenuScreen(game));
+                manager.music.playGameOverSound();  //game over sound
                 return;
             }
         }
