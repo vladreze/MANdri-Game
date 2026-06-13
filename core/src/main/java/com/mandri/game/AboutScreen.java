@@ -24,14 +24,16 @@ public class AboutScreen implements Screen {
     private OrthographicCamera camera;
     private Stage stage;
 
-    public AboutScreen(Main game){
+    private Screen previousScreen;
+
+    public AboutScreen(Main game, Screen previousScreen){
         this.game = game;
+        this.previousScreen = previousScreen;
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(320, 180, camera);
 
         stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
 
         Skin skin = UIManager.getInstance().getSkin();
 
@@ -52,7 +54,7 @@ public class AboutScreen implements Screen {
         PixelImageButton backButton = new PixelImageButton(backIcon, skin);
         backButton.setSize(20, 20);
         backButton.setPosition(10, 150);
-        ButtonActions.openSettingsForIconButtons(backButton, game);
+        ButtonActions.backActionDynamic(backButton, game, previousScreen);
 
         Table scrollContainer = new Table();
         scrollContainer.top();
@@ -104,7 +106,7 @@ public class AboutScreen implements Screen {
 
 
     @Override
-    public void show() {
+    public void show() {   Gdx.input.setInputProcessor(stage);
 
     }
 

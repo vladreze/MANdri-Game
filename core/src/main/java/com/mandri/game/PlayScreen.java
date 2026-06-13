@@ -1,9 +1,12 @@
 package com.mandri.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.MapLayer;
@@ -14,13 +17,18 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mandri.entities.Player;
 import com.mandri.storage.MainAssetsManager;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
+import com.mandri.ui.FontCreator;
 import com.mandri.ui.PixelButton;
+import com.mandri.ui.PixelImageButton;
 
 public class PlayScreen implements Screen {
     private SpriteBatch batch;
@@ -58,13 +66,21 @@ public class PlayScreen implements Screen {
     private float mapWidth;
     private float mapHeight;
 
-    public PlayScreen(Main game ,MainAssetsManager manager){
+    private boolean isPaused = false;
+    private Table pauseTable;
+    private Texture dimBackground;
+    private boolean isInitialized = false;
+    private Texture pauseIcon;
+
+    public PlayScreen(Main game, MainAssetsManager manager) {
         this.game = game;
         this.manager = manager;
     }
+
     @Override
     public void show() {
-        batch = new SpriteBatch();
+        if (!isInitialized){
+            batch = new SpriteBatch();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, playerCameraWidth, playerCameraHeight);
@@ -106,80 +122,138 @@ public class PlayScreen implements Screen {
         renderer.getBatch().setShader(vignetteShader);
 
         hudStage = new Stage(new com.badlogic.gdx.utils.viewport.FitViewport(hudCameraWidth, hudCameraHeight));
-        Gdx.input.setInputProcessor(hudStage);
 
         Skin skin = UIManager.getInstance().getSkin();
-        PixelButton menuBtn = new PixelButton("MENU", skin);
-        ButtonActions.openMainMenu(menuBtn, game);
+        pauseIcon = new Texture(Gdx.files.internal("assets/ui/pause-icon.png"));
+        PixelImageButton pauseButton = new PixelImageButton(pauseIcon, skin);
+        pauseButton.setSize(30, 30);
+        pauseButton.setPosition(hudCameraWidth - 60, hudCameraHeight - 60);
+        ButtonActions.pauseScreen(pauseButton, this);
+        hudStage.addActor(pauseButton);
 
-        menuBtn.setSize(40, 40);
+        pauseTable = new Table();
+        pauseTable.setFillParent(true);
+        pauseTable.setVisible(false);
 
-        menuBtn.setPosition(hudCameraWidth - 60, hudCameraHeight - 60);
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(0f, 0f, 0f, 0.8f);
+        pixmap.fill();
+        dimBackground = new Texture(pixmap);
+        pixmap.dispose();
 
-        hudStage.addActor(menuBtn);
+        pauseTable.setBackground(new TextureRegionDrawable(dimBackground));
+
+            BitmapFont fontForPauseLabel = FontCreator.generateTextFont(35, 1f);
+            Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
+            labelPauseTextStyle.font = fontForPauseLabel;
+            Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
+
+            BitmapFont fontText = FontCreator.generateTextFont(24, 1f);
+            Label.LabelStyle textStyle = new Label.LabelStyle();
+            textStyle.font = fontText;
+
+            Label resumeTextBtn = new Label("RESUME", textStyle);
+            Label settingsTextBtn = new Label("SETTINGS", textStyle);
+            Label exitTextBtn = new Label("EXIT", textStyle);
+
+            ButtonActions.resumeScreen(resumeTextBtn, this);
+            ButtonActions.openSettings(settingsTextBtn, game, this);
+            ButtonActions.openMainMenu(exitTextBtn, game);
+
+            ButtonActions.addHover(resumeTextBtn);
+            ButtonActions.addHover(settingsTextBtn);
+            ButtonActions.addHover(exitTextBtn);
+
+            pauseTable.add(pauseLabel).padBottom(30).row();
+            pauseTable.add(resumeTextBtn).padBottom(15).row();
+            pauseTable.add(settingsTextBtn).padBottom(15).row();
+            pauseTable.add(exitTextBtn).padBottom(15).row();
+
+            hudStage.addActor(pauseTable);
+
+        isInitialized = true;
+    }
+
+        Gdx.input.setInputProcessor(hudStage);
+
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
 
-        if (player.liveCount < displayedLives) {
-            heartTimer += delta;
-            if (heartTimer >= HEART_DELAY) {
-                displayedLives--;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            if (isPaused) resumeGame();
+            else pauseGame();
+        }
+
+        if(!isPaused) {
+            if (player.liveCount < displayedLives) {
+                heartTimer += delta;
+                if (heartTimer >= HEART_DELAY) {
+                    displayedLives--;
+                    heartTimer = 0f;
+                }
+            } else {
+                displayedLives = player.liveCount;
                 heartTimer = 0f;
             }
-        } else {
-            displayedLives = player.liveCount;
-            heartTimer = 0f;
-        }
 
-        switch (player.liveCount) {
-            case 3: HEART_ANIMATION_DELAY = 5f; break;
-            case 2: HEART_ANIMATION_DELAY = 2.5f; break;
-            case 1: HEART_ANIMATION_DELAY = .7f; break;
-            default: HEART_ANIMATION_DELAY = 5f; break;
-        }
+            switch (player.liveCount) {
+                case 3:
+                    HEART_ANIMATION_DELAY = 5f;
+                    break;
+                case 2:
+                    HEART_ANIMATION_DELAY = 2.5f;
+                    break;
+                case 1:
+                    HEART_ANIMATION_DELAY = .7f;
+                    break;
+                default:
+                    HEART_ANIMATION_DELAY = 5f;
+                    break;
+            }
 
-        if (heartTimer == 0) {
-            heartAnimationTimer += delta;
-            if (heartAnimationTimer >= HEART_ANIMATION_DELAY) {
+            if (heartTimer == 0) {
+                heartAnimationTimer += delta;
+                if (heartAnimationTimer >= HEART_ANIMATION_DELAY) {
+                    heartAnimationTimer = 0f;
+                }
+            } else {
                 heartAnimationTimer = 0f;
             }
-        } else {
-            heartAnimationTimer = 0f;
+
+            TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
+            MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
+            player.update(delta, collisionLayer, objectLayer, 2720f);
+
+            float lookAheadOffset = player.isRunningRight() ? 45f : -45f;
+
+            float desiredX = player.bounds.getX() + lookAheadOffset;
+            float desiredY = player.bounds.getY();
+
+            float targetX = MathUtils.clamp(desiredX, (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
+            float targetY = MathUtils.clamp(desiredY, (playerCameraHeight / 2), mapHeight);
+
+            float currentCameraX = camera.position.x;
+            float currentCameraY = camera.position.y;
+
+            float alpha = 3.5f * delta;
+
+            float smoothCameraX = MathUtils.lerp(currentCameraX, targetX, alpha);
+            float smoothCameraY = MathUtils.lerp(currentCameraY, targetY, alpha);
+
+            camera.position.set(smoothCameraX, smoothCameraY, 0);
+
+            if (player.isShaking()) {
+                float shakePower = .5f;
+
+                camera.position.x += MathUtils.random(-shakePower, shakePower);
+                camera.position.y += MathUtils.random(-shakePower, shakePower);
+            }
+
+            camera.update();
         }
-
-        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
-        MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
-        player.update(delta, collisionLayer, objectLayer,2720f);
-
-        float lookAheadOffset = player.isRunningRight() ? 45f : -45f;
-
-        float desiredX = player.bounds.getX() + lookAheadOffset;
-        float desiredY = player.bounds.getY();
-
-        float targetX = MathUtils.clamp(desiredX, (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
-        float targetY = MathUtils.clamp(desiredY, (playerCameraHeight / 2), mapHeight);
-
-        float currentCameraX = camera.position.x;
-        float currentCameraY = camera.position.y;
-
-        float alpha = 3.5f * delta;
-
-        float smoothCameraX = MathUtils.lerp(currentCameraX, targetX, alpha);
-        float smoothCameraY = MathUtils.lerp(currentCameraY, targetY, alpha);
-
-        camera.position.set(smoothCameraX, smoothCameraY, 0);
-
-        if (player.isShaking()) {
-            float shakePower = .5f;
-
-            camera.position.x += MathUtils.random(-shakePower, shakePower);
-            camera.position.y += MathUtils.random(-shakePower, shakePower);
-        }
-
-        camera.update();
         renderer.setView(camera);
 
         batch.setProjectionMatrix(camera.combined);
@@ -286,5 +360,17 @@ public class PlayScreen implements Screen {
         manager.disposeAll();
         player.dispose();
         bgTexture.dispose();
+        if (dimBackground != null) dimBackground.dispose();
+        if (pauseIcon != null) pauseIcon.dispose();
+    }
+
+    public void pauseGame() {
+        isPaused = true;
+        pauseTable.setVisible(true);
+    }
+
+    public void resumeGame() {
+        isPaused = false;
+        pauseTable.setVisible(false);
     }
 }
