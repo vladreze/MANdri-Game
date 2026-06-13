@@ -141,7 +141,7 @@ public class Player {
         groundParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
         damageParticleEffect.setPosition(x + bounds.width / 2, y + bounds.height / 2);
 
-        fallingParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y + 6f);
+        fallingParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
 
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
