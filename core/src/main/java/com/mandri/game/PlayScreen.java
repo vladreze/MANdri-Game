@@ -72,6 +72,8 @@ public class PlayScreen implements Screen {
     private boolean isInitialized = false;
     private Texture pauseIcon;
 
+    private Table exitConfirmTable = new Table();;
+
     public PlayScreen(Main game, MainAssetsManager manager) {
         this.game = game;
         this.manager = manager;
@@ -153,17 +155,17 @@ public class PlayScreen implements Screen {
             labelPauseTextStyle.font = fontForPauseLabel;
             Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
 
-            BitmapFont fontText = FontCreator.generateTextFont(24, 1f);
-            Label.LabelStyle textStyle = new Label.LabelStyle();
-            textStyle.font = fontText;
+            BitmapFont fontForButtonText = FontCreator.generateTextFont(24, 1f);
+            Label.LabelStyle textForButtonStyle = new Label.LabelStyle();
+            textForButtonStyle.font = fontForButtonText;
 
-            Label resumeTextBtn = new Label("RESUME", textStyle);
-            Label settingsTextBtn = new Label("SETTINGS", textStyle);
-            Label exitTextBtn = new Label("EXIT", textStyle);
+            Label resumeTextBtn = new Label("RESUME", textForButtonStyle);
+            Label settingsTextBtn = new Label("SETTINGS", textForButtonStyle);
+            Label exitTextBtn = new Label("EXIT", textForButtonStyle);
 
             ButtonActions.resumeScreen(resumeTextBtn, this);
             ButtonActions.openSettings(settingsTextBtn, game, this);
-            ButtonActions.openMainMenu(exitTextBtn, game);
+            ButtonActions.exitScreen(exitTextBtn, pauseTable, exitConfirmTable);
 
             ButtonActions.addHover(resumeTextBtn);
             ButtonActions.addHover(settingsTextBtn);
@@ -175,6 +177,28 @@ public class PlayScreen implements Screen {
             pauseTable.add(exitTextBtn).padBottom(15).row();
 
             hudStage.addActor(pauseTable);
+            exitConfirmTable.setFillParent(true);
+            exitConfirmTable.setVisible(false);
+            exitConfirmTable.setBackground(new TextureRegionDrawable(dimBackground));
+
+            Label warningLabel = new Label("ARE YOU SURE YOU WANT TO EXIT?\nALL PROGRESS WILL BE LOST", labelPauseTextStyle);
+            warningLabel.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+            Label yesBtn = new Label("YES", textForButtonStyle);
+            Label noBtn = new Label("NO", textForButtonStyle);
+
+            ButtonActions.openMainMenu(yesBtn, game);
+            ButtonActions.abortExit(noBtn, pauseTable, exitConfirmTable);
+
+            ButtonActions.addHover(yesBtn);
+            ButtonActions.addHover(noBtn);
+
+            exitConfirmTable.add(warningLabel).colspan(2).padBottom(30).row();
+            exitConfirmTable.add(yesBtn).padRight(40);
+            exitConfirmTable.add(noBtn);
+
+            hudStage.addActor(exitConfirmTable);
+
 
         isInitialized = true;
     }
