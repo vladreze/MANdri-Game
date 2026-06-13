@@ -143,12 +143,12 @@ public class PlayScreen implements Screen {
 
         pauseTable.setBackground(new TextureRegionDrawable(dimBackground));
 
-        BitmapFont fontForPauseLabel = FontCreator.generateTextFont(28, 1f);
+        BitmapFont fontForPauseLabel = FontCreator.generateTextFont(35, 1f);
         Label.LabelStyle labelPauseTextStyle = new Label.LabelStyle();
         labelPauseTextStyle.font = fontForPauseLabel;
         Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
 
-        BitmapFont fontForButtonsText = FontCreator.generateTextFont(24, 1f);
+        BitmapFont fontForButtonsText = FontCreator.generateTextFont(28, 1f);
 
         PixelButton resumeBtn = new PixelButton("RESUME", skin, fontForButtonsText);
         ButtonActions.resumeScreen(resumeBtn, this);
@@ -163,8 +163,8 @@ public class PlayScreen implements Screen {
         ButtonActions.addHover(exitBtn);
 
         pauseTable.add(pauseLabel).padBottom(30).row();
-        pauseTable.add(settingsBtn).padBottom(30).row();
         pauseTable.add(resumeBtn).padBottom(15).row();
+        pauseTable.add(settingsBtn).padBottom(15).row();
         pauseTable.add(exitBtn);
 
         hudStage.addActor(pauseTable);
