@@ -294,11 +294,14 @@ public class PlayScreen implements Screen {
 
         camera.update();
 
-        for(Enemy  e:enemies){
-            e.update(delta, collisionLayer);
-        }
-        if(rocket!=null){
-            rocket.update(delta);
+            for(Enemy  e:enemies){
+                e.update(delta, collisionLayer);
+            }
+
+            if(rocket!=null){
+                rocket.update(delta);
+            }
+
             camera.position.set(smoothCameraX, smoothCameraY, 0);
 
             if (player.isShaking()) {
@@ -421,7 +424,7 @@ public class PlayScreen implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize (int width, int height) {
         camera.viewportWidth = playerCameraWidth;
         camera.viewportHeight = playerCameraHeight;
         camera.update();
