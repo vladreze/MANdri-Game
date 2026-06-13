@@ -1,14 +1,20 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.mandri.storage.MainAssetsManager;
 
 public class Player {
@@ -37,6 +43,23 @@ public class Player {
     private float stepTimer;
     private final MainAssetsManager manager;
 
+    private ShaderProgram damageShader;
+
+    private ParticleEffect groundParticleEffect;
+    private ParticleEffect jetpackParticleEffect;
+
+    private Array<ActiveBreakable> activeBreakables = new Array<>();
+
+    private class ActiveBreakable {
+        RectangleMapObject object;
+        float timer;
+
+        public ActiveBreakable(RectangleMapObject object, float timer) {
+            this.object = object;
+            this.timer = timer;
+        }
+    }
+
     public Player(float startX, float startY, MainAssetsManager manager) {
         this.x = startX;
         this.y = startY;
@@ -48,15 +71,42 @@ public class Player {
         this.stepTimer = 0;
         this.bounds = new Rectangle(x, y, 30, 30);
         this.manager = manager;
+
+        damageShader = new ShaderProgram(
+            Gdx.files.internal("shaders/default.vsh"),
+            Gdx.files.internal("shaders/damage.fsh")
+        );
+        damageShader.pedantic = false;
+
+        if (!damageShader.isCompiled()) {
+            Gdx.app.log("Shader Error", damageShader.getLog());
+        }
+
+        groundParticleEffect = new ParticleEffect();
+        jetpackParticleEffect = new ParticleEffect();
+
+        groundParticleEffect.load(
+            Gdx.files.internal("assets/particles/ground.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        groundParticleEffect.scaleEffect(0.7f);
+
+        jetpackParticleEffect.load(
+            Gdx.files.internal("assets/particles/jetpack.p"),
+            Gdx.files.internal("assets/particles/")
+        );
+        jetpackParticleEffect.scaleEffect(0.6f);
     }
 
-    public void update(float delta, TiledMapTileLayer layer, float screenWidth) {
+    public void update(float delta, TiledMapTileLayer layer, MapLayer objectLayer, float screenWidth) {
         if (isInvulnerable) {
             invulnerableTimer -= delta;
             if (invulnerableTimer <= 0) {
                 isInvulnerable = false;
             }
         }
+
+        handleBreakables(delta, objectLayer, layer);
 
         if (y < -50) {
             takeDamage();
@@ -65,6 +115,9 @@ public class Player {
                 this.y = spawnY;
             }
         }
+
+        jetpackParticleEffect.setPosition(x + 10, y + 12);
+        groundParticleEffect.setPosition(x + bounds.width / 2, y);
 
         velocityX = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -80,13 +133,17 @@ public class Player {
             velocityY = JUMP_FORCE;
             isGrounded = false;
 
+            jetpackParticleEffect.start();
+
             manager.music.playJumpSound();
         }
 
         float oldX = x;
         x += velocityX * delta;
-        x = MathUtils.clamp(x, 0, screenWidth - 32); // Границы мира
+        x = MathUtils.clamp(x, 0, screenWidth - 32);
         bounds.setPosition(x, y);
+
+        checkTraps(objectLayer);
 
         if (checkCollision(bounds, layer)) {
             x = oldX;
@@ -99,14 +156,18 @@ public class Player {
         y += velocityY * delta;
         bounds.setPosition(x, y);
 
+        checkTraps(objectLayer);
+
         if (checkCollision(bounds, layer)) {
             if (velocityY < 0) {
                 if (!isGrounded && velocityY < -50f) {
+                    groundParticleEffect.start();
                     manager.music.playLandSound();
                 }
+                jetpackParticleEffect.allowCompletion();
                 isGrounded = true;
             }
-            else if(velocityY>0) manager.music.playHurtSound(1);
+
             y = oldY;
             bounds.setPosition(x, y);
             velocityY = 0;
@@ -114,6 +175,8 @@ public class Player {
             isGrounded = false;
         }
 
+        groundParticleEffect.update(delta);
+        jetpackParticleEffect.update(delta);
         updateState(delta);
     }
 
@@ -131,6 +194,79 @@ public class Player {
             }
         }
         return false;
+    }
+
+    private void checkTraps(MapLayer objectLayer) {
+        if (objectLayer == null) return;
+        for (MapObject object : objectLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject rectangleObject = (RectangleMapObject) object;
+                Rectangle trapRect = rectangleObject.getRectangle();
+                String type = object.getProperties().get("type", String.class);
+                if ("Trap".equals(type)) {
+                    Rectangle adjustedTraRect = new Rectangle(
+                        trapRect.x + 2,
+                        trapRect.y,
+                        trapRect.width-3,
+                        trapRect.height
+                    );
+                    if (this.bounds.overlaps(adjustedTraRect)) {
+                        takeDamage();
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleBreakables(float delta, MapLayer objectLayer, TiledMapTileLayer tileLayer) {
+        if (objectLayer == null || tileLayer == null) return;
+
+        for (MapObject object : objectLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject rectObject = (RectangleMapObject) object;
+                String type = object.getProperties().get("type", String.class);
+
+                Rectangle originalRect = rectObject.getRectangle();
+
+                Rectangle adjustedRect = new Rectangle(
+                    originalRect.x,
+                    originalRect.y,
+                    originalRect.width,
+                    originalRect.height + 4
+                );
+
+                if ("Breakable".equals(type) && this.bounds.overlaps(adjustedRect)) {
+                    boolean alreadyActive = false;
+                    for (ActiveBreakable ab : activeBreakables) {
+                        if (ab.object == rectObject) {
+                            alreadyActive = true;
+                            break;
+                        }
+                    }
+                    if (!alreadyActive) {
+                        Float delayProp = object.getProperties().get("delay", Float.class);
+                        float delay = (delayProp != null) ? delayProp : 2.0f;
+                        activeBreakables.add(new ActiveBreakable(rectObject, delay));
+                    }
+                }
+            }
+        }
+
+        for (int i = activeBreakables.size - 1; i >= 0; i--) {
+            ActiveBreakable ab = activeBreakables.get(i);
+            ab.timer -= delta;
+
+            if (ab.timer <= 0) {
+                Rectangle rect = ab.object.getRectangle();
+                int tileX = (int) ((rect.x + 2) / 16);
+                int tileY = (int) ((rect.y + 2) / 16);
+                tileLayer.setCell(tileX, tileY, null);
+                objectLayer.getObjects().remove(ab.object);
+                activeBreakables.removeIndex(i);
+
+                // manager.music.playBreakSound();
+            }
+        }
     }
 
     private void updateState(float delta) {
@@ -161,12 +297,17 @@ public class Player {
 
     public void draw(SpriteBatch batch) {
         if (isInvulnerable) {
+            batch.setShader(damageShader);
             if (invulnerableTimer % 0.2f > 0.1f) {
+                jetpackParticleEffect.draw(batch);
                 batch.draw(getFrame(), x, y);
             }
+            batch.setShader(null);
         } else {
+            jetpackParticleEffect.draw(batch);
             batch.draw(getFrame(), x, y);
         }
+        groundParticleEffect.draw(batch);
     }
 
     private TextureRegion getFrame() {
@@ -196,16 +337,36 @@ public class Player {
     public void takeDamage() {
         if (!isInvulnerable && !isDead()) {
             liveCount--;
-            manager.music.playHurtSound(1);
+            if(liveCount==2)manager.music.playHurtSound(1);
+            else if(liveCount==1) manager.music.playHurtSound(2);
 
             if (liveCount > 0) {
                 isInvulnerable = true;
                 invulnerableTimer = INVINCIBILITY_TIME;
             }
         }
+        if(isDead()){
+            manager.music.playHurtSound(3);
+        }
     }
 
     public boolean isDead() {
         return liveCount <= 0;
+    }
+
+    public boolean isShaking() {
+        return activeBreakables.size > 0;
+    }
+
+    public void dispose() {
+        if (damageShader != null) {
+            damageShader.dispose();
+        }
+        if (groundParticleEffect != null) {
+            groundParticleEffect.dispose();
+        }
+        if (jetpackParticleEffect != null) {
+            jetpackParticleEffect.dispose();
+        }
     }
 }
