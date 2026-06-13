@@ -100,18 +100,18 @@ public class PlayScreen implements Screen {
         MapLayer spawnLayer = map.getLayers().get("spawns");
         if(spawnLayer!=null){
             for(MapObject object:spawnLayer.getObjects()){
-                String name=object.getName();
                 String type=object.getProperties().get("type", String.class);
                 String className=object.getProperties().get("class", String.class);
 
                 Float x=object.getProperties().get("x", Float.class);
                 Float y=object.getProperties().get("y", Float.class);
+
                 if(x!= null&&y!= null){
                     if("Mob".equals(type)||"Mob".equals(className)){
                         enemies.add(new Enemy(x,y,manager));
                     }
-                    else if("RocketPart1".equals(name)||"RocketPart2".equals(name)||"RocketPart3".equals(name)){
-                        rocketParts.add(new Item(null,name,x,y));
+                    else if("RocketPart1".equals(type)||"RocketPart2".equals(type)||"RocketPart3".equals(type)){
+                        rocketParts.add(new Item(manager, type, x, y));
                     }
                     else if("LevelExit".equals(type)||"LevelExit".equals(className)){
                         rocket=new Rocket(x,y,manager);

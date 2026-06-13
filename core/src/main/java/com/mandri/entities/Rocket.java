@@ -12,18 +12,21 @@ public class Rocket{
     public float x, y;
     public Rectangle bounds;
     private float velY=0;
+    public float width = 64f;
+    public float height = 100f;
     private final MainAssetsManager manager;
     public Rocket(float x, float y, MainAssetsManager manager){
         this.x=x;
         this.y=y;
         this.manager=manager;
         this.curState=State.BROKEN;
-        this.bounds=new Rectangle(x,y,32,32);
+        this.bounds=new Rectangle(x,y,width,height);
     }
     public void update(float delta){
         if(curState==State.FLYING){
             velY+=100f*delta;
             y+=velY*delta;
+            bounds.setPosition(x, y);
         }
     }
     public void draw(SpriteBatch batch){
@@ -37,6 +40,6 @@ public class Rocket{
         else{
             frame=manager.image.rocketFixed;
         }
-        batch.draw(frame, x,y);
+        batch.draw(frame, x,y,width,height);
     }
 }
