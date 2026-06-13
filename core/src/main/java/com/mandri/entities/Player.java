@@ -28,7 +28,7 @@ public class Player {
     private float velocityX, velocityY;
     private final float SPEED = 150f;
     private final float GRAVITY = -600f;
-    private final float JUMP_FORCE = 300f;
+    public final float JUMP_FORCE = 300f;
 
     public int liveCount = 3;
     private boolean isInvulnerable = false;
@@ -40,9 +40,9 @@ public class Player {
     private boolean runningRight = true;
     private float stateTimer;
 
-    float playerDamageRed;
-    float playerDamageGreen;
-    float playerDamageBlue;
+    private float playerDamageRed;
+    private float playerDamageGreen;
+    private float playerDamageBlue;
 
     private float stepTimer;
     private final MainAssetsManager manager;
@@ -381,6 +381,13 @@ public class Player {
                 break;
         }
         return region;
+    }
+
+    public void bounce() {
+        velocityY = JUMP_FORCE * 0.8f;
+        currentState = State.JUMPING;
+        isGrounded = false;
+        jetpackParticleEffect.reset();
     }
 
     public void takeDamage(String trapType) {

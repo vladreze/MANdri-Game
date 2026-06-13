@@ -294,8 +294,25 @@ public class PlayScreen implements Screen {
 
         camera.update();
 
-            for(Enemy  e:enemies){
+            for(int i = enemies.size - 1; i >= 0; i--) {
+                Enemy e = enemies.get(i);
+
+                if (e.isDead && e.deathTimer >= e.DEATH_TIME) {
+                    enemies.removeIndex(i);
+                    continue;
+                }
+
                 e.update(delta, collisionLayer);
+
+                if (player.bounds.overlaps(e.bounds) && !e.isDead) {
+                    if (player.currentState == Player.State.FALLING && player.bounds.y > e.bounds.y) {
+                        player.bounce();
+                        e.isDead = true;
+                        e.velocityY = player.JUMP_FORCE / 1.25f;
+                        e.currentState = Enemy.State.DEAD;
+                    }
+                   else player.takeDamage("mob");
+                }
             }
 
             if(rocket!=null){

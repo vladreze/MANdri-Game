@@ -3,6 +3,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -15,14 +16,25 @@ public class Enemy {
     private float x, y;
     private float spawnX, spawnY;
 
-    private float velocityX, velocityY;
+    public float velocityX, velocityY;
     private final float SPEED = 50f;
     private final float GRAVITY = -600f;
     private final float PATROL_DISTANCE = 50f;
 
+    private float enemyDamageRed = .8f;
+    private float enemyDamageGreen = .3f;
+    private float enemyDamageBlue = .3f;
+
+    private ShaderProgram damageShader;
+
     public Rectangle bounds;
     private boolean runningRight = true;
     private final MainAssetsManager manager;
+
+    public boolean isDead = false;
+
+    public float deathTimer = 0;
+    public float DEATH_TIME = 2.5f;
 
     public Enemy(float startX, float startY, MainAssetsManager manager) {
         this.x = startX;
@@ -32,10 +44,20 @@ public class Enemy {
         this.currentState = State.ALIVE;
         this.bounds = new Rectangle(x, y, 30, 30);
         this.manager = manager;
+
+        damageShader = new ShaderProgram(
+            Gdx.files.internal("shaders/default.vsh"),
+            Gdx.files.internal("shaders/damage.fsh")
+        );
+        damageShader.pedantic = false;
     }
 
     public void update(float delta, TiledMapTileLayer layer) {
         if(currentState==State.DEAD) {
+            deathTimer += delta;
+            velocityY += GRAVITY * delta;
+            y += velocityY * delta;
+            this.bounds.setPosition(x, y);
             return;
         }
         if(runningRight==true){
@@ -99,11 +121,25 @@ public class Enemy {
             if((!runningRight&&!frame.isFlipX())|| (runningRight&&frame.isFlipX())){
                 frame.flip(true,false);
             }
+            batch.draw(frame, x, y);
         }
         else{
             frame = manager.image.spaceMobDead;
+            batch.setShader(damageShader);
+            damageShader.setUniformf("damage_color", enemyDamageRed, enemyDamageGreen, enemyDamageBlue);
+            if (!frame.isFlipY()) {
+                frame.flip(false,true);
+            }
+            if (deathTimer % .2f > .1f) {
+                batch.draw(frame, x, y);
+            }
+            batch.setShader(null);
         }
-        batch.draw(frame, x, y);
     }
 
+    public void dispose() {
+        if (damageShader != null) {
+            damageShader.dispose();
+        }
+    }
 }
