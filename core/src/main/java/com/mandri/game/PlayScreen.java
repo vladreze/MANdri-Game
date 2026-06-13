@@ -374,7 +374,7 @@ public class PlayScreen implements Screen {
             if (transitionAlpha >= 1f) {
                 transitionAlpha = 1f;
                 isFadingOut = false;
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new GameOverScreen(game));
                 return;
             }
         }

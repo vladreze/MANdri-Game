@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mandri.storage.UIManager;
+import com.mandri.ui.AnimationActions;
 import com.mandri.ui.ButtonActions;
 import com.mandri.ui.FontCreator;
 
@@ -24,10 +25,6 @@ public class GameOverScreen implements Screen {
 
     private Table heartTable;
     private Table gameOverTable;
-
-    private float stateTimer = 0f;
-    private boolean isHeartPart = true;
-    private final float HEART_DURATION = 1.5f;
 
     public GameOverScreen(Main game) {
         this.game = game;
@@ -51,11 +48,18 @@ public class GameOverScreen implements Screen {
         heartTable = new Table();
         heartTable.setFillParent(true);
 
-        Image emptyHeart = new Image(game.getManager().image.emptyHeart);
-        heartTable.add(emptyHeart).size(40, 40).row();
+        Image heart1 = new Image(game.getManager().image.emptyHeart);
+        Image heart2 = new Image(game.getManager().image.emptyHeart);
+        Image heart3 = new Image(game.getManager().image.emptyHeart);
+
+        heartTable.add(heart1).size(40, 40).padRight(10);
+        heartTable.add(heart2).size(40, 40).padRight(10);
+        heartTable.add(heart3).size(40, 40);
+        heartTable.getColor().a = 0f;
 
         gameOverTable = new Table();
         gameOverTable.setFillParent(true);
+        gameOverTable.getColor().a = 0f;
         gameOverTable.setVisible(false);
 
         Label gameOverLabel = new Label("GAME OVER", gameOverStyle);
@@ -75,10 +79,7 @@ public class GameOverScreen implements Screen {
         stage.addActor(heartTable);
         stage.addActor(gameOverTable);
 
-
-
-
-
+        AnimationActions.gameOverFade(heartTable, gameOverTable);
     }
 
     @Override
@@ -90,15 +91,6 @@ public class GameOverScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        if(isHeartPart){
-            stateTimer += delta;
-            if(stateTimer >= HEART_DURATION){
-                isHeartPart = false;
-                heartTable.setVisible(false);
-                gameOverTable.setVisible(true);
-            }
-        }
 
         stage.act(delta);
         stage.draw();
