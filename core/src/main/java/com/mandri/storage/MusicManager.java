@@ -20,6 +20,8 @@ public class MusicManager {
         manager.load("music/music-forest.mp3", Music.class);
         manager.load("music/music-space.mp3", Music.class);
 
+        manager.load("music/music-space-1.mp3", Music.class);
+
         manager.load("music/music-menu.mp3", Music.class);
 
         //sounds
