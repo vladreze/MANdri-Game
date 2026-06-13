@@ -346,6 +346,8 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
+        ShaderProgram currentShader = batch.getShader();
+        batch.setShader(null);
         jetpackParticleEffect.draw(batch);
         fallingParticleEffect.draw(batch);
         if (isInvulnerable) {
@@ -354,12 +356,14 @@ public class Player {
             if (invulnerableTimer % 0.2f > 0.1f) {
                 batch.draw(getFrame(), x, y);
             }
-            batch.setShader(null);
         } else {
+            batch.setShader(currentShader);
             batch.draw(getFrame(), x, y);
         }
+        batch.setShader(null);
         groundParticleEffect.draw(batch);
         damageParticleEffect.draw(batch);
+        batch.setShader(currentShader);
     }
 
     private TextureRegion getFrame() {
@@ -455,5 +459,9 @@ public class Player {
 
     public boolean isRunningRight() {
         return runningRight;
+    }
+
+    public void drawShadow(SpriteBatch batch, float offsetX, float offsetY) {
+        batch.draw(getFrame(), x + offsetX, y + offsetY);
     }
 }

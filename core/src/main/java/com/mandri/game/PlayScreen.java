@@ -19,6 +19,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -58,6 +59,7 @@ public class PlayScreen implements Screen {
     private float playerStartY = 105f;
 
     private ShaderProgram vignetteShader;
+    private ShaderProgram shadowShader;
 
     private int displayedLives = 3;
     private final float HEART_DELAY = .75f;
@@ -160,6 +162,18 @@ public class PlayScreen implements Screen {
 
             if (!vignetteShader.isCompiled()) {
                 Gdx.app.log("Shader Error", vignetteShader.getLog());
+                Gdx.app.exit();
+            }
+
+            shadowShader = new ShaderProgram(
+                Gdx.files.internal("shaders/default.vsh"),
+                Gdx.files.internal("shaders/shadow.fsh")
+            );
+
+            shadowShader.pedantic = false;
+
+            if  (!shadowShader.isCompiled()) {
+                Gdx.app.log("Shader Error", shadowShader.getLog());
                 Gdx.app.exit();
             }
 
@@ -427,13 +441,33 @@ public class PlayScreen implements Screen {
         batch.setShader(null);
         batch.begin();
 
-        if(rocket!=null){
+        float shadowOffset = 2.0f;
+        batch.setShader(shadowShader);
+
+        if (rocket != null) {
+            Matrix4 originalTransform = batch.getTransformMatrix().cpy();
+            batch.setTransformMatrix(originalTransform.cpy().translate(shadowOffset, -shadowOffset, 0));
+
+            rocket.draw(batch);
+
+            for (Item part : rocketParts) {
+                part.draw(batch, manager);
+            }
+            batch.setTransformMatrix(originalTransform);
+        }
+        for (Enemy e : enemies) {
+            e.drawShadow(batch, shadowOffset, -shadowOffset);
+        }
+        player.drawShadow(batch, shadowOffset, -shadowOffset);
+        batch.setShader(null);
+
+        if (rocket != null) {
             rocket.draw(batch);
         }
-        for(Item part:rocketParts){
+        for (Item part : rocketParts) {
             part.draw(batch, manager);
         }
-        for(Enemy  e:enemies){
+        for (Enemy e : enemies) {
             e.draw(batch);
         }
 

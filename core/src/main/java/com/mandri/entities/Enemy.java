@@ -142,4 +142,20 @@ public class Enemy {
             damageShader.dispose();
         }
     }
+
+    public void drawShadow(SpriteBatch batch, float offsetX, float offsetY) {
+        TextureRegion frame;
+        if (currentState == State.ALIVE) {
+            frame = manager.image.spaceMobAlive;
+            if ((!runningRight && !frame.isFlipX()) || (runningRight && frame.isFlipX())) {
+                frame.flip(true, false);
+            }
+        } else {
+            frame = manager.image.spaceMobDead;
+            if (!frame.isFlipY()) {
+                frame.flip(false, true);
+            }
+        }
+        batch.draw(frame, x + offsetX, y + offsetY);
+    }
 }
