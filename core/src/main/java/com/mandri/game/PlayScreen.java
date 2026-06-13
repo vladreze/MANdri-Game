@@ -43,8 +43,11 @@ public class PlayScreen implements Screen {
     private ShaderProgram vignetteShader;
 
     private int displayedLives = 3;
-    private final float HEART_DELAY = 0.5f;
+    private final float HEART_DELAY = .75f;
     private float heartTimer = 0f;
+
+    private float HEART_ANIMATION_DELAY = 5f;
+    private float heartAnimationTimer = 0f;
 
     private final float playerCameraWidth = 320f;
     private final float playerCameraHeight = 180f;
@@ -131,6 +134,22 @@ public class PlayScreen implements Screen {
             heartTimer = 0f;
         }
 
+        switch (player.liveCount) {
+            case 3: HEART_ANIMATION_DELAY = 5f; break;
+            case 2: HEART_ANIMATION_DELAY = 2.5f; break;
+            case 1: HEART_ANIMATION_DELAY = .7f; break;
+            default: HEART_ANIMATION_DELAY = 5f; break;
+        }
+
+        if (heartTimer == 0) {
+            heartAnimationTimer += delta;
+            if (heartAnimationTimer >= HEART_ANIMATION_DELAY) {
+                heartAnimationTimer = 0f;
+            }
+        } else {
+            heartAnimationTimer = 0f;
+        }
+
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
         MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
         player.update(delta, collisionLayer, objectLayer,2720f);
@@ -196,23 +215,29 @@ public class PlayScreen implements Screen {
         float startX = 20f;
         final float startY = hudCameraHeight-40f;
 
-        float heartWidth = 24f;
-        float heartHeight = 24f;
-
         float spacing = 6f;
 
         int maxLives = 3;
 
+        float baseSize = 24f;
+        float currentHeartSize = baseSize;
 
+        if (heartAnimationTimer < 0.2f) {
+            float popFactor = MathUtils.sin(heartAnimationTimer * (MathUtils.PI / 0.2f));
+            currentHeartSize = baseSize + (6f * popFactor);
+        }
 
         for (int i = 0; i < maxLives; i++) {
-            float currentX = startX + i * (heartWidth + spacing);
+            float currentX = startX + i * (baseSize + spacing);
+            float drawX = currentX - (currentHeartSize - baseSize) / 2f;
+            float drawY = startY - (currentHeartSize - baseSize) / 2f;
+
             if (i < player.liveCount) {
-                batch.draw(manager.image.fullHeart, currentX, startY, heartWidth, heartHeight);
+                batch.draw(manager.image.fullHeart, drawX, drawY, currentHeartSize, currentHeartSize);
             } else if (i < displayedLives) {
-                batch.draw(manager.image.poisonHeart, currentX, startY, heartWidth, heartHeight);
+                batch.draw(manager.image.poisonHeart, drawX, drawY, currentHeartSize, currentHeartSize);
             } else {
-                batch.draw(manager.image.emptyHeart, currentX, startY, heartWidth, heartHeight);
+                batch.draw(manager.image.emptyHeart, drawX, drawY, baseSize, baseSize);
             }
         }
 
