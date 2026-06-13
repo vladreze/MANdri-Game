@@ -135,16 +135,18 @@ public class PlayScreen implements Screen {
         MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
         player.update(delta, collisionLayer, objectLayer,2720f);
 
-        float cameraX = MathUtils.clamp(player.bounds.getX(), (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
-        float cameraY = MathUtils.clamp(player.bounds.getY(), (playerCameraHeight / 2), mapHeight);
+        float lookAheadOffset = player.isRunningRight() ? 45f : -45f;
+
+        float desiredX = player.bounds.getX() + lookAheadOffset;
+        float desiredY = player.bounds.getY();
+
+        float targetX = MathUtils.clamp(desiredX, (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
+        float targetY = MathUtils.clamp(desiredY, (playerCameraHeight / 2), mapHeight);
 
         float currentCameraX = camera.position.x;
-        float targetX = cameraX;
-
         float currentCameraY = camera.position.y;
-        float targetY = cameraY;
 
-        float alpha = 7.5f * delta;
+        float alpha = 3.5f * delta;
 
         float smoothCameraX = MathUtils.lerp(currentCameraX, targetX, alpha);
         float smoothCameraY = MathUtils.lerp(currentCameraY, targetY, alpha);

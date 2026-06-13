@@ -411,4 +411,8 @@ public class Player {
             fallingParticleEffect.dispose();
         }
     }
+
+    public boolean isRunningRight() {
+        return runningRight;
+    }
 }
