@@ -64,6 +64,27 @@ public class ImageManager {
     public Animation<TextureRegion> forestRun_R;
     public Animation<TextureRegion> forestRun_L;
 
+    //bat
+    public TextureRegion forestBatAlive;
+    public TextureRegion forestBatDead;
+    //tree
+    public TextureRegion forestTree;
+    //bee
+    public TextureRegion forestBeeAlive;
+    public TextureRegion forestBeeDead;
+    public TextureRegion forestBeeAngr;
+    //fox
+    public TextureRegion forestFox;
+    //mushroom
+    public TextureRegion forestMushroom;
+    //axe
+    public TextureRegion forestAxe;
+    //acorn
+    public TextureRegion forestAcorn;
+    //hive
+    public TextureRegion forestHive;
+
+
 //    cave
     public Animation<TextureRegion> caveIdle_F;
     public Animation<TextureRegion> caveIdle_R;
@@ -126,6 +147,19 @@ public class ImageManager {
         manager.load("forest/forest_right.png", Texture.class);
         manager.load("forest/forest_run_L.png", Texture.class);
         manager.load("forest/forest_run_R.png", Texture.class);
+        //Blocks
+        manager.load("forest/forest_acorn.png", Texture.class);
+        manager.load("forest/forest_axe.png", Texture.class);
+        manager.load("forest/forest_bat_alive.png", Texture.class);
+        manager.load("forest/forest_bat_dead.png", Texture.class);
+        manager.load("forest/forest_bee_angre.png", Texture.class);
+        manager.load("forest/forest_bee_dead.png", Texture.class);
+        manager.load("forest/forest_bee_norm.png", Texture.class);
+        manager.load("forest/forest_fox.png", Texture.class);
+        manager.load("forest/forest_hive.png", Texture.class);
+        manager.load("forest/forest_mushroom.png", Texture.class);
+        manager.load("forest/forest_tree.png", Texture.class);
+
 //        cave
     }
 
@@ -143,6 +177,18 @@ public class ImageManager {
         rocketPart3 = new TextureRegion(manager.get("space/space_Part_3.png", Texture.class));
         Texture tWhitePixel = manager.get("particles/particle.png", Texture.class);
         whitePixel = new TextureRegion(tWhitePixel);
+        //forest
+        forestAcorn = new TextureRegion(manager.get("forest/forest_acorn.png", Texture.class));
+        forestAxe = new TextureRegion(manager.get("forest/forest_axe.png", Texture.class));
+        forestBatAlive = new TextureRegion(manager.get("forest/forest_bat_alive.png", Texture.class));
+        forestBatDead = new TextureRegion(manager.get("forest/forest_bat_dead.png", Texture.class));
+        forestBeeAngr = new TextureRegion(manager.get("forest/forest_bee_angre.png", Texture.class));
+        forestBeeDead = new TextureRegion(manager.get("forest/forest_bee_dead.png", Texture.class));
+        forestBeeAlive = new TextureRegion(manager.get("forest/forest_bee_norm.png", Texture.class));
+        forestFox = new TextureRegion(manager.get("forest/forest_fox.png", Texture.class));
+        forestHive = new TextureRegion(manager.get("forest/forest_hive.png", Texture.class));
+        forestMushroom = new TextureRegion(manager.get("forest/forest_mushroom.png", Texture.class));
+        forestTree = new TextureRegion(manager.get("forest/forest_tree.png", Texture.class));
 
 //      hearts
         Texture tHearts = manager.get("level-ui/hearts.png", Texture.class);

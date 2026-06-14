@@ -142,7 +142,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
 
                     if (x != null && y != null) {
                         if ("Mob".equals(type) || "Mob".equals(className)) {
-                            enemies.add(new Enemy(x, y, manager));
+                            enemies.add(new Enemy(x, y, manager, type));
                         } else {
                             handleCustomSpawn(object, type, x, y);
                         }
