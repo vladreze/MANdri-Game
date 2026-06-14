@@ -7,7 +7,7 @@ import com.badlogic.gdx.audio.Sound;
 public class MusicManager {
     private final AssetManager manager;
     private Music music;
-    private float volume = 1.0f;
+    private float volume = 0.3f;
     private float soundEffectsvolume = 1.0f;
 
     public MusicManager(AssetManager manager){
@@ -36,7 +36,7 @@ public class MusicManager {
 
         manager.load("sounds/bee.mp3", Sound.class);
         manager.load("sounds/enemy-hurt.mp3", Sound.class);
-        manager.load("sounds/monster-punch-player.mp3", Sound.class);
+        manager.load("sounds/monster-punch-player2.mp3", Sound.class);
         manager.load("sounds/monster-walk.mp3", Sound.class);
 
         manager.load("sounds/spaceship.mp3", Sound.class);
@@ -131,7 +131,7 @@ public class MusicManager {
         manager.get("sounds/monster-walk.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playMonsterPunchSound(){
-        manager.get("sounds/monster-punch-player.mp3", Sound.class).play(soundEffectsvolume);
+        manager.get("sounds/monster-punch-player2.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playRocketBreakSound(){
         manager.get("sounds/rocket-break.mp3", Sound.class).play(soundEffectsvolume);

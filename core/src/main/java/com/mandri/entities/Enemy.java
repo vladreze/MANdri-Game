@@ -1,6 +1,7 @@
 package com.mandri.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -54,7 +55,7 @@ public class Enemy {
         damageShader.pedantic = false;
     }
 
-    public void update(float delta, TiledMapTileLayer layer) {
+    public void update(float delta, TiledMapTileLayer layer, OrthographicCamera camera) {
         if(currentState==State.DEAD) {
             deathTimer += delta;
             velocityY += GRAVITY * delta;
@@ -62,9 +63,12 @@ public class Enemy {
             this.bounds.setPosition(x, y);
             return;
         }
+        float camL = camera.position.x - (camera.viewportWidth/2);
+        float camR = camera.position.x + (camera.viewportWidth/2);
+        boolean onScreen = (x + bounds.width> camL && x <camR);
         walkTimer+=delta;
         if(walkTimer> 0.95f){
-            manager.music.playMonsterWalkSound();
+            if(onScreen) manager.music .playMonsterWalkSound();
             walkTimer = 0f;
         }
         if(runningRight==true){

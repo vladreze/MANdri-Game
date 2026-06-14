@@ -349,7 +349,7 @@ public class PlayScreen implements Screen {
                     continue;
                 }
 
-                e.update(delta, collisionLayer);
+                e.update(delta, collisionLayer, camera);
 
                 if (player.bounds.overlaps(e.bounds) && !e.isDead) {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > e.bounds.y) {
@@ -358,7 +358,6 @@ public class PlayScreen implements Screen {
                         e.isDead = true;
                         e.velocityY = player.JUMP_FORCE * 1.05f;
                         e.currentState = Enemy.State.DEAD;
-//                        manager.music.playEnemyHurtSound();
                         manager.music.playPunchSound();
                     }
                    else player.takeDamage("mob");
@@ -386,6 +385,7 @@ public class PlayScreen implements Screen {
                 mainInventoryTable.setVisible(isInventoryOpen);
                 hotbarTable.setVisible(!isInventoryOpen);
                 player.isInventoryOpen = isInventoryOpen;
+                manager.music.playGrabSound();
                 if (isInventoryOpen) {
                     updateInventoryUI();
                 }
