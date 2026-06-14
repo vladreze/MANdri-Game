@@ -20,6 +20,16 @@ public class InventoryLogic {
         return false;
     }
 
+    public boolean consumeItem(String itemName) {
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i] != null && slots[i].getName().equals(itemName)) {
+                slots[i] = null;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Item[] getSlots() {
         return slots;
     }

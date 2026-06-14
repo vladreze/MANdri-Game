@@ -90,6 +90,7 @@ public class PlayScreen implements Screen {
 
     private boolean isFadingIn = true;
     private boolean isFadingOut = false;
+    private boolean isRocketFadingOut = false;
 
     private boolean isPaused = false;
     private Table pauseTable;
@@ -371,18 +372,35 @@ public class PlayScreen implements Screen {
             MapLayer objectLayer = (MapLayer) map.getLayers().get("collisions");
             player.update(delta, collisionLayer, objectLayer, 2720f);
 
-            float lookAheadOffset = player.isRunningRight() ? 45f : -45f;
+            float desiredX;
+            float desiredY;
 
-            float desiredX = player.bounds.getX() + lookAheadOffset;
-            float desiredY = player.bounds.getY();
+            if (rocket != null && rocket.isFlying()) {
+                desiredX = rocket.x + rocket.width / 2f;
+                desiredY = rocket.y + rocket.height / 2f;
+            } else {
+                float lookAheadOffset = player.isRunningRight() ? 45f : -45f;
+
+                desiredX = player.bounds.getX() + lookAheadOffset;
+                desiredY = player.bounds.getY();
+            }
 
             float targetX = MathUtils.clamp(desiredX, (playerCameraWidth / 2), mapWidth - (playerCameraWidth / 2));
-            float targetY = MathUtils.clamp(desiredY, (playerCameraHeight / 2), mapHeight);
+
+            float targetY;
+            float alpha;
+
+            if (rocket != null && rocket.isFlying()) {
+                targetY = MathUtils.clamp(desiredY, (playerCameraHeight / 2), 10000f);
+                alpha = 4.5f * delta;
+                isRocketFadingOut = true;
+            } else {
+                targetY = MathUtils.clamp(desiredY, (playerCameraHeight / 2), mapHeight);
+                alpha = 3.5f * delta;
+            }
 
             float currentCameraX = camera.position.x;
             float currentCameraY = camera.position.y;
-
-            float alpha = 3.5f * delta;
 
             float smoothCameraX = MathUtils.lerp(currentCameraX, targetX, alpha);
             float smoothCameraY = MathUtils.lerp(currentCameraY, targetY, alpha);
@@ -469,6 +487,34 @@ public class PlayScreen implements Screen {
                 }
             }
 
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                if (rocket != null && player.bounds.overlaps(rocket.bounds)) {
+                    if (rocket.curState == Rocket.State.BROKEN) {
+                        boolean partConsumed = false;
+
+                        if (inventory.consumeItem("RocketPart1")) {
+                            partConsumed = true;
+                        } else if (inventory.consumeItem("RocketPart2")) {
+                            partConsumed = true;
+                        } else if (inventory.consumeItem("RocketPart3")) {
+                            partConsumed = true;
+                        }
+
+                        if (partConsumed) {
+                            rocket.insetPart();
+                            updateInventoryUI();
+                            manager.music.playBonusSound();
+                        }
+                    }
+
+                    else if (rocket.curState == Rocket.State.FIXED) {
+                        rocket.curState = Rocket.State.FLYING;
+                        manager.music.playRocketBreakSound();
+                        rocket.launchRocket();
+                    }
+                }
+            }
+
             camera.position.set(smoothCameraX, smoothCameraY, 0);
 
             if (player.isShaking()) {
@@ -507,7 +553,10 @@ public class PlayScreen implements Screen {
         batch.begin();
 
         float shadowOffset = 2.0f;
-        batch.setShader(shadowShader);
+
+        if (!rocket.isFlying()) {
+            batch.setShader(shadowShader);
+        } else batch.setShader(null);
 
         if (rocket != null) {
             Matrix4 originalTransform = batch.getTransformMatrix().cpy();
@@ -523,7 +572,11 @@ public class PlayScreen implements Screen {
         for (Enemy e : enemies) {
             e.drawShadow(batch, shadowOffset, -shadowOffset);
         }
-        player.drawShadow(batch, shadowOffset, -shadowOffset);
+
+        if (rocket == null || !rocket.isFlying()) {
+            player.drawShadow(batch, shadowOffset, -shadowOffset);
+        }
+
         batch.setShader(null);
 
         if (rocket != null) {
@@ -536,7 +589,10 @@ public class PlayScreen implements Screen {
             e.draw(batch);
         }
 
-        player.draw(batch);
+        if (rocket == null || !rocket.isFlying()) {
+            player.draw(batch);
+        }
+
         pickupEffect.update(delta);
         pickupEffect.draw(batch);
         batch.end();
@@ -595,7 +651,7 @@ public class PlayScreen implements Screen {
 
             String partName = "RocketPart" + (i + 1);
 
-            if (inventory.hasItem(partName)) {
+            if (inventory.hasItem(partName) || rocket.partsInserted > 0) {
                 batch.setColor(1f, 1f, 1f, 1f);
             } else {
                 batch.setColor(.3f, .3f, .3f, .8f);
@@ -643,7 +699,16 @@ public class PlayScreen implements Screen {
                 manager.music.playGameOverSound();  //game over sound
                 return;
             }
+        } else if (isRocketFadingOut) {
+            transitionAlpha += delta * .15f;
+            if  (transitionAlpha >= 1f) {
+                transitionAlpha = 1f;
+                isRocketFadingOut = false;
+                manager.getMusic().stopMusic();
+                game.setScreen(new MainMenuScreen(game));
+            }
         }
+
 
         if (transitionAlpha > 0) {
             Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
