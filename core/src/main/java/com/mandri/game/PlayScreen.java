@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -32,6 +33,7 @@ import com.mandri.ui.ButtonActions;
 import com.mandri.ui.FontCreator;
 import com.mandri.ui.PixelButton;
 import com.mandri.ui.PixelImageButton;
+import org.w3c.dom.Text;
 
 public class PlayScreen implements Screen {
     private SpriteBatch batch;
@@ -70,6 +72,11 @@ public class PlayScreen implements Screen {
     private float HEART_ANIMATION_DELAY = 5f;
     private float heartAnimationTimer = 0f;
 
+    private float PART_ANIMATION_DELAY = .2f;
+    private float partAnimationTimer = 0f;
+    private boolean isAnimating = false;
+    private int animatingPartIndex = -1;
+
     private final float playerCameraWidth = 320f;
     private final float playerCameraHeight = 180f;
 
@@ -95,6 +102,9 @@ public class PlayScreen implements Screen {
     private Table mainInventoryTable;
     private boolean isInventoryOpen = false;
     private TextureRegionDrawable emptySlotDrawable;
+    private TextureRegionDrawable selectedSlotDrawable;
+
+    private ParticleEffect pickupEffect;
 
     public PlayScreen(Main game, MainAssetsManager manager) {
         this.game = game;
@@ -242,6 +252,15 @@ public class PlayScreen implements Screen {
             emptySlotDrawable = new TextureRegionDrawable(new Texture(slotPixmap));
             slotPixmap.dispose();
 
+            Pixmap selectedPixmap = new Pixmap(40, 40, Pixmap.Format.RGBA8888);
+            selectedPixmap.setColor(0.1f, 0.1f, 0.1f, 0.6f);
+            selectedPixmap.fill();
+            selectedPixmap.setColor(1f, 1f, 0f, 1f);
+            selectedPixmap.drawRectangle(0, 0, 40, 40);
+            selectedPixmap.drawRectangle(1, 1, 38, 38);
+            selectedSlotDrawable = new TextureRegionDrawable(new Texture(selectedPixmap));
+            selectedPixmap.dispose();
+
             hotbarTable = new Table();
             hotbarTable.setFillParent(true);
             hotbarTable.bottom().padBottom(15);
@@ -283,6 +302,12 @@ public class PlayScreen implements Screen {
 
 
             isInitialized = true;
+
+            pickupEffect = new ParticleEffect();
+            pickupEffect.load(
+                Gdx.files.internal("assets/particles/collectItem.p"),
+                Gdx.files.internal("assets/particles/")
+            );
         }
 
         Gdx.input.setInputProcessor(hudStage);
@@ -331,6 +356,15 @@ public class PlayScreen implements Screen {
                 }
             } else {
                 heartAnimationTimer = 0f;
+            }
+
+            if (isAnimating) {
+                partAnimationTimer += delta;
+                if (partAnimationTimer > PART_ANIMATION_DELAY) {
+                    isAnimating = false;
+                    animatingPartIndex = -1;
+                    partAnimationTimer = 0f;
+                }
             }
 
             TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("ground");
@@ -382,12 +416,25 @@ public class PlayScreen implements Screen {
                 rocket.update(delta);
             }
 
-            for (int i = rocketParts.size - 1; i >= 0; i--) {
+            for (int i = 0; i < rocketParts.size; i++) {
                 Item part = rocketParts.get(i);
                 if (player.bounds.overlaps(part.bounds)) {
                     boolean added = inventory.addItem(part);
                     manager.music.playBigBonusSound();
                     if (added){
+                        pickupEffect.setPosition(part.bounds.x + part.bounds.width / 2, part.bounds.y + part.bounds.height / 2);
+                        pickupEffect.scaleEffect(.85f);
+                        pickupEffect.start();
+
+                        switch (part.getName()) {
+                            case "RocketPart1": animatingPartIndex = 0; break;
+                            case "RocketPart2": animatingPartIndex = 1; break;
+                            case "RocketPart3": animatingPartIndex = 2; break;
+                        }
+
+                        isAnimating = true;
+                        partAnimationTimer = 0f;
+
                         rocketParts.removeIndex(i);
                         updateInventoryUI();
                     }
@@ -404,6 +451,22 @@ public class PlayScreen implements Screen {
                     updateInventoryUI();
                 }
                 else isPaused = false;
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) { inventory.selectColumn(0); updateInventoryUI(); }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) { inventory.selectColumn(1); updateInventoryUI(); }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) { inventory.selectColumn(2); updateInventoryUI(); }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) { inventory.selectColumn(3); updateInventoryUI(); }
+
+            if (isInventoryOpen) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+                    inventory.nextRow();
+                    updateInventoryUI();
+                }
+                if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                    inventory.prevRow();
+                    updateInventoryUI();
+                }
             }
 
             camera.position.set(smoothCameraX, smoothCameraY, 0);
@@ -474,6 +537,8 @@ public class PlayScreen implements Screen {
         }
 
         player.draw(batch);
+        pickupEffect.update(delta);
+        pickupEffect.draw(batch);
         batch.end();
 
         batch.setProjectionMatrix(hudCamera.combined);
@@ -509,6 +574,41 @@ public class PlayScreen implements Screen {
             }
         }
 
+        float rocketPartsStartX = 500f;
+        float rocketPartSize = 24f;
+        float rocketPartSpacing = 6f;
+
+        float rocketPartsStartY = (hudCameraHeight - 40f) + rocketPartSize / 2;
+
+        for (int i = 0; i < TOTAL_PARTS; i++) {
+            float currentPartSize = rocketPartSize;
+
+            if (isAnimating && i == animatingPartIndex) {
+                float popFactor = MathUtils.sin(partAnimationTimer * (MathUtils.PI / PART_ANIMATION_DELAY));
+                currentPartSize = rocketPartSize + (14f * popFactor);
+            }
+
+            float currentX = rocketPartsStartX + i * (rocketPartSize + rocketPartSpacing);
+
+            float drawX = currentX - currentPartSize / 2f;
+            float drawY = rocketPartsStartY - currentPartSize / 2f;
+
+            String partName = "RocketPart" + (i + 1);
+
+            if (inventory.hasItem(partName)) {
+                batch.setColor(1f, 1f, 1f, 1f);
+            } else {
+                batch.setColor(.3f, .3f, .3f, .8f);
+            }
+
+            TextureRegion currentTexture = getTextureForItemByName(partName);
+
+            if (currentTexture != null) {
+                batch.draw(currentTexture, drawX, drawY, rocketPartSize, rocketPartSize);
+            }
+        }
+
+        batch.setColor(1f, 1f, 1f, 1f);
         batch.end();
 
         if (isInventoryOpen) {
@@ -582,15 +682,30 @@ public class PlayScreen implements Screen {
 
     private void updateInventoryUI() {
         Item[] items = inventory.getSlots();
+        int activeRow = inventory.getActiveRow();
+        int selectedCol = inventory.getSelectedCol();
+        int globalSelectedIndex = inventory.getGlobalSelectedIndex();
+
         for (int i = 0; i < 4; i++) {
+
             ImageButton button = (ImageButton) hotbarTable.getCells().get(i).getActor();
-            Item item = items[i];
+            int itemIndex = (activeRow * 4) + i;
+            Item item = items[itemIndex];
+
             if (item != null) {
                 TextureRegionDrawable drawable = new TextureRegionDrawable(getTextureForItem(item));
                 drawable.setMinWidth(32);
                 drawable.setMinHeight(32);
                 button.getStyle().imageUp = drawable;
-            } else button.getStyle().imageUp = emptySlotDrawable;
+            } else {
+                button.getStyle().imageUp = emptySlotDrawable;
+            }
+
+            if (i == selectedCol) {
+                button.getStyle().up =selectedSlotDrawable;
+            } else {
+                button.getStyle().up = emptySlotDrawable;
+            }
         }
         for (int i = 0; i < 16; i++) {
             ImageButton button = (ImageButton) mainInventoryTable.getCells().get(i).getActor();
@@ -602,6 +717,12 @@ public class PlayScreen implements Screen {
                 button.getStyle().imageUp = drawable;
             } else {
                 button.getStyle().imageUp = emptySlotDrawable;
+            }
+
+            if (i == globalSelectedIndex) {
+                button.getStyle().up = selectedSlotDrawable;
+            } else {
+                button.getStyle().up = emptySlotDrawable;
             }
         }
     }
@@ -617,6 +738,7 @@ public class PlayScreen implements Screen {
         bgTexture.dispose();
         if (dimBackground != null) dimBackground.dispose();
         if (pauseIcon != null) pauseIcon.dispose();
+        if (pickupEffect != null) pickupEffect.dispose();
     }
 
     public void pauseGame() {
@@ -633,6 +755,13 @@ public class PlayScreen implements Screen {
         if (item.getName().equals("RocketPart1")) return manager.image.rocketPart1;
         if (item.getName().equals("RocketPart2")) return manager.image.rocketPart2;
         if (item.getName().equals("RocketPart3")) return manager.image.rocketPart3;
+        return manager.image.whitePixel;
+    }
+
+    private TextureRegion getTextureForItemByName(String itemName) {
+        if (itemName.equals("RocketPart1")) return manager.image.rocketPart1;
+        if (itemName.equals("RocketPart2")) return manager.image.rocketPart2;
+        if (itemName.equals("RocketPart3")) return manager.image.rocketPart3;
         return manager.image.whitePixel;
     }
 }
