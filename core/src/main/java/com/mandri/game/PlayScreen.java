@@ -421,9 +421,8 @@ public class PlayScreen implements Screen {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > e.bounds.y) {
                         manager.music.playBonusSound();
                         player.bounce();
-                        e.isDead = true;
+                        e.die();
                         e.velocityY = player.JUMP_FORCE * 1.05f;
-                        e.currentState = Enemy.State.DEAD;
                         manager.music.playPunchSound();
                     }
                    else player.takeDamage("mob");

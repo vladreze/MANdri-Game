@@ -2,6 +2,7 @@ package com.mandri.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -39,6 +40,8 @@ public class Enemy {
 
     private float walkTimer = 0f;
 
+    private ParticleEffect deathEffect;
+
     public Enemy(float startX, float startY, MainAssetsManager manager) {
         this.x = startX;
         this.y = startY;
@@ -53,9 +56,20 @@ public class Enemy {
             Gdx.files.internal("shaders/damage.fsh")
         );
         damageShader.pedantic = false;
+
+        deathEffect = new ParticleEffect();
+
+        deathEffect.load(
+            Gdx.files.internal("particles/deathMobSpace.p"),
+            Gdx.files.internal("particles/")
+        );
+
+        deathEffect.setPosition(x + bounds.width / 2, y + bounds.height);
     }
 
     public void update(float delta, TiledMapTileLayer layer, OrthographicCamera camera) {
+        deathEffect.update(delta);
+
         if(currentState==State.DEAD) {
             deathTimer += delta;
             velocityY += GRAVITY * delta;
@@ -135,6 +149,7 @@ public class Enemy {
             batch.draw(frame, x, y);
         }
         else{
+            deathEffect.draw(batch);
             frame = manager.image.spaceMobDead;
             batch.setShader(damageShader);
             damageShader.setUniformf("damage_color", enemyDamageRed, enemyDamageGreen, enemyDamageBlue);
@@ -152,6 +167,9 @@ public class Enemy {
         if (damageShader != null) {
             damageShader.dispose();
         }
+        if (deathEffect != null) {
+            deathEffect.dispose();
+        }
     }
 
     public void drawShadow(SpriteBatch batch, float offsetX, float offsetY) {
@@ -168,5 +186,14 @@ public class Enemy {
             }
         }
         batch.draw(frame, x + offsetX, y + offsetY);
+    }
+
+    public void die() {
+        if (!isDead) {
+            isDead = true;
+            currentState = State.DEAD;
+            deathEffect.setPosition(x + bounds.width / 2, y + bounds.height / 2);
+            deathEffect.start();
+        }
     }
 }

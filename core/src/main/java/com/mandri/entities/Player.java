@@ -289,6 +289,7 @@ public class Player {
                             Float delayProp = object.getProperties().get("delay", Float.class);
                             float delay = (delayProp != null) ? delayProp : 2.0f;
                             activeBreakables.add(new ActiveBreakable(rectObject, delay));
+                            manager.music.playCrackingBlockSound();
                         }
                     }
                 }
@@ -306,8 +307,6 @@ public class Player {
                 tileLayer.setCell(tileX, tileY, null);
                 objectLayer.getObjects().remove(ab.object);
                 activeBreakables.removeIndex(i);
-
-                 manager.music.playCrackingBlockSound();
             }
         }
     }
@@ -414,7 +413,7 @@ public class Player {
             }
             switch (trapType) {
                 case "trap-thorn": {
-                    playerDamageRed = .5f;
+                    playerDamageRed = .7f;
                     playerDamageGreen = -.2f;
                     playerDamageBlue = -.2f;
                     manager.music.playThornBlockSound();
@@ -422,7 +421,7 @@ public class Player {
                 }
                 case "trap-poison": {
                     playerDamageRed = -.2f;
-                    playerDamageGreen = .5f;
+                    playerDamageGreen = .7f;
                     playerDamageBlue = -.2f;
                     manager.music.playSlimeBlockSound();
                     break;
