@@ -129,7 +129,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
             mapHeight = mapHeightInTiles * tilePixelHeight;
 
             renderer = new OrthogonalTiledMapRenderer(map);
-            player = new Player(playerStartX, playerStartY, manager);
+            player = new Player(playerStartX, playerStartY, manager, getLevelTheme());
             enemies = new Array<>();
 
             MapLayer spawnLayer = map.getLayers().get("spawns");
@@ -295,7 +295,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
                         manager.music.playBonusSound();
                         player.bounce();
                         e.die();
-                        e.velocityY = player.JUMP_FORCE * 1.05f;
+                        e.velocityY = player.JUMP_FORCE / 1.5f;
                         manager.music.playPunchSound();
                     } else {
                         player.takeDamage("mob");
@@ -552,6 +552,8 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
+
+    protected abstract String getLevelTheme();
 
     @Override
     public void dispose() {

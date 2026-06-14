@@ -185,6 +185,13 @@ public class SpaceScreen extends BaseLevelScreen {
     }
 
     @Override
+    protected String getLevelTheme() {
+        String mapName = getMapPath();
+        String[] parts = mapName.split("/");
+        return parts[parts.length - 1].substring(0, parts[parts.length - 1].indexOf("."));
+    }
+
+    @Override
     public void dispose() {
         super.dispose();
         if (pickupEffect != null) pickupEffect.dispose();

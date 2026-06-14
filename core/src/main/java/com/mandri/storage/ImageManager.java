@@ -115,6 +115,17 @@ public class ImageManager {
         manager.load("space/space_Part_2.png", Texture.class);
         manager.load("space/space_Part_3.png", Texture.class);
 //        forest
+        manager.load("forest/forest_fall_F.png", Texture.class);
+        manager.load("forest/forest_fall_L.png", Texture.class);
+        manager.load("forest/forest_fall_R.png", Texture.class);
+        manager.load("forest/forest_front.png", Texture.class);
+        manager.load("forest/forest_jump_F.png", Texture.class);
+        manager.load("forest/forest_jump_L.png", Texture.class);
+        manager.load("forest/forest_jump_R.png", Texture.class);
+        manager.load("forest/forest_left.png", Texture.class);
+        manager.load("forest/forest_right.png", Texture.class);
+        manager.load("forest/forest_run_L.png", Texture.class);
+        manager.load("forest/forest_run_R.png", Texture.class);
 //        cave
     }
 
@@ -164,6 +175,28 @@ public class ImageManager {
         spaceFall_F = new TextureRegion(manager.get("space/space_fall_F.png", Texture.class));
         spaceFall_R = new TextureRegion(manager.get("space/space_fall_R.png", Texture.class));
         spaceFall_L = new TextureRegion(manager.get("space/space_fall_L.png", Texture.class));
+
+        // run forest
+        Texture tForestRunR = manager.get("forest/forest_run_R.png", Texture.class);
+        TextureRegion[][] texForestRunR = TextureRegion.split(tForestRunR, 32, 32);
+        forestRun_R = new Animation<>(0.15f, texForestRunR[0]);
+
+        Texture tForestRunL = manager.get("forest/forest_run_L.png", Texture.class);
+        TextureRegion[][] texForestRunL = TextureRegion.split(tForestRunL, 32, 32);
+        forestRun_L = new Animation<>(0.15f, texForestRunL[0]);
+
+        // idle forest
+        Texture tForestIdle = manager.get("forest/forest_front.png", Texture.class);
+        TextureRegion[][] texForestIdle = TextureRegion.split(tForestIdle, 32, 32);
+        forestIdle_F = new Animation<>(0.24f, texForestIdle[0]);
+
+        // jump & fall forest
+        forestJump_F = new TextureRegion(manager.get("forest/forest_jump_F.png", Texture.class));
+        forestJump_R = new TextureRegion(manager.get("forest/forest_jump_R.png", Texture.class));
+        forestJump_L = new TextureRegion(manager.get("forest/forest_jump_L.png", Texture.class));
+        forestFall_F = new TextureRegion(manager.get("forest/forest_fall_F.png", Texture.class));
+        forestFall_R = new TextureRegion(manager.get("forest/forest_fall_R.png", Texture.class));
+        forestFall_L = new TextureRegion(manager.get("forest/forest_fall_L.png", Texture.class));
 
     }
     public Texture spaceBg(){

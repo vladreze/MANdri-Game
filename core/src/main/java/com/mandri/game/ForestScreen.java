@@ -8,7 +8,9 @@ public class ForestScreen extends BaseLevelScreen {
 
     public ForestScreen(Main game, MainAssetsManager manager) {
         super(game, manager);
-        // player.setJetpackEnabled(false);
+        if (player != null) {
+            player.isJetpackEnabled = false;
+        }
     }
 
     @Override
@@ -50,5 +52,12 @@ public class ForestScreen extends BaseLevelScreen {
     @Override
     protected void drawLevelSpecificUI() {
 
+    }
+
+    @Override
+    protected String getLevelTheme() {
+        String mapName = getMapPath();
+        String[] parts = mapName.split("/");
+        return parts[parts.length - 1].substring(0, parts[parts.length - 1].indexOf("."));
     }
 }
