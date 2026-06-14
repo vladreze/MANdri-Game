@@ -27,8 +27,9 @@ public class Player {
 
     private float velocityX, velocityY;
     private final float SPEED = 150f;
-    private final float GRAVITY = -600f;
-    public final float JUMP_FORCE = 300f;
+    public final float JUMP_FORCE = 400f;
+    private final float GRAVITY = -(JUMP_FORCE * 2);
+    private boolean wasSpacePressed = false;
 
     public int liveCount = 3;
     private boolean isInvulnerable = false;
@@ -40,6 +41,9 @@ public class Player {
     private boolean isGrounded = false;
     private boolean runningRight = true;
     private float stateTimer;
+
+    private int jumpCount = 0;
+    private final int MAX_JUMPS = 2;
 
     private float playerDamageRed;
     private float playerDamageGreen;
@@ -162,11 +166,16 @@ public class Player {
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
                 velocityY = JUMP_FORCE;
                 isGrounded = false;
+                jumpCount++;
 
                 jetpackParticleEffect.start();
 
                 manager.music.playJumpSound();
             }
+        }
+
+        if (wasSpacePressed && !Gdx.input.isKeyPressed(Input.Keys.SPACE) && velocityY > 0) {
+            velocityY *= 0.75f;
         }
 
         float oldX = x;
@@ -197,6 +206,7 @@ public class Player {
                 }
                 jetpackParticleEffect.allowCompletion();
                 isGrounded = true;
+                jumpCount = 0;
             }
 
             y = oldY;
@@ -210,6 +220,7 @@ public class Player {
         jetpackParticleEffect.update(delta);
         damageParticleEffect.update(delta);
         fallingParticleEffect.update(delta);
+        wasSpacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
         updateState(delta);
     }
 
