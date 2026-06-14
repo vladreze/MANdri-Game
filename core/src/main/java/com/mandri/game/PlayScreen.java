@@ -144,7 +144,7 @@ public class PlayScreen implements Screen {
             mapHeight = mapHeightInTiles * tilePixelHeight;
 
             renderer = new OrthogonalTiledMapRenderer(map);
-            player = new Player(playerStartX, playerStartY, manager);
+//            player = new Player(playerStartX, playerStartY, manage);
             enemies = new Array<Enemy>();
             rocketParts = new Array<Item>();
             MapLayer spawnLayer = map.getLayers().get("spawns");
@@ -448,9 +448,8 @@ public class PlayScreen implements Screen {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > e.bounds.y) {
                         manager.music.playBonusSound();
                         player.bounce();
-                        e.isDead = true;
+                        e.die();
                         e.velocityY = player.JUMP_FORCE * 1.05f;
-                        e.currentState = Enemy.State.DEAD;
                         manager.music.playPunchSound();
                     }
                    else player.takeDamage("mob");

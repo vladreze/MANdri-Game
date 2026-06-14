@@ -1,5 +1,6 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -27,10 +28,13 @@ public class Player {
 
     private float velocityX, velocityY;
     private final float SPEED = 150f;
-    private final float GRAVITY = -600f;
-    public final float JUMP_FORCE = 300f;
+    public final float JUMP_FORCE = 400f;
+    private final float GRAVITY = -(JUMP_FORCE * 2);
+    private boolean wasSpacePressed = false;
 
     public int liveCount = 3;
+    public boolean isJetpackEnabled = true;
+
     private boolean isInvulnerable = false;
     public boolean isInventoryOpen = false;
     private float invulnerableTimer = 0;
@@ -40,6 +44,9 @@ public class Player {
     private boolean isGrounded = false;
     private boolean runningRight = true;
     private float stateTimer;
+
+    private int jumpCount = 0;
+    private final int MAX_JUMPS = 2;
 
     private float playerDamageRed;
     private float playerDamageGreen;
@@ -57,6 +64,10 @@ public class Player {
 
     private Array<ActiveBreakable> activeBreakables = new Array<>();
 
+    private TextureRegion jumpF, jumpR, jumpL;
+    private TextureRegion fallF, fallR, fallL;
+    private Animation<TextureRegion> runR, runL, idleF;
+
     private class ActiveBreakable {
         RectangleMapObject object;
         float timer;
@@ -67,7 +78,7 @@ public class Player {
         }
     }
 
-    public Player(float startX, float startY, MainAssetsManager manager) {
+    public Player(float startX, float startY, MainAssetsManager manager, String theme) {
         this.x = startX;
         this.y = startY;
         this.spawnX = startX;
@@ -78,6 +89,37 @@ public class Player {
         this.stepTimer = 0;
         this.bounds = new Rectangle(x, y, 30, 30);
         this.manager = manager;
+
+        switch (theme) {
+            case "forest":
+                jumpF = manager.image.forestJump_F;
+                jumpR = manager.image.forestJump_R;
+                jumpL = manager.image.forestJump_L;
+                fallF = manager.image.forestFall_F;
+                fallR = manager.image.forestFall_R;
+                fallL = manager.image.forestFall_L;
+                runR  = manager.image.forestRun_R;
+                runL  = manager.image.forestRun_L;
+                idleF = manager.image.forestIdle_F;
+
+                isJetpackEnabled = false;
+                break;
+            case "cave":
+                isJetpackEnabled = false;
+                break;
+            default:
+                jumpF = manager.image.spaceJump_F;
+                jumpR = manager.image.spaceJump_R;
+                jumpL = manager.image.spaceJump_L;
+                fallF = manager.image.spaceFall_F;
+                fallR = manager.image.spaceFall_R;
+                fallL = manager.image.spaceFall_L;
+                runR  = manager.image.spaceRun_R;
+                runL  = manager.image.spaceRun_L;
+                idleF = manager.image.spaceIdle_F;
+
+                break;
+        }
 
         damageShader = new ShaderProgram(
             Gdx.files.internal("shaders/default.vsh"),
@@ -90,21 +132,24 @@ public class Player {
         }
 
         groundParticleEffect = new ParticleEffect();
-        jetpackParticleEffect = new ParticleEffect();
         damageParticleEffect = new ParticleEffect();
         fallingParticleEffect = new ParticleEffect();
+
+        if (isJetpackEnabled) {
+            jetpackParticleEffect = new ParticleEffect();
+
+            jetpackParticleEffect.load(
+                Gdx.files.internal("assets/particles/jetpack.p"),
+                Gdx.files.internal("assets/particles/")
+            );
+            jetpackParticleEffect.scaleEffect(.85f);
+        }
 
         groundParticleEffect.load(
             Gdx.files.internal("assets/particles/ground.p"),
             Gdx.files.internal("assets/particles/")
         );
         groundParticleEffect.scaleEffect(1f);
-
-        jetpackParticleEffect.load(
-            Gdx.files.internal("assets/particles/jetpack.p"),
-            Gdx.files.internal("assets/particles/")
-        );
-        jetpackParticleEffect.scaleEffect(.85f);
 
         damageParticleEffect.load(
             Gdx.files.internal("assets/particles/damage.p"),
@@ -141,7 +186,10 @@ public class Player {
         }
 
         float jetpackOffsetX = runningRight ? 10f : 20f;
-        jetpackParticleEffect.setPosition(x + jetpackOffsetX, y + 12);
+
+        if (isJetpackEnabled) {
+            jetpackParticleEffect.setPosition(x + jetpackOffsetX, y + 12);
+        }
 
         groundParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
         damageParticleEffect.setPosition(x + bounds.width / 2, y + bounds.height / 2);
@@ -162,11 +210,18 @@ public class Player {
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isGrounded) {
                 velocityY = JUMP_FORCE;
                 isGrounded = false;
+                jumpCount++;
 
-                jetpackParticleEffect.start();
+                if (isJetpackEnabled) {
+                    jetpackParticleEffect.start();
+                }
 
                 manager.music.playJumpSound();
             }
+        }
+
+        if (wasSpacePressed && !Gdx.input.isKeyPressed(Input.Keys.SPACE) && velocityY > 0) {
+            velocityY *= 0.75f;
         }
 
         float oldX = x;
@@ -195,8 +250,13 @@ public class Player {
                     groundParticleEffect.reset();
                     manager.music.playLandSound();
                 }
-                jetpackParticleEffect.allowCompletion();
+
+                if (isJetpackEnabled) {
+                    jetpackParticleEffect.allowCompletion();
+                }
+
                 isGrounded = true;
+                jumpCount = 0;
             }
 
             y = oldY;
@@ -207,9 +267,14 @@ public class Player {
         }
 
         groundParticleEffect.update(delta);
-        jetpackParticleEffect.update(delta);
+
+        if (isJetpackEnabled) {
+            jetpackParticleEffect.update(delta);
+        }
+
         damageParticleEffect.update(delta);
         fallingParticleEffect.update(delta);
+        wasSpacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
         updateState(delta);
     }
 
@@ -289,6 +354,7 @@ public class Player {
                             Float delayProp = object.getProperties().get("delay", Float.class);
                             float delay = (delayProp != null) ? delayProp : 2.0f;
                             activeBreakables.add(new ActiveBreakable(rectObject, delay));
+                            manager.music.playCrackingBlockSound();
                         }
                     }
                 }
@@ -306,8 +372,6 @@ public class Player {
                 tileLayer.setCell(tileX, tileY, null);
                 objectLayer.getObjects().remove(ab.object);
                 activeBreakables.removeIndex(i);
-
-                 manager.music.playCrackingBlockSound();
             }
         }
     }
@@ -333,7 +397,9 @@ public class Player {
 
         if (currentState == State.FALLING && previousState != State.FALLING) {
             fallingParticleEffect.start();
-            jetpackParticleEffect.allowCompletion();
+            if (isJetpackEnabled) {
+                jetpackParticleEffect.allowCompletion();
+            }
         }
         if (previousState == State.FALLING && currentState != State.FALLING) {
             fallingParticleEffect.allowCompletion();
@@ -349,7 +415,9 @@ public class Player {
     public void draw(SpriteBatch batch) {
         ShaderProgram currentShader = batch.getShader();
         batch.setShader(null);
-        jetpackParticleEffect.draw(batch);
+        if (isJetpackEnabled) {
+            jetpackParticleEffect.draw(batch);
+        }
         fallingParticleEffect.draw(batch);
         if (isInvulnerable) {
             batch.setShader(damageShader);
@@ -372,20 +440,19 @@ public class Player {
 
         switch (currentState) {
             case JUMPING:
-                if(velocityX == 0) region = manager.image.spaceJump_F;
-                else region = runningRight ? manager.image.spaceJump_R : manager.image.spaceJump_L;
+                if (velocityX == 0) region = jumpF;
+                else region = runningRight ? jumpR : jumpL;
                 break;
             case FALLING:
-                if(velocityX == 0) region = manager.image.spaceFall_F;
-                else region = runningRight ? manager.image.spaceFall_R : manager.image.spaceFall_L;
+                if (velocityX == 0) region = fallF;
+                else region = runningRight ? fallR : fallL;
                 break;
             case RUNNING:
-                region = runningRight ? manager.image.spaceRun_R.getKeyFrame(stateTimer, true)
-                    : manager.image.spaceRun_L.getKeyFrame(stateTimer, true);
+                region = runningRight ? runR.getKeyFrame(stateTimer, true) : runL.getKeyFrame(stateTimer, true);
                 break;
             case STANDING:
             default:
-                region = manager.image.spaceIdle_F.getKeyFrame(stateTimer, true);
+                region = idleF.getKeyFrame(stateTimer, true);
                 break;
         }
         return region;
@@ -414,7 +481,7 @@ public class Player {
             }
             switch (trapType) {
                 case "trap-thorn": {
-                    playerDamageRed = .5f;
+                    playerDamageRed = .7f;
                     playerDamageGreen = -.2f;
                     playerDamageBlue = -.2f;
                     manager.music.playThornBlockSound();
@@ -422,7 +489,7 @@ public class Player {
                 }
                 case "trap-poison": {
                     playerDamageRed = -.2f;
-                    playerDamageGreen = .5f;
+                    playerDamageGreen = .7f;
                     playerDamageBlue = -.2f;
                     manager.music.playSlimeBlockSound();
                     break;
