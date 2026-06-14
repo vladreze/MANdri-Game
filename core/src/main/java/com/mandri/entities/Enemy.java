@@ -42,7 +42,7 @@ public class Enemy {
         this.spawnX = startX;
         this.spawnY = startY;
         this.currentState = State.ALIVE;
-        this.bounds = new Rectangle(x, y, 30, 30);
+        this.bounds = new Rectangle(x, y, 15, 15);
         this.manager = manager;
 
         damageShader = new ShaderProgram(
@@ -141,5 +141,21 @@ public class Enemy {
         if (damageShader != null) {
             damageShader.dispose();
         }
+    }
+
+    public void drawShadow(SpriteBatch batch, float offsetX, float offsetY) {
+        TextureRegion frame;
+        if (currentState == State.ALIVE) {
+            frame = manager.image.spaceMobAlive;
+            if ((!runningRight && !frame.isFlipX()) || (runningRight && frame.isFlipX())) {
+                frame.flip(true, false);
+            }
+        } else {
+            frame = manager.image.spaceMobDead;
+            if (!frame.isFlipY()) {
+                frame.flip(false, true);
+            }
+        }
+        batch.draw(frame, x + offsetX, y + offsetY);
     }
 }

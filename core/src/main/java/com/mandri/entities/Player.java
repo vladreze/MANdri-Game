@@ -32,6 +32,7 @@ public class Player {
 
     public int liveCount = 3;
     private boolean isInvulnerable = false;
+    public boolean isInventoryOpen = false;
     private float invulnerableTimer = 0;
     private final float INVINCIBILITY_TIME = 1.5f;
 
@@ -148,7 +149,7 @@ public class Player {
         fallingParticleEffect.setPosition((x + (bounds.width / 2)) - 6f, y);
 
         velocityX = 0;
-        if (!isDead()) {
+        if (!isDead() && !isInventoryOpen) {
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 velocityX = -SPEED;
                 runningRight = false;
@@ -276,10 +277,12 @@ public class Player {
 
                 if ("Breakable".equals(type) && this.bounds.overlaps(adjustedRect)) {
                     boolean alreadyActive = false;
-                    for (ActiveBreakable ab : activeBreakables) {
-                        if (ab.object == rectObject) {
-                            alreadyActive = true;
-                            break;
+                    if (this.currentState == State.FALLING && this.bounds.y > adjustedRect.y) {
+                        for (ActiveBreakable ab : activeBreakables) {
+                            if (ab.object == rectObject) {
+                                alreadyActive = true;
+                                break;
+                            }
                         }
                     }
                     if (!alreadyActive) {
@@ -343,6 +346,8 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
+        ShaderProgram currentShader = batch.getShader();
+        batch.setShader(null);
         jetpackParticleEffect.draw(batch);
         fallingParticleEffect.draw(batch);
         if (isInvulnerable) {
@@ -351,12 +356,14 @@ public class Player {
             if (invulnerableTimer % 0.2f > 0.1f) {
                 batch.draw(getFrame(), x, y);
             }
-            batch.setShader(null);
         } else {
+            batch.setShader(currentShader);
             batch.draw(getFrame(), x, y);
         }
+        batch.setShader(null);
         groundParticleEffect.draw(batch);
         damageParticleEffect.draw(batch);
+        batch.setShader(currentShader);
     }
 
     private TextureRegion getFrame() {
@@ -387,7 +394,6 @@ public class Player {
         velocityY = JUMP_FORCE * 0.8f;
         currentState = State.JUMPING;
         isGrounded = false;
-        jetpackParticleEffect.reset();
     }
 
     public void takeDamage(String trapType) {
@@ -453,5 +459,9 @@ public class Player {
 
     public boolean isRunningRight() {
         return runningRight;
+    }
+
+    public void drawShadow(SpriteBatch batch, float offsetX, float offsetY) {
+        batch.draw(getFrame(), x + offsetX, y + offsetY);
     }
 }
