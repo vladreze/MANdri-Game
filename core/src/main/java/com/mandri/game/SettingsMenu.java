@@ -101,8 +101,6 @@ public class SettingsMenu implements Screen {
         stage.addActor(volumeSlider);
         stage.addActor(soundEffectsvolumeLabel);
         stage.addActor(soundEffectsvolumeSlider);
-
-
     }
 
     @Override

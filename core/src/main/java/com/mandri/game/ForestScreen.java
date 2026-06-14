@@ -1,5 +1,6 @@
 package com.mandri.game;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.mandri.storage.MainAssetsManager;
@@ -59,5 +60,10 @@ public class ForestScreen extends BaseLevelScreen {
         String mapName = getMapPath();
         String[] parts = mapName.split("/");
         return parts[parts.length - 1].substring(0, parts[parts.length - 1].indexOf("."));
+    }
+
+    @Override
+    protected Screen getRestartScreen() {
+        return new ForestScreen(game, manager);
     }
 }

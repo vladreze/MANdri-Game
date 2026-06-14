@@ -9,62 +9,66 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mandri.storage.UIManager;
 import com.mandri.ui.ButtonActions;
 import com.mandri.ui.FontCreator;
-import com.mandri.ui.PixelButton;
 
+public class ConfirmationExitFromGameScreen implements Screen {
 
-public class MainMenuScreen implements Screen {
     private Main game;
     private Stage stage;
     private OrthographicCamera camera;
     private FitViewport viewport;
 
-    public MainMenuScreen(Main game) {
+
+    public ConfirmationExitFromGameScreen(Main game) {
         this.game = game;
 
         camera = new OrthographicCamera();
-        viewport = new FitViewport(320, 180, camera);
+        viewport = new FitViewport(320,180, camera);
 
         stage = new Stage(viewport);
-
         Skin skin = UIManager.getInstance().getSkin();
 
         Table table = new Table();
         table.setFillParent(true);
+        table.center();
 
-        BitmapFont fontForMainLabel = FontCreator.generateTextFont(28, 1f);
-        Label.LabelStyle labelMainTextlStyle = new Label.LabelStyle();
-        labelMainTextlStyle.font = fontForMainLabel;
+        BitmapFont fontExitText = FontCreator.generateTextFont(18, 1f);
+        Label.LabelStyle exitStyle = new Label.LabelStyle();
+        exitStyle.font = fontExitText;
 
-        BitmapFont fontForButtonsText = FontCreator.generateTextFont(16, 1f);
+        BitmapFont fontButtons = FontCreator.generateTextFont(20, 1f);
+        Label.LabelStyle buttonStyle = new Label.LabelStyle();
+        buttonStyle.font = fontButtons;
 
-        Label titleLabel = new Label("MANDRi", labelMainTextlStyle);
-        titleLabel.setFontScale(1.5f);
+        Label exitLabel = new Label("ARE YOU SURE\n YOU WANT TO EXIT THIS GAME?", exitStyle);
+        exitLabel.setAlignment(Align.center);
 
-        PixelButton playButton = new PixelButton("START GAME", skin, fontForButtonsText);
-        ButtonActions.playGame(playButton, game);
 
-        PixelButton settingsButton = new PixelButton("SETTINGS", skin, fontForButtonsText);
-        ButtonActions.openSettings(settingsButton , game, this);
+        Label yesLabel = new Label("YES", buttonStyle );
+        Label noLabel = new Label("NO", buttonStyle);
 
-        PixelButton exitButton = new PixelButton("EXIT", skin, fontForButtonsText);
-        ButtonActions.exitGameConfirmaiton(exitButton, game);
+        ButtonActions.openMainMenu(noLabel, game);
+        ButtonActions.exitGame(yesLabel);
 
-        table.add(titleLabel).padBottom(15).row();
-        table.add(playButton).width(120).padBottom(10).row();
-        table.add(settingsButton).width(120).padBottom(10).row();
-        table.add(exitButton).width(120);
+        ButtonActions.addHover(yesLabel);
+        ButtonActions.addHover(noLabel);
+
+        table.add(exitLabel).colspan(2).padBottom(30).row();
+        table.add(yesLabel).padRight(40);
+        table.add(noLabel);
 
         stage.addActor(table);
+
+
     }
 
     @Override
-    public void show(){
+    public void show() {
         Gdx.input.setInputProcessor(stage);
-        game.getManager().getMusic().playMenuMusic();
     }
 
     @Override
@@ -74,7 +78,6 @@ public class MainMenuScreen implements Screen {
 
         stage.act(delta);
         stage.draw();
-
     }
 
     @Override
@@ -95,7 +98,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void hide() {
-//        Gdx.input.setInputProcessor(null);
+
     }
 
     @Override

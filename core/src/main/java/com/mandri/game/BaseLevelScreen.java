@@ -150,6 +150,8 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
                 }
             }
 
+            manager.getMusic().setVolume(0f);
+            manager.music.playLevelMusic(getLevelMusicIndex());
             manager.music.playLevelMusic(getLevelMusicIndex());
             initShaders();
             initUI();
@@ -469,28 +471,40 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
             manager.music.playHurtSound(3);
             isFadingOut = true;
             manager.getMusic().stopMusic();
-            manager.music.stopMusic();
         }
 
         if (isFadingIn) {
             transitionAlpha -= delta * .5f;
-            if (transitionAlpha <= 0) { transitionAlpha = 0; isFadingIn = false; }
+            float currentVol = manager.getMusic().getVolume();
+
+            if (currentVol < 1f) {
+                manager.getMusic().setVolume(Math.min(1f, currentVol + 0.35f * delta));
+            }
+
+            if (transitionAlpha <= 0) {
+                transitionAlpha = 0;
+                isFadingIn = false;
+            }
         } else if (isFadingOut) {
             transitionAlpha += delta * .5f;
             if (transitionAlpha >= 1f) {
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(getRestartScreen());
                 manager.music.playGameOverSound();
                 return;
             }
         } else if (isLevelFinished) {
             transitionAlpha += delta * .15f;
+            levelFinishTimer += delta;
+            float currentVol = manager.getMusic().getVolume();
+
+            if (currentVol > 0f) {
+                manager.getMusic().setVolume(Math.max(0f, currentVol - 0.1f * delta));
+            }
+
             if (transitionAlpha >= 1f) {
                 transitionAlpha = 1f;
-                manager.getMusic().stopMusic();
-
-                levelFinishTimer += delta;
-
                 if (levelFinishTimer >= 3f) {
+                    manager.getMusic().stopMusic();
                     game.setScreen(new ForestScreen(game, manager));
                 }
             }
@@ -554,6 +568,8 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     @Override public void hide() {}
 
     protected abstract String getLevelTheme();
+
+    protected abstract Screen getRestartScreen();
 
     @Override
     public void dispose() {
