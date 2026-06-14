@@ -80,10 +80,14 @@ public class CutsceneScreen implements Screen {
         };
 
         storyText = new String[]{
-          "[System]:Warning! An unknown object is approaching the ship at high speed.\n Collision is imminent. Warning!...",
-            "[]",
-            "",
-            ""
+          "[System]:Warning! An unknown object is approaching the ship at high speed.\n Collision is imminent. Warni...",
+            "[You]: Aaah...What happened?\n Where am I?",
+            "[You]:Oh no, my spaceship broke down! \n I need to find the parts that fell off.",
+            "And so my journey began...",
+            //2
+            "[You]:Finally I'm flying home...",
+            //3
+            "[You]:Damn, I've fallen somewhere again. \n Well, let's see where this road leads..."
         };
 
     }
