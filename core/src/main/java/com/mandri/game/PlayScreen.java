@@ -139,7 +139,7 @@ public class PlayScreen implements Screen {
             mapHeight = mapHeightInTiles * tilePixelHeight;
 
             renderer = new OrthogonalTiledMapRenderer(map);
-            player = new Player(playerStartX, playerStartY, manager);
+//            player = new Player(playerStartX, playerStartY, manage);
             enemies = new Array<Enemy>();
             rocketParts = new Array<Item>();
             MapLayer spawnLayer = map.getLayers().get("spawns");
