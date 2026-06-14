@@ -116,6 +116,27 @@ public class ImageManager {
         manager.load("space/space_Part_3.png", Texture.class);
 //        forest
 //        cave
+
+//        CUTSCENE
+        manager.load("cutscenes/cutscene1-1.png", Texture.class);
+        manager.load("cutscenes/cutscene1-2.png", Texture.class);
+        manager.load("cutscenes/cutscene1-3.png", Texture.class);
+        manager.load("cutscenes/cutscene1-9.png", Texture.class);
+        manager.load("cutscenes/cutscene1-10.png", Texture.class);
+        manager.load("cutscenes/cutscene1-11.png", Texture.class);
+
+//        manager.load("cutscenes/cutscene2-1.png", Texture.class);
+
+        manager.load("cutscenes/c1.png", Texture.class);
+        manager.load("cutscenes/c1.1.png", Texture.class);
+        manager.load("cutscenes/c2.png", Texture.class);
+        manager.load("cutscenes/c2.1.png", Texture.class);
+        manager.load("cutscenes/c3.png", Texture.class);
+        manager.load("cutscenes/c3.1.png", Texture.class);
+        manager.load("cutscenes/c3.2.png", Texture.class);
+        manager.load("cutscenes/c3.3.png", Texture.class);
+        manager.load("cutscenes/c3.4.png", Texture.class);
+        manager.load("cutscenes/c-black.png", Texture.class);
     }
 
     public void initAnimations(){
@@ -168,6 +189,52 @@ public class ImageManager {
     }
     public Texture spaceBg(){
         return  manager.get("space/space-bg.png", Texture.class);
+    }
+
+    public Texture cutscene1(int frameNum){
+        Texture texture =  manager.get("cutscenes/cutscene1-1.png", Texture.class);
+        switch (frameNum){
+            case 1: texture = manager.get("cutscenes/cutscene1-1.png", Texture.class);
+            break;
+            case 2: texture = manager.get("cutscenes/cutscene1-2.png", Texture.class);
+                break;
+            case 3: texture = manager.get("cutscenes/cutscene1-3.png", Texture.class);
+                break;
+            case 9: texture = manager.get("cutscenes/cutscene1-9.png", Texture.class);
+                break;
+            case 10: texture = manager.get("cutscenes/cutscene1-10.png", Texture.class);
+                break;
+            case 11: texture = manager.get("cutscenes/cutscene1-11.png", Texture.class);
+                break;
+        }
+        return texture;
+    }
+
+    public Texture cutscene2(int frameNum){
+        Texture texture =  manager.get("cutscenes/c1.1.png", Texture.class);
+        switch (frameNum){
+            case 1: texture = manager.get("cutscenes/c1.png", Texture.class);
+                break;
+            case 2: texture = manager.get("cutscenes/c1.1.png", Texture.class);
+                break;
+            case 3: texture = manager.get("cutscenes/c2.png", Texture.class);
+                break;
+            case 4: texture = manager.get("cutscenes/c2.1.png", Texture.class);
+                break;
+            case 5: texture = manager.get("cutscenes/c3.png", Texture.class);
+                break;
+            case 6: texture = manager.get("cutscenes/c3.1.png", Texture.class);
+                break;
+            case 7: texture = manager.get("cutscenes/c3.2.png", Texture.class);
+                break;
+            case 8: texture = manager.get("cutscenes/c3.3.png", Texture.class);
+                break;
+            case 9: texture = manager.get("cutscenes/c3.4.png", Texture.class);
+                break;
+            case 10: texture = manager.get("cutscenes/c-black.png", Texture.class);
+                break;
+        }
+        return texture;
     }
 
     public void disposeImages(){
