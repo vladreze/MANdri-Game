@@ -46,12 +46,12 @@ public class MusicManager {
         manager.load("sounds/bonus-big.mp3", Sound.class);
         manager.load("sounds/game-over.mp3", Sound.class);
 
-        manager.load("sounds/slime-block.mp3", Sound.class);
+        manager.load("sounds/acid-block.mp3", Sound.class);
         manager.load("sounds/cracking-block.mp3", Sound.class);
         manager.load("sounds/thorn-block.mp3", Sound.class);
 
 //        manager.load("sounds/text-type(long).mp3", Sound.class);
-//        manager.load("sounds/text-type.mp3", Sound.class);
+        manager.load("sounds/text-type.mp3", Sound.class);
 
 
     }
@@ -119,7 +119,7 @@ public class MusicManager {
         manager.get("sounds/punch-monster.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playSlimeBlockSound(){
-        manager.get("sounds/slime-block.mp3", Sound.class).play(soundEffectsvolume);
+        manager.get("sounds/acid-block.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playCrackingBlockSound(){
         manager.get("sounds/cracking-block.mp3", Sound.class).play(soundEffectsvolume);
@@ -137,7 +137,7 @@ public class MusicManager {
         manager.get("sounds/rocket-break.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playTypeSound(){
-        manager.get("sounds/text-type(long).mp3", Sound.class).play(soundEffectsvolume);
+        manager.get("sounds/text-type.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playBeeSound(){
         manager.get("sounds/bee.mp3", Sound.class).play(soundEffectsvolume);
