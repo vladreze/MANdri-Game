@@ -29,9 +29,11 @@
 </data>
  </layer>
  <objectgroup id="3" name="spawns">
-  <object id="142" type="RocketPart3" gid="53" x="2237.33" y="68.8333" width="20" height="20"/>
-  <object id="144" type="RocketPart2" gid="34" x="1551" y="88" width="20" height="20"/>
+<!--   <object id="142" type="RocketPart3" gid="53" x="2237.33" y="68.8333" width="20" height="20"/> -->
+<!--   <object id="144" type="RocketPart2" gid="34" x="1551" y="88" width="20" height="20"/> -->
   <object id="146" type="RocketPart1" gid="54" x="844.5" y="122" width="20" height="20"/>
+  <object id="144" type="RocketPart2" gid="34" x="1551" y="88" width="20" height="20"/>
+  <object id="142" type="RocketPart3" gid="53" x="2237.33" y="68.8333" width="20" height="20"/>
   <object id="147" type="Mob" gid="44" x="1056.5" y="222.5" width="16" height="16"/>
   <object id="148" type="Mob" gid="44" x="1743.5" y="206.5" width="16" height="16"/>
   <object id="150" type="LevelExit" gid="47" x="2656" y="191.5" width="16" height="16"/>

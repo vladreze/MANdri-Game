@@ -133,7 +133,7 @@ public class Player {
         handleBreakables(delta, objectLayer, layer);
 
         if (y < -50) {
-            takeDamage("trap-thorn");
+            takeDamage("fall");
             if (!isDead()) {
                 this.x = spawnX;
                 this.y = spawnY;
@@ -277,18 +277,19 @@ public class Player {
 
                 if ("Breakable".equals(type) && this.bounds.overlaps(adjustedRect)) {
                     boolean alreadyActive = false;
-                    if (this.currentState == State.FALLING && this.bounds.y > adjustedRect.y) {
-                        for (ActiveBreakable ab : activeBreakables) {
-                            if (ab.object == rectObject) {
-                                alreadyActive = true;
-                                break;
-                            }
+                    for (ActiveBreakable ab : activeBreakables) {
+                        if (ab.object == rectObject) {
+                            alreadyActive = true;
+                            break;
                         }
                     }
+
                     if (!alreadyActive) {
-                        Float delayProp = object.getProperties().get("delay", Float.class);
-                        float delay = (delayProp != null) ? delayProp : 2.0f;
-                        activeBreakables.add(new ActiveBreakable(rectObject, delay));
+                        if (this.currentState == State.FALLING && this.bounds.y > adjustedRect.y) {
+                            Float delayProp = object.getProperties().get("delay", Float.class);
+                            float delay = (delayProp != null) ? delayProp : 2.0f;
+                            activeBreakables.add(new ActiveBreakable(rectObject, delay));
+                        }
                     }
                 }
             }
@@ -306,7 +307,7 @@ public class Player {
                 objectLayer.getObjects().remove(ab.object);
                 activeBreakables.removeIndex(i);
 
-                // manager.music.playBreakSound();
+                 manager.music.playCrackingBlockSound();
             }
         }
     }
@@ -400,8 +401,13 @@ public class Player {
         if (!isInvulnerable && !isDead()) {
             liveCount--;
             damageParticleEffect.reset();
-            if(liveCount==2)manager.music.playHurtSound(1);
-            else if(liveCount==1) manager.music.playHurtSound(2);
+            manager.music.playMonsterPunchSound();
+            if(liveCount==2){
+                manager.music.playHurtSound(1);
+            }
+            else if(liveCount==1){
+                manager.music.playHurtSound(2);
+            }
             if (liveCount > 0) {
                 isInvulnerable = true;
                 invulnerableTimer = INVINCIBILITY_TIME;
@@ -411,12 +417,14 @@ public class Player {
                     playerDamageRed = .5f;
                     playerDamageGreen = -.2f;
                     playerDamageBlue = -.2f;
+                    manager.music.playThornBlockSound();
                     break;
                 }
                 case "trap-poison": {
                     playerDamageRed = -.2f;
                     playerDamageGreen = .5f;
                     playerDamageBlue = -.2f;
+                    manager.music.playSlimeBlockSound();
                     break;
                 }
                 default: {
@@ -426,9 +434,6 @@ public class Player {
                 }
             }
         }
-//        if(isDead()){
-//            manager.music.playHurtSound(3);
-//        }
     }
 
     public boolean isDead() {
