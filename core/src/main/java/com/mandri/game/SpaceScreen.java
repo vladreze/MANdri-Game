@@ -2,6 +2,7 @@ package com.mandri.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
@@ -189,6 +190,11 @@ public class SpaceScreen extends BaseLevelScreen {
         String mapName = getMapPath();
         String[] parts = mapName.split("/");
         return parts[parts.length - 1].substring(0, parts[parts.length - 1].indexOf("."));
+    }
+
+    @Override
+    protected Screen getRestartScreen() {
+        return new SpaceScreen(game, manager);
     }
 
     @Override
