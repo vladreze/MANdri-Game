@@ -24,6 +24,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mandri.entities.*;
@@ -106,6 +109,8 @@ public class PlayScreen implements Screen {
     private TextureRegionDrawable selectedSlotDrawable;
 
     private ParticleEffect pickupEffect;
+
+    private Table exitConfirmTable = new Table();;
 
     public PlayScreen(Main game, MainAssetsManager manager) {
         this.game = game;
@@ -222,17 +227,17 @@ public class PlayScreen implements Screen {
             labelPauseTextStyle.font = fontForPauseLabel;
             Label pauseLabel = new Label("PAUSED", labelPauseTextStyle);
 
-            BitmapFont fontText = FontCreator.generateTextFont(24, 1f);
-            Label.LabelStyle textStyle = new Label.LabelStyle();
-            textStyle.font = fontText;
+            BitmapFont fontForButtonText = FontCreator.generateTextFont(24, 1f);
+            Label.LabelStyle textForButtonStyle = new Label.LabelStyle();
+            textForButtonStyle.font = fontForButtonText;
 
-            Label resumeTextBtn = new Label("RESUME", textStyle);
-            Label settingsTextBtn = new Label("SETTINGS", textStyle);
-            Label exitTextBtn = new Label("EXIT", textStyle);
+            Label resumeTextBtn = new Label("RESUME", textForButtonStyle);
+            Label settingsTextBtn = new Label("SETTINGS", textForButtonStyle);
+            Label exitTextBtn = new Label("EXIT", textForButtonStyle);
 
             ButtonActions.resumeScreen(resumeTextBtn, this);
             ButtonActions.openSettings(settingsTextBtn, game, this);
-            ButtonActions.openMainMenu(exitTextBtn, game);
+            ButtonActions.exitScreen(exitTextBtn, pauseTable, exitConfirmTable);
 
             ButtonActions.addHover(resumeTextBtn);
             ButtonActions.addHover(settingsTextBtn);
@@ -299,6 +304,28 @@ public class PlayScreen implements Screen {
             hudStage.addActor(mainInventoryTable);
 
             hudStage.addActor(pauseTable);
+            exitConfirmTable.setFillParent(true);
+            exitConfirmTable.setVisible(false);
+            exitConfirmTable.setBackground(new TextureRegionDrawable(dimBackground));
+
+            Label warningLabel = new Label("ARE YOU SURE YOU WANT TO EXIT?\nALL PROGRESS WILL BE LOST", labelPauseTextStyle);
+            warningLabel.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+            Label yesBtn = new Label("YES", textForButtonStyle);
+            Label noBtn = new Label("NO", textForButtonStyle);
+
+            ButtonActions.openMainMenu(yesBtn, game);
+            ButtonActions.abortExit(noBtn, pauseTable, exitConfirmTable);
+
+            ButtonActions.addHover(yesBtn);
+            ButtonActions.addHover(noBtn);
+
+            exitConfirmTable.add(warningLabel).colspan(2).padBottom(30).row();
+            exitConfirmTable.add(yesBtn).padRight(40);
+            exitConfirmTable.add(noBtn);
+
+            hudStage.addActor(exitConfirmTable);
+
 
 
 
@@ -694,7 +721,7 @@ public class PlayScreen implements Screen {
             if (transitionAlpha >= 1f) {
                 transitionAlpha = 1f;
                 isFadingOut = false;
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new GameOverScreen(game));
                 manager.music.playGameOverSound();  //game over sound
                 return;
             }
