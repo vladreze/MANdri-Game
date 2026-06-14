@@ -90,10 +90,6 @@ public class Player {
         this.bounds = new Rectangle(x, y, 30, 30);
         this.manager = manager;
 
-        if (!theme.equals("default")) {
-            isJetpackEnabled = false;
-        }
-
         switch (theme) {
             case "forest":
                 jumpF = manager.image.forestJump_F;
@@ -105,8 +101,11 @@ public class Player {
                 runR  = manager.image.forestRun_R;
                 runL  = manager.image.forestRun_L;
                 idleF = manager.image.forestIdle_F;
+
+                isJetpackEnabled = false;
                 break;
             case "cave":
+                isJetpackEnabled = false;
                 break;
             default:
                 jumpF = manager.image.spaceJump_F;
@@ -118,6 +117,7 @@ public class Player {
                 runR  = manager.image.spaceRun_R;
                 runL  = manager.image.spaceRun_L;
                 idleF = manager.image.spaceIdle_F;
+
                 break;
         }
 
