@@ -53,7 +53,7 @@ public class ButtonActions {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (previousScreen instanceof PlayScreen) {
+                if (previousScreen instanceof BaseLevelScreen) {
                     game.getManager().getMusic().playGamePauseSound();
                 }
                 game.setScreen(new SettingsMenu(game, previousScreen));

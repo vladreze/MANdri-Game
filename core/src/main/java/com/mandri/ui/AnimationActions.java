@@ -30,6 +30,7 @@ public class AnimationActions {
             Actions.fadeIn(1.5f),
             Actions.delay(2.0f),
             Actions.fadeOut(1.5f),
+            Actions.delay(0.5f),
             Actions.run(new Runnable() {
                 @Override
                 public void run() {
