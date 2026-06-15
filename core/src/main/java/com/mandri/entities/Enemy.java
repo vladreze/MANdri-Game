@@ -19,7 +19,7 @@ public class Enemy {
     private float spawnX, spawnY;
 
     public float velocityX, velocityY;
-    private final float SPEED = 50f;
+    private float speed;
     private final float GRAVITY = -600f;
     private final float PATROL_DISTANCE = 50f;
 
@@ -41,8 +41,14 @@ public class Enemy {
     private float walkTimer = 0f;
 
     private ParticleEffect deathEffect;
+    private String type;
+    private boolean isFlying;
+    private TextureRegion aliveTexture;
+    private TextureRegion deadTexture;
+    private TextureRegion angryTexture;
+    private boolean isAngry=false;
 
-    public Enemy(float startX, float startY, MainAssetsManager manager) {
+    public Enemy(float startX, float startY, MainAssetsManager manager, String type) {
         this.x = startX;
         this.y = startY;
         this.spawnX = startX;
@@ -50,7 +56,33 @@ public class Enemy {
         this.currentState = State.ALIVE;
         this.bounds = new Rectangle(x, y, 15, 15);
         this.manager = manager;
-
+        this.type = type;
+        if("bee".equals(type)) {
+            this.aliveTexture=new TextureRegion(manager.image.forestBeeAlive);
+            this.angryTexture=new TextureRegion(manager.image.forestBeeAngr);
+            this.deadTexture = new TextureRegion(manager.image.forestBeeDead);
+            this.speed = 35f;
+            this.isFlying = true;
+            this.angryTexture = new TextureRegion(manager.image.forestBeeAngr);
+        }
+        if("hive".equals(type)) {
+            this.aliveTexture=new TextureRegion(manager.image.forestHive);
+            this.deadTexture = new TextureRegion(manager.image.forestHive);
+            this.speed = 0f;
+            this.isFlying = true;
+        }
+        if("fox".equals(type)) {
+            this.aliveTexture=new TextureRegion(manager.image.forestFox);
+            this.deadTexture = new TextureRegion(manager.image.forestFox);
+            this.speed = 30f;
+            this.isFlying = true;
+        }
+        if("bat".equals(type)) {
+            this.aliveTexture=new TextureRegion(manager.image.forestBeeAlive);
+            this.deadTexture = new TextureRegion(manager.image.forestBeeDead);
+            this.speed = 30f;
+            this.isFlying = true;
+        }
         damageShader = new ShaderProgram(
             Gdx.files.internal("shaders/default.vsh"),
             Gdx.files.internal("shaders/damage.fsh")
@@ -66,7 +98,12 @@ public class Enemy {
 
         deathEffect.setPosition(x + bounds.width / 2, y + bounds.height);
     }
-
+    public void beeAngry(){
+        if("bee".equals(type)&&!isDead&&!isAngry) {
+            this.aliveTexture=angryTexture;
+            isAngry=true;
+        }
+    }
     public void update(float delta, TiledMapTileLayer layer, OrthographicCamera camera) {
         deathEffect.update(delta);
 
@@ -86,10 +123,10 @@ public class Enemy {
             walkTimer = 0f;
         }
         if(runningRight==true){
-            velocityX=SPEED;
+            velocityX=speed;
         }
         else{
-            velocityX=-SPEED;
+            velocityX=-speed;
         }
 
         float oldX = x;
