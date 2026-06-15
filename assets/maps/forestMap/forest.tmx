@@ -198,7 +198,7 @@
   <object id="252" x="1232" y="224" width="16" height="32"/>
   <object id="253" x="1264" y="192" width="16" height="64"/>
   <object id="254" x="2560" y="208" width="16" height="32"/>
-  <object id="255" x="3136" y="224" width="16" height="32"/>
+  <object id="255" x="3136" y="208" width="16" height="48"/>
   <object id="256" x="3776" y="224" width="16" height="32"/>
   <object id="258" x="4400" y="224" width="16" height="32"/>
  </objectgroup>
