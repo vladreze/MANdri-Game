@@ -101,10 +101,18 @@ public class Player {
                 runR  = manager.image.forestRun_R;
                 runL  = manager.image.forestRun_L;
                 idleF = manager.image.forestIdle_F;
-
                 isJetpackEnabled = false;
                 break;
             case "cave":
+                jumpF = manager.image.caveJump_F;
+                jumpR = manager.image.caveJump_R;
+                jumpL = manager.image.caveJump_L;
+                fallF = manager.image.caveFall_F;
+                fallR = manager.image.caveFall_R;
+                fallL = manager.image.caveFall_L;
+                runR  = manager.image.caveRun_R;
+                runL  = manager.image.caveRun_L;
+                idleF = manager.image.caveIdle_F;
                 isJetpackEnabled = false;
                 break;
             default:
