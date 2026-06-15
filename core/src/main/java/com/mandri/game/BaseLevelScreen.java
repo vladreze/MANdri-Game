@@ -356,14 +356,47 @@ public abstract class BaseLevelScreen implements Screen {
 
         vignetteShader.bind();
         vignetteShader.setUniformf("u_resolution", Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
-        float intensity = (getLevelTheme().equals("space") || getLevelTheme().equals("cave")) ? 0f : 1f;
-        vignetteShader.setUniformf("u_rays_intensity", intensity);
         vignetteShader.setUniformf("u_time", shaderTime);
         vignetteShader.setUniformf("u_density", 5.0f);
-        float fogIntensity = getLevelTheme().equals("forest") ? 1f : 0f;
+
+        String theme = getLevelTheme();
+
+        float raysIntensity = 0f;
+        float fogIntensity = 0f;
+        float starsIntensity = 0f;
+        float shadowR = 0f, shadowG = 0f, shadowB = 0f;
+        float lightR = 1f, lightG = 1f, lightB = 1f;
+
+        if ("forest".equals(theme)) {
+            raysIntensity = 1.0f;
+            fogIntensity = 1.0f;
+            starsIntensity = 0.0f;
+
+            shadowR = 0.54f; shadowG = 0.17f; shadowB = 0.89f;
+            lightR = 0.99f; lightG = 0.87f; lightB = 0.42f;
+
+        } else if ("cave".equals(theme)) {
+            raysIntensity = 0.0f;
+            fogIntensity = 0.6f;
+            starsIntensity = 0.0f;
+
+            shadowR = 0.10f; shadowG = 0.05f; shadowB = 0.20f;
+            lightR = 0.60f; lightG = 0.80f; lightB = 0.85f;
+
+        } else if ("space".equals(theme)) {
+            raysIntensity = 0.0f;
+            fogIntensity = 0.0f;
+            starsIntensity = 1.0f;
+
+            shadowR = 0.54f; shadowG = 0.17f; shadowB = 0.89f;
+            lightR = 0.99f; lightG = 0.87f; lightB = 0.42f;
+        }
+
+        vignetteShader.setUniformf("u_rays_intensity", raysIntensity);
         vignetteShader.setUniformf("u_fog_intensity", fogIntensity);
-        float starsIntensity = getLevelTheme().equals("space") ? 1f : 0f;
         vignetteShader.setUniformf("u_stars_intensity", starsIntensity);
+        vignetteShader.setUniformf("u_shadow_color", shadowR, shadowG, shadowB);
+        vignetteShader.setUniformf("u_light_color", lightR, lightG, lightB);
 
         Texture noiseTexture = getNoiseTexture();
         if (noiseTexture != null) {
