@@ -99,23 +99,20 @@ public class ImageManager {
 
     public Animation<TextureRegion> caveRun_R;
     public Animation<TextureRegion> caveRun_L;
+//cs1
+    public Animation<TextureRegion> cs1Anim;
 
     public void loadImages(){
         manager.load("particles/particle.png", Texture.class);
-//        backgrounds
-//        manager.load("menu_bg.png", Texture.class);
 
 //      hearts
         manager.load("level-ui/hearts.png", Texture.class);
 
         manager.load("space/space-bg.png", Texture.class);
-//        manager.load("forest_bg.png", Texture.class);
-//        manager.load("cave_bg.png", Texture.class);
+
 
 //        space
         manager.load("space/space_front.png", Texture.class);
-//        manager.load("space/space_left.png", Texture.class);
-//        manager.load("space/space_right.png", Texture.class);
         manager.load("space/space_fall_F.png", Texture.class);
         manager.load("space/space_fall_L.png", Texture.class);
         manager.load("space/space_fall_R.png", Texture.class);
@@ -161,6 +158,30 @@ public class ImageManager {
         manager.load("forest/forest_tree.png", Texture.class);
 
 //        cave
+
+//        CUTSCENE
+        manager.load("cutscenes/cutscene1.png", Texture.class);
+        manager.load("cutscenes/cutscene1-1.png", Texture.class);
+        manager.load("cutscenes/cutscene1-2.png", Texture.class);
+        manager.load("cutscenes/cutscene1-3.png", Texture.class);
+        manager.load("cutscenes/cutscene1-9.png", Texture.class);
+        manager.load("cutscenes/cutscene1-10.png", Texture.class);
+        manager.load("cutscenes/cutscene1-11.png", Texture.class);
+        manager.load("cutscenes/dialogue window.png", Texture.class);
+        manager.load("cutscenes/logo.png", Texture.class);
+
+//        manager.load("cutscenes/cutscene2-1.png", Texture.class);
+
+        manager.load("cutscenes/cutscene3-1.png", Texture.class);
+        manager.load("cutscenes/cutscene3-2.png", Texture.class);
+        manager.load("cutscenes/cutscene3-3.png", Texture.class);
+        manager.load("cutscenes/cutscene3-4.png", Texture.class);
+        manager.load("cutscenes/cutscene3-5.png", Texture.class);
+        manager.load("cutscenes/cutscene3-8.png", Texture.class);
+        manager.load("cutscenes/cutscene3-9.png", Texture.class);
+        manager.load("cutscenes/cutscene3-10.png", Texture.class);
+        manager.load("cutscenes/cutscene3-12.png", Texture.class);
+        manager.load("cutscenes/cutscene3-13.png", Texture.class);
     }
 
     public void initAnimations(){
@@ -199,6 +220,10 @@ public class ImageManager {
         poisonHeart = heartFrames[1][0];
         shieldHeart = heartFrames[2][0];
         emptyHeart = heartFrames[3][0];
+
+        Texture cs1 = manager.get("cutscenes/cutscene1.png", Texture.class);
+        TextureRegion[][] texCs1 = TextureRegion.split(cs1, 1280, 720);
+        cs1Anim = new Animation<>(0.5f, texCs1[0]);
 
 //        run
         Texture tSpaceRunR = manager.get("space/space_run_R.png", Texture.class);
@@ -247,6 +272,55 @@ public class ImageManager {
     }
     public Texture spaceBg(){
         return  manager.get("space/space-bg.png", Texture.class);
+    }
+
+    public Texture cutscene1(int frameNum){
+        Texture texture =  manager.get("cutscenes/cutscene1-1.png", Texture.class);
+        switch (frameNum){
+            case 1: texture = manager.get("cutscenes/cutscene1-1.png", Texture.class);
+                break;
+            case 2: texture = manager.get("cutscenes/cutscene1-2.png", Texture.class);
+                break;
+            case 3: texture = manager.get("cutscenes/cutscene1-3.png", Texture.class);
+                break;
+            case 9: texture = manager.get("cutscenes/cutscene1-9.png", Texture.class);
+                break;
+            case 10: texture = manager.get("cutscenes/cutscene1-10.png", Texture.class);
+                break;
+            case 11: texture = manager.get("cutscenes/cutscene1-11.png", Texture.class);
+                break;
+            case 12 : texture = manager.get("cutscenes/dialogue window.png", Texture.class);
+                break;
+            case 13: texture = manager.get("cutscenes/logo.png", Texture.class);
+        }
+        return texture;
+    }
+
+    public Texture cutscene3(int frameNum){
+        Texture texture =  manager.get("cutscenes/cutscene3-1.png", Texture.class);
+        switch (frameNum){
+            case 1: texture = manager.get("cutscenes/cutscene3-1.png", Texture.class);
+                break;
+            case 2: texture = manager.get("cutscenes/cutscene3-2.png", Texture.class);
+                break;
+            case 3: texture = manager.get("cutscenes/cutscene3-3.png", Texture.class);
+                break;
+            case 4: texture = manager.get("cutscenes/cutscene3-4.png", Texture.class);
+                break;
+            case 5: texture = manager.get("cutscenes/cutscene3-5.png", Texture.class);
+                break;
+            case 6: texture = manager.get("cutscenes/cutscene3-8.png", Texture.class);
+                break;
+            case 7: texture = manager.get("cutscenes/cutscene3-9.png", Texture.class);
+                break;
+            case 8: texture = manager.get("cutscenes/cutscene3-10.png", Texture.class);
+                break;
+            case 9: texture = manager.get("cutscenes/cutscene3-12.png", Texture.class);
+                break;
+            case 10: texture = manager.get("cutscenes/cutscene3-13.png", Texture.class);
+                break;
+        }
+        return texture;
     }
 
     public void disposeImages(){
