@@ -29,16 +29,17 @@ void main() {
     vec3 gradedColor = mix(shadowColor, lightChunks, brightness);
     color.rgb = mix(color.rgb, gradedColor, 0.5);
 
-    float ray1 = sin(uv.x * 12.0 - uv.y * 7.0 + u_time * 0.2);
-    float ray2 = sin(uv.x * 18.0 - uv.y * 9.0 + u_time * 0.3);
-    float rays = (ray1 + ray2) * 0.5;
+    float ray1 = sin(uv.x * 12.0 - uv.y * 7.0 + u_time * 0.5);
+    float ray2 = sin(uv.x * 16.0 - uv.y * 9.0 + u_time * 0.6);
+    float ray3 = sin(uv.x * 14.0 - uv.y * 8.0 + u_time * 0.7);
+    float rays = (ray1 + ray2 + ray3) * 0.5;
 
     rays = smoothstep(0.6, 1.0, rays);
-    vec3 rayColor = vec3(1.0, 0.95, 0.7) * rays * 0.15 * u_rays_intensity;
+    vec3 rayColor = vec3(1.0, 1.0, 0.75) * rays * 0.2 * u_rays_intensity;
 
     color.rgb += rayColor;
 
-    vec3 fogColor = vec3(0.6, 0.75, 0.85);
+    vec3 fogColor = vec3(0.6, 0.75, 0.95);
     float wave = sin(uv.x * 6.0 + u_time * 1.5) * 0.05;
 
     float fogHeight = (1.0 - uv.y) + wave;
