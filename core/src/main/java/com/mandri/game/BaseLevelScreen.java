@@ -29,6 +29,7 @@ import com.mandri.entities.Enemy;
 import com.mandri.entities.InventoryLogic;
 import com.mandri.entities.Item;
 import com.mandri.entities.Player;
+import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
 import com.mandri.ui.ButtonActions;
 import com.mandri.ui.FontCreator;
@@ -569,7 +570,7 @@ public abstract class BaseLevelScreen implements Screen {
                 transitionAlpha = 1f;
                 if (levelFinishTimer >= 3f) {
                     manager.getMusic().stopMusic();
-                    game.setScreen(new ForestScreen(game, manager));
+                    game.setScreen(new  CutsceneManager(game, manager).cs2());
                 }
             }
         }
