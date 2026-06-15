@@ -49,19 +49,24 @@ void main() {
 
     color.rgb = mix(color.rgb, fogColor, opacity);
 
-    vec4 noiseColor = texture2D(u_noise_texture, uv * 3.0);
-    float stars = smoothstep(0.9935, 1.0, noiseColor.r);
-    float heightMask = smoothstep(0.0, 0.45, uv.y);
-    stars *= heightMask;
-    stars *= 0.4 + 0.6 * abs(sin(u_time * 3.0 + noiseColor.r * 20.0));
-    stars = max(0.0, stars);
-    color.rgb += vec3(stars) * u_stars_intensity;
-
     float len = length(relativePosition);
     float vignette = smoothstep(0.5, 0.4, len);
     vec3 vignetteColor = vec3(0.02, 0.02, 0.08);
     vec3 coloredVignette = mix(vignetteColor, color.rgb, vignette);
     color.rgb = mix(color.rgb, coloredVignette, 0.5);
+
+    vec4 noiseColor = texture2D(u_noise_texture, uv * 1.0);
+    float stars = smoothstep(0.995, 1.0, noiseColor.r);
+    float heightMask = smoothstep(0.3, 0.6, uv.y);
+    stars *= heightMask;
+
+    vec3 starBaseColor = vec3(1.0, 1.0, 1.0);
+    float starBrightness = 4.0;
+
+    stars *= 0.4 + 0.6 * abs(sin(u_time * 1.5 + noiseColor.r * 10.0));
+    stars = max(0.0, stars);
+
+    color.rgb += starBaseColor * stars * starBrightness * u_stars_intensity;
 
     gl_FragColor = color;
 }
