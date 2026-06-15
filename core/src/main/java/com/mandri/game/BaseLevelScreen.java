@@ -378,8 +378,8 @@ public abstract class BaseLevelScreen implements Screen {
         batch.setShader(vignetteShader);
         batch.begin();
 
-        float parallaxSpeedX = 0.2f;
-        float parallaxSpeedY = 0.05f;
+        float parallaxSpeedX = 0.075f;
+        float parallaxSpeedY = 0.075f;
 
         float bgWidth = playerCameraWidth;
         float bgHeight = playerCameraHeight;

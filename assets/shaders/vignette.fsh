@@ -61,9 +61,9 @@ void main() {
     stars *= heightMask;
 
     vec3 starBaseColor = vec3(1.0, 1.0, 1.0);
-    float starBrightness = 4.0;
+    float starBrightness = 10.0;
 
-    stars *= 0.4 + 0.6 * abs(sin(u_time * 1.5 + noiseColor.r * 10.0));
+    stars *= 0.15 + 0.5 * abs(sin(u_time * 1.5 + noiseColor.r * 10.0));
     stars = max(0.0, stars);
 
     color.rgb += starBaseColor * stars * starBrightness * u_stars_intensity;
