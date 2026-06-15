@@ -141,7 +141,7 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected Screen getNextScreen() {
-        return new CutsceneManager(game, manager).cs3();
+        return new CutsceneManager(game, manager).cs4();
     }
 
     @Override
