@@ -64,4 +64,12 @@ public class Item {
             }
         }
     }
+
+    public void drawShadow(SpriteBatch batch, MainAssetsManager manager) {
+        if (!isCollected) {
+            batch.setColor(0f, 0f, 0f, 0.4f);
+            batch.draw(manager.image.whitePixel, x + 2, y - 2, width - 4, 3);
+            batch.setColor(1f, 1f, 1f, 1f);
+        }
+    }
 }

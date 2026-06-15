@@ -2,6 +2,7 @@ package com.mandri.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -88,7 +89,9 @@ public class ForestScreen extends BaseLevelScreen {
 
     @Override
     protected void drawLevelSpecificShadows(float shadowOffset) {
-
+        for (int i = 0; i < forestItems.size; i++) {
+            forestItems.get(i).drawShadow(batch, manager);
+        }
     }
 
     @Override
@@ -115,5 +118,10 @@ public class ForestScreen extends BaseLevelScreen {
     @Override
     protected Screen getRestartScreen() {
         return new ForestScreen(game, manager);
+    }
+
+    @Override
+    protected Texture getNoiseTexture() {
+        return null;
     }
 }

@@ -229,7 +229,9 @@ public class Enemy {
                 frame.flip(false, true);
             }
         }
-        batch.draw(frame, x + offsetX, y + offsetY);
+        batch.setColor(0, 0, 0, 0.4f);
+        batch.draw(manager.image.whitePixel, x + 4, y - 2, bounds.width - 8, 4);
+        batch.setColor(1f, 1f, 1f, 1f);
     }
 
     public void die() {
