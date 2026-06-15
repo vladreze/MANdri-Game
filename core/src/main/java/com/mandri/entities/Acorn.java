@@ -34,7 +34,7 @@ public class Acorn {
         if("acorn".equals(type)) {
             batch.draw(manager.image.forestAcorn, x, y, width, height);
         }
-        else{
+        else if("stalactite".equals(type)) {
             batch.draw(manager.image.caveStalactite, x, y, width, height);
         }
     }

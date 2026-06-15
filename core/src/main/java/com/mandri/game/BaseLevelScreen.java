@@ -659,6 +659,11 @@ public abstract class BaseLevelScreen implements Screen {
         if (itemName.equals("axe")) return manager.image.forestAxe;
         if (itemName.equals("stalactite")) return manager.image.caveStalactite;
         if (itemName.equals("geyser")) return manager.image.caveGeyser;
+        if(itemName.equals("emerald")) return manager.image.caveEmerald;
+        if (itemName.equals("numb0") || itemName.equals("number0")) return manager.image.caveNumber0;
+        if (itemName.equals("numb1") || itemName.equals("number1")) return manager.image.caveNumber1;
+        if (itemName.equals("numb3") || itemName.equals("number3")) return manager.image.caveNumber3;
+        if (itemName.equals("numb5") || itemName.equals("number5")) return manager.image.caveNumber5;
         return manager.image.whitePixel;
     }
 

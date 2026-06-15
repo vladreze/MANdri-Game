@@ -47,23 +47,27 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected String getBackgroundPath() {
-        return "assets/maps/forestMap/bgForest.png";
+        return "assets/maps/caveMap/bgCave.png";
     }
 
     @Override
     protected int getLevelMusicIndex() {
-        return 2;
+        return 3;
     }
 
     @Override
     protected void handleCustomSpawn(MapObject object, String type, float x, float y) {
-        if ("bee".equals(type) || "fox".equals(type) || "hive".equals(type) || "bat".equals(type)) {
+        if (type == null) {
+            type = "";
+        }
+        if ("spider".equals(type)) {
             enemies.add(new Enemy(x, y, manager, type));
         }
-        else if ("acorn".equals(type) || "axe".equals(type) || "mushroom".equals(type)) {
+        else if ("stalactite".equalsIgnoreCase(type) || "emerald".equalsIgnoreCase(type) ||
+            "geyser".equalsIgnoreCase(type) || type.toLowerCase().contains("numb") || type.toLowerCase().contains("number")) {
             caveItems.add(new Item(manager, type, x, y));
         }
-        else if ("LevelExit".equals(type) || "pitExit".equals(type)) {
+        else if ("LevelExit".equals(type) || "pitExit".equals(type)||"exitWater".equals(type)) {
         }
     }
 
@@ -73,7 +77,7 @@ public class CaveScreen extends BaseLevelScreen {
             Item item = caveItems.get(i);
             item.update(delta, player.bounds.x);
             if (player.bounds.overlaps(item.bounds)) {
-                if ("axe".equals(item.getName())) {
+                if ("emerald".equals(item.getName())||"numb1".equals(item.getName())||"numb3".equals(item.getName())||"numb5".equals(item.getName())||"numb0".equals(item.getName())) {
                     item.collect();
                     boolean added = inventory.addItem(item);
                     if (added) {
@@ -86,7 +90,7 @@ public class CaveScreen extends BaseLevelScreen {
                         caveItems.removeIndex(i);
                         updateInventoryUI();
                     }
-                }if ("mushroom".equals(item.getName())) {
+                }if ("geyser".equals(item.getName())) {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > item.bounds.y) {
                         player.bounce();
                         player.velocityY = player.JUMP_FORCE;
@@ -94,9 +98,9 @@ public class CaveScreen extends BaseLevelScreen {
                         manager.music.playBonusSound();
                     }
                 }
-                if ("acorn".equals(item.getName())) {
+                if ("stalactite".equals(item.getName())) {
                     if (player.bounds.overlaps(item.bounds)) {
-                        player.takeDamage("acorn");
+                        player.takeDamage("stalactite");
                         caveItems.removeIndex(i);
                     }
                 }
@@ -136,7 +140,7 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected Screen getRestartScreen() {
-        return new ForestScreen(game, manager);
+        return new CaveScreen(game, manager);
     }
 
     @Override
