@@ -57,6 +57,11 @@ public class CaveScreen extends BaseLevelScreen {
     }
 
     @Override
+    protected Screen getNextScreen() {
+        return null;
+    }
+
+    @Override
     protected Texture getNoiseTexture() {
         return null;
     }
