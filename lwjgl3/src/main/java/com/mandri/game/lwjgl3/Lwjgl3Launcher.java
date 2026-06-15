@@ -1,5 +1,6 @@
 package com.mandri.game.lwjgl3;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.mandri.game.Main;
@@ -31,7 +32,8 @@ public class Lwjgl3Launcher {
         configuration.setWindowedMode(1820, 980);
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         //// They can also be loaded from the root of assets/ .
-        configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+        configuration.setWindowIcon(Files.FileType.Internal,"icon/logo128.png","icon/logo64.png",
+            "icon/logo32.png", "icon/logo16.png");
 
         //// This could improve compatibility with Windows machines with buggy OpenGL drivers, Macs
         //// with Apple Silicon that have to emulate compatibility with OpenGL anyway, and more.
