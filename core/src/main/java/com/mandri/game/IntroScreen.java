@@ -9,78 +9,74 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mandri.storage.UIManager;
-import com.mandri.ui.ButtonActions;
+import com.mandri.ui.AnimationActions;
 import com.mandri.ui.FontCreator;
-import com.mandri.ui.PixelButton;
 
-
-public class MainMenuScreen implements Screen {
+public class IntroScreen implements Screen {
     private Main game;
     private Stage stage;
     private OrthographicCamera camera;
     private FitViewport viewport;
 
-    public MainMenuScreen(Main game) {
+    public IntroScreen(Main game) {
         this.game = game;
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(320, 180, camera);
 
-        stage = new Stage(viewport);
-
         Skin skin = UIManager.getInstance().getSkin();
+
+        stage = new Stage(viewport);
 
         Table table = new Table();
         table.setFillParent(true);
 
-        BitmapFont fontForMainLabel = FontCreator.generateTextFont(28, 1f);
-        Label.LabelStyle labelMainTextlStyle = new Label.LabelStyle();
-        labelMainTextlStyle.font = fontForMainLabel;
+        BitmapFont textMainFont = FontCreator.generateTextFont(28, 1f);
+        Label.LabelStyle textMainStyle = new Label.LabelStyle();
+        textMainStyle.font = textMainFont;
 
-        BitmapFont fontForButtonsText = FontCreator.generateTextFont(16, 1f);
+        BitmapFont textFont = FontCreator.generateTextFont(18, 1f);
+        Label.LabelStyle textStyle = new Label.LabelStyle();
+        textStyle.font = textFont;
 
-        Label titleLabel = new Label("MANdri", labelMainTextlStyle);
-        titleLabel.setFontScale(1.5f);
+        Label teamNameLabel = new Label("something genius team", textMainStyle);
+        teamNameLabel.setAlignment(Align.center);
 
-        PixelButton playButton = new PixelButton("START GAME", skin, fontForButtonsText);
-        ButtonActions.playGameWithFade(playButton, table ,game);
+        Label presentLabel = new Label("presents", textStyle);
+        presentLabel.setAlignment(Align.center);
 
-        PixelButton settingsButton = new PixelButton("SETTINGS", skin, fontForButtonsText);
-        ButtonActions.openSettings(settingsButton , game, this);
+        table.add(teamNameLabel).padBottom(10).row();
+        table.add(presentLabel).row();
 
-        PixelButton exitButton = new PixelButton("EXIT", skin, fontForButtonsText);
-        ButtonActions.exitGameConfirmaiton(exitButton, game);
-
-        table.add(titleLabel).padBottom(15).row();
-        table.add(playButton).width(120).padBottom(10).row();
-        table.add(settingsButton).width(120).padBottom(10).row();
-        table.add(exitButton).width(120);
+        table.getColor().a = 0f;
 
         stage.addActor(table);
+
+        AnimationActions.fadeAnimationBetweenScreenAndTable(table, new MainMenuScreen(game), game);
+
+
     }
 
     @Override
-    public void show(){
+    public void show() {
         Gdx.input.setInputProcessor(stage);
-        game.getManager().getMusic().playMenuMusic();
+
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1f);
+        Gdx.gl.glClearColor(0,0,0,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         stage.act(delta);
         stage.draw();
-
     }
 
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-
     }
 
     @Override
@@ -95,11 +91,11 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void hide() {
-//        Gdx.input.setInputProcessor(null);
+
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
+       stage.dispose();
     }
 }
