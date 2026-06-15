@@ -26,6 +26,9 @@ public class MusicManager {
 
         manager.load("music/logo-music.mp3", Music.class);
         manager.load("music/cs2-bg-music.mp3", Music.class);
+        manager.load("music/cs3-bg-music.mp3", Music.class);
+//        manager.load("music/cs4-bg-music.mp3", Music.class);
+        manager.load("music/credits-music.mp3", Music.class);
 
         //sounds
         manager.load("sounds/walking.mp3", Sound.class);
@@ -83,6 +86,16 @@ public class MusicManager {
     }
     public void playCs2BgMusic(){
         music = manager.get("music/cs2-bg-music.mp3", Music.class);
+        music.setVolume(soundEffectsvolume);
+        music.play();
+    }
+    public void playCs3BgMusic(){
+        music = manager.get("music/cs3-bg-music.mp3", Music.class);
+        music.setVolume(soundEffectsvolume);
+        music.play();
+    }
+    public void playCreditsMusic(){
+        music = manager.get("music/credits-music.mp3", Music.class);
         music.setVolume(soundEffectsvolume);
         music.play();
     }

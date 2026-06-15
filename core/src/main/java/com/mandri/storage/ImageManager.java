@@ -103,6 +103,8 @@ public class ImageManager {
     public Animation<TextureRegion> cs1Anim;
     public Animation<TextureRegion> cs2w;
     public Animation<TextureRegion>cs2e;
+    public Animation<TextureRegion>cs3One;
+    public Animation<TextureRegion>cs3Two;
 
     public void loadImages(){
         manager.load("particles/particle.png", Texture.class);
@@ -177,16 +179,19 @@ public class ImageManager {
         manager.load("cutscenes/The Earth.png", Texture.class);
         manager.load("cutscenes/The Earth-2.png", Texture.class);
 
-        manager.load("cutscenes/cutscene3-1.png", Texture.class);
-        manager.load("cutscenes/cutscene3-2.png", Texture.class);
-        manager.load("cutscenes/cutscene3-3.png", Texture.class);
-        manager.load("cutscenes/cutscene3-4.png", Texture.class);
-        manager.load("cutscenes/cutscene3-5.png", Texture.class);
-        manager.load("cutscenes/cutscene3-8.png", Texture.class);
-        manager.load("cutscenes/cutscene3-9.png", Texture.class);
-        manager.load("cutscenes/cutscene3-10.png", Texture.class);
-        manager.load("cutscenes/cutscene3-12.png", Texture.class);
-        manager.load("cutscenes/cutscene3-13.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-1.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-2.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-3.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-4.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-5.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-8.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-9.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-10.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-12.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-13.png", Texture.class);
+        manager.load("cutscenes/dialogue window-2.png", Texture.class);
+        manager.load("cutscenes/cutscene3(1).png", Texture.class);
+        manager.load("cutscenes/cutscene3(2).png", Texture.class);
     }
 
     public void initAnimations(){
@@ -238,6 +243,14 @@ public class ImageManager {
         Texture cs2E = manager.get("cutscenes/The Earth.png", Texture.class);
         TextureRegion[][] texCs2e = TextureRegion.split(cs2E, 1280, 720);
         cs2e = new Animation<>(0.5f, texCs2e[0]);
+
+        Texture cs31 = manager.get("cutscenes/cutscene3(1).png", Texture.class);
+        TextureRegion[][] texCs31 = TextureRegion.split(cs31, 1280, 720);
+        cs3One = new Animation<>(0.5f, texCs31[0]);
+
+        Texture cs32 = manager.get("cutscenes/cutscene3(2).png", Texture.class);
+        TextureRegion[][] texCs32 = TextureRegion.split(cs32, 1280, 720);
+        cs3Two = new Animation<>(0.5f, texCs32[0]);
 
 //        run
         Texture tSpaceRunR = manager.get("space/space_run_R.png", Texture.class);
@@ -323,27 +336,29 @@ public class ImageManager {
     }
 
     public Texture cutscene3(int frameNum){
-        Texture texture =  manager.get("cutscenes/cutscene3-1.png", Texture.class);
+        Texture texture =  manager.get("cutscenes/dialogue window-2.png", Texture.class);
         switch (frameNum){
-            case 1: texture = manager.get("cutscenes/cutscene3-1.png", Texture.class);
-                break;
-            case 2: texture = manager.get("cutscenes/cutscene3-2.png", Texture.class);
-                break;
-            case 3: texture = manager.get("cutscenes/cutscene3-3.png", Texture.class);
-                break;
-            case 4: texture = manager.get("cutscenes/cutscene3-4.png", Texture.class);
-                break;
-            case 5: texture = manager.get("cutscenes/cutscene3-5.png", Texture.class);
-                break;
-            case 6: texture = manager.get("cutscenes/cutscene3-8.png", Texture.class);
-                break;
-            case 7: texture = manager.get("cutscenes/cutscene3-9.png", Texture.class);
-                break;
-            case 8: texture = manager.get("cutscenes/cutscene3-10.png", Texture.class);
-                break;
-            case 9: texture = manager.get("cutscenes/cutscene3-12.png", Texture.class);
-                break;
-            case 10: texture = manager.get("cutscenes/cutscene3-13.png", Texture.class);
+//            case 1: texture = manager.get("cutscenes/cutscene3-1.png", Texture.class);
+//                break;
+//            case 2: texture = manager.get("cutscenes/cutscene3-2.png", Texture.class);
+//                break;
+//            case 3: texture = manager.get("cutscenes/cutscene3-3.png", Texture.class);
+//                break;
+//            case 4: texture = manager.get("cutscenes/cutscene3-4.png", Texture.class);
+//                break;
+//            case 5: texture = manager.get("cutscenes/cutscene3-5.png", Texture.class);
+//                break;
+//            case 6: texture = manager.get("cutscenes/cutscene3-8.png", Texture.class);
+//                break;
+//            case 7: texture = manager.get("cutscenes/cutscene3-9.png", Texture.class);
+//                break;
+//            case 8: texture = manager.get("cutscenes/cutscene3-10.png", Texture.class);
+//                break;
+//            case 9: texture = manager.get("cutscenes/cutscene3-12.png", Texture.class);
+//                break;
+//            case 10: texture = manager.get("cutscenes/cutscene3-13.png", Texture.class);
+//                break;
+            case 11: texture = manager.get("cutscenes/dialogue window-2.png", Texture.class);
                 break;
         }
         return texture;

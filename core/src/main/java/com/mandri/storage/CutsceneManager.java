@@ -86,36 +86,23 @@ public class CutsceneManager {
     }
     public Screen cs3(){
         Texture[] texture = new Texture[]{
-            manager.image.cutscene3(1),
-            manager.image.cutscene3(2),
-            manager.image.cutscene3(3),
-            manager.image.cutscene3(5),
-            manager.image.cutscene3(4),
-            manager.image.cutscene3(5),
-            manager.image.cutscene3(3),
-            manager.image.cutscene3(6),
-            manager.image.cutscene3(5),
-            manager.image.cutscene3(6),
-            manager.image.cutscene3(7),
-            manager.image.cutscene3(8),
-            manager.image.cutscene3(9),
-            manager.image.cutscene3(3)
+            manager.image.cutscene3(11) //dialogue
         };
 
         String[] text = new String[]{
             "[You]:Damn, I've fallen somewhere again. \n Well, let's see where this road leads..."
         };
 
-        Screen screen = new SpaceScreen(main, manager);
+        Screen screen = new SpaceScreen(main, manager); //CAVE LEVEL
         Vector2[] textPositions = new Vector2[] {
-
-
+            new Vector2(300,200)
         };
 
-        Animation<TextureRegion> anim = manager.image.cs1Anim;;
+        Animation<TextureRegion> anim = manager.image.cs3One;
+        Animation<TextureRegion> anim2 = manager.image.cs3Two;
 
         int id =3;
-        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim, null, textPositions, id);
+        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim, anim2, textPositions, id);
         return cutsceneScreen;
     }
     public Screen cs4(){

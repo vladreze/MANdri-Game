@@ -72,6 +72,9 @@ public class CutsceneScreen implements Screen {
             manager.music.playCs2BgMusic();
             manager.music.playEngineSound();
         }
+        if(id==3){
+            manager.music.playCs3BgMusic();
+        }
 
     }
 
@@ -186,6 +189,7 @@ public class CutsceneScreen implements Screen {
                     if(currentSlide != storyText.length-1){
                         font.draw(batch, "[press SPACE]", 1000, 100);
                     }
+                    if(id==3)font.draw(batch, "[press SPACE]", 1000, 100);
                 }
             }
         }
