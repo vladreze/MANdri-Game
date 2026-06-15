@@ -26,9 +26,9 @@ public class Player {
     private float x, y;
     private float spawnX, spawnY;
 
-    private float velocityX, velocityY;
+    public float velocityX, velocityY;
     private final float SPEED = 150f;
-    public final float JUMP_FORCE = 400f;
+    public final float JUMP_FORCE = 350f;
     private final float GRAVITY = -(JUMP_FORCE * 2);
     private boolean wasSpacePressed = false;
 

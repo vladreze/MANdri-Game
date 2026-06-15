@@ -18,6 +18,7 @@ import com.mandri.ui.FontCreator;
 
 public class GameOverScreen implements Screen {
 
+    private final Screen restartScreen;
     private Main game;
     private Stage stage;
     private OrthographicCamera camera;
@@ -26,9 +27,10 @@ public class GameOverScreen implements Screen {
     private Table heartTable;
     private Table gameOverTable;
 
-    public GameOverScreen(Main game) {
+    public GameOverScreen(Main game, Screen restartScreen) {
         this.game = game;
-
+        this.restartScreen = restartScreen;
+        
         camera = new OrthographicCamera();
 
         viewport = new FitViewport(320,180, camera);
@@ -66,7 +68,7 @@ public class GameOverScreen implements Screen {
         Label returnBtn = new Label("MAIN MENU", buttonStyle);
         Label tryAgainBtn = new Label("TRY AGAIN", buttonStyle);
 
-        ButtonActions.playGame(tryAgainBtn, game);
+        ButtonActions.restartLevel(tryAgainBtn, game, restartScreen);
         ButtonActions.openMainMenu(returnBtn, game);
 
         ButtonActions.addHover(tryAgainBtn);

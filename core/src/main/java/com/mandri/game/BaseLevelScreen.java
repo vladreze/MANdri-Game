@@ -33,7 +33,7 @@ import com.mandri.storage.MainAssetsManager;
 import com.mandri.ui.ButtonActions;
 import com.mandri.ui.FontCreator;
 
-public abstract class BaseLevelScreen extends PlayScreen implements Screen {
+public abstract class BaseLevelScreen implements Screen {
     protected SpriteBatch batch;
     protected OrthographicCamera camera;
     protected OrthographicCamera hudCamera;
@@ -92,7 +92,6 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     protected float levelFinishTimer = 0f;
 
     public BaseLevelScreen(Main game, MainAssetsManager manager) {
-        super(game, manager);
         this.game = game;
         this.manager = manager;
     }
@@ -352,19 +351,6 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        float parallaxSpeed = 0.2f;
-        float bgU = (camera.position.x * parallaxSpeed) / bgTexture.getWidth();
-//        float bgHeight = playerCameraHeight;
-        float bgWidth = playerCameraWidth;
-        float backgroundStartX = camera.position.x - (playerCameraWidth / 2);
-//        float backgroundStartY = camera.position.y - (playerCameraHeight / 2);
-        float bgHeight = mapHeight;
-        float backgroundStartY = 0f;
-
-        batch.draw(bgTexture, backgroundStartX, backgroundStartY, bgWidth, bgHeight,
-            bgU, 0, bgU + (bgWidth / bgTexture.getWidth()), 1);
-        batch.end();
-
         shaderTime += delta;
 
         vignetteShader.bind();
@@ -384,6 +370,30 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
             vignetteShader.setUniformi("u_noise_texture", 1);
             Gdx.gl.glActiveTexture(Gdx.gl.GL_TEXTURE0);
         }
+
+        batch.end();
+
+        renderer.setView(camera);
+        batch.setProjectionMatrix(camera.combined);
+        batch.setShader(vignetteShader);
+        batch.begin();
+
+        float parallaxSpeedX = 0.2f;
+        float parallaxSpeedY = 0.05f;
+
+        float bgWidth = playerCameraWidth;
+        float bgHeight = playerCameraHeight;
+        float backgroundStartX = camera.position.x - (playerCameraWidth / 2);
+        float backgroundStartY = camera.position.y - (playerCameraHeight / 2);
+
+        float bgU = (camera.position.x * parallaxSpeedX) / bgTexture.getWidth();
+        float bgU2 = bgU + (bgWidth / bgTexture.getWidth());
+
+        float bgV = (camera.position.y * parallaxSpeedY) / bgTexture.getHeight();
+        float bgV2 = bgV + (bgHeight / bgTexture.getHeight());
+
+        batch.draw(bgTexture, backgroundStartX, backgroundStartY, bgWidth, bgHeight, bgU, bgV, bgU2, bgV2);
+        batch.end();
 
         renderer.render();
 
@@ -542,7 +552,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         } else if (isFadingOut) {
             transitionAlpha += delta * .5f;
             if (transitionAlpha >= 1f) {
-                game.setScreen(new GameOverScreen(game));
+                game.setScreen(new GameOverScreen(game, getRestartScreen()));
                 manager.music.playGameOverSound();
                 return;
             }
