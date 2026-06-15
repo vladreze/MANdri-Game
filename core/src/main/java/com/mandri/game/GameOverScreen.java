@@ -79,7 +79,7 @@ public class GameOverScreen implements Screen {
         stage.addActor(heartTable);
         stage.addActor(gameOverTable);
 
-        AnimationActions.fadeAnimation(heartTable, gameOverTable);
+        AnimationActions.fadeAnimationBetweenTable(heartTable, gameOverTable);
     }
 
     @Override
