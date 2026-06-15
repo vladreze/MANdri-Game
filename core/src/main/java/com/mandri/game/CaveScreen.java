@@ -61,7 +61,7 @@ public class CaveScreen extends BaseLevelScreen {
             enemies.add(new Enemy(x, y, manager, type));
         }
         else if ("acorn".equals(type) || "axe".equals(type) || "mushroom".equals(type)) {
-            forestItems.add(new Item(manager, type, x, y));
+            caveItems.add(new Item(manager, type, x, y));
         }
         else if ("LevelExit".equals(type) || "pitExit".equals(type)) {
         }
@@ -69,8 +69,8 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected void updateLevelSpecifics(float delta, TiledMapTileLayer collisionLayer) {
-        for (int i = 0; i < forestItems.size; i++) {
-            Item item = forestItems.get(i);
+        for (int i = 0; i < caveItems.size; i++) {
+            Item item = caveItems.get(i);
             item.update(delta, player.bounds.x);
             if (player.bounds.overlaps(item.bounds)) {
                 if ("axe".equals(item.getName())) {
@@ -83,7 +83,7 @@ public class CaveScreen extends BaseLevelScreen {
                         pickupEffect.scaleEffect(.85f);
                         pickupEffect.start();
 
-                        forestItems.removeIndex(i);
+                        caveItems.removeIndex(i);
                         updateInventoryUI();
                     }
                 }if ("mushroom".equals(item.getName())) {
@@ -97,7 +97,7 @@ public class CaveScreen extends BaseLevelScreen {
                 if ("acorn".equals(item.getName())) {
                     if (player.bounds.overlaps(item.bounds)) {
                         player.takeDamage("acorn");
-                        forestItems.removeIndex(i);
+                        caveItems.removeIndex(i);
                     }
                 }
             }
@@ -108,15 +108,15 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected void drawLevelSpecificShadows(float shadowOffset) {
-        for (int i = 0; i < forestItems.size; i++) {
-            forestItems.get(i).drawShadow(batch, manager);
+        for (int i = 0; i < caveItems.size; i++) {
+            caveItems.get(i).drawShadow(batch, manager);
         }
     }
 
     @Override
     protected void drawLevelSpecifics() {
-        for (int i = 0; i < forestItems.size; i++) {
-            forestItems.get(i).draw(batch, manager);
+        for (int i = 0; i < caveItems.size; i++) {
+            caveItems.get(i).draw(batch, manager);
         }
 
         pickupEffect.draw(batch);
