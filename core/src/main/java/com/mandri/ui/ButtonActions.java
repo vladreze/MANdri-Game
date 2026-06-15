@@ -41,8 +41,7 @@ public class ButtonActions {
             public void clicked(InputEvent event, float x, float y) {
                 game.getManager().getMusic().stopMusic();
                 game.setScreen(new SpaceScreen(game, game.getManager()));
-//                game.setScreen(new ForestScreen(game, game.getManager()));
-//                game.setScreen(new PlayScreen(game, game.getManager()));
+//                 game.setScreen(new ForestScreen(game, game.getManager()));
             }
         });
     }
@@ -107,6 +106,16 @@ public class ButtonActions {
         });
     }
 
+    public static void restartLevel(Actor button, Main game, Screen levelScreen) {
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.getManager().getMusic().stopMusic();
+                game.setScreen(levelScreen);
+            }
+        });
+    }
+
     public static void aboutScreen(Actor button, Main game, Screen previousScreen){
         button.addListener(new ClickListener() {
             @Override
@@ -125,7 +134,7 @@ public class ButtonActions {
         });
     }
 
-    public static void pauseScreen(Actor button, PlayScreen screen) {
+    public static void pauseScreen(Actor button, BaseLevelScreen screen) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -134,7 +143,7 @@ public class ButtonActions {
         });
     }
 
-    public static void resumeScreen(Actor button, PlayScreen screen) {
+    public static void resumeScreen(Actor button, BaseLevelScreen screen) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

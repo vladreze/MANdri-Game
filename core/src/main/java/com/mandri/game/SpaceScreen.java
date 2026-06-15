@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.mandri.entities.Item;
 import com.mandri.entities.Rocket;
@@ -47,21 +50,23 @@ public class SpaceScreen extends BaseLevelScreen {
 
     @Override
     public void show() {
-        rocketParts = new Array<>();
-        pickupEffect = new ParticleEffect();
-        pickupEffect.load(Gdx.files.internal("assets/particles/collectItem.p"), Gdx.files.internal("assets/particles/"));
+        if (!isInitialized) {
+            rocketParts = new Array<>();
+            pickupEffect = new ParticleEffect();
+            pickupEffect.load(Gdx.files.internal("assets/particles/collectItem.p"), Gdx.files.internal("assets/particles/"));
 
-        Pixmap pixmap = new Pixmap(256, 256, Pixmap.Format.RGBA8888);
-        for (int y = 0; y < pixmap.getHeight(); y++) {
-            for (int x = 0; x < pixmap.getWidth(); x++) {
-                float noise = MathUtils.random();
-                pixmap.setColor(noise, noise, noise, 1f);
-                pixmap.drawPixel(x, y);
+            Pixmap pixmap = new Pixmap(320, 180, Pixmap.Format.RGBA8888);
+            for (int y = 0; y < pixmap.getHeight(); y++) {
+                for (int x = 0; x < pixmap.getWidth(); x++) {
+                    float noise = MathUtils.random();
+                    pixmap.setColor(noise, noise, noise, 1f);
+                    pixmap.drawPixel(x, y);
+                }
             }
+            noiseTexture = new Texture(pixmap);
+            noiseTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+            pixmap.dispose();
         }
-        noiseTexture = new Texture(pixmap);
-        noiseTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-        pixmap.dispose();
 
         super.show();
     }
