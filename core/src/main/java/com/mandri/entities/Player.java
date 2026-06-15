@@ -26,9 +26,9 @@ public class Player {
     private float x, y;
     private float spawnX, spawnY;
 
-    private float velocityX, velocityY;
+    public float velocityX, velocityY;
     private final float SPEED = 150f;
-    public final float JUMP_FORCE = 400f;
+    public final float JUMP_FORCE = 350f;
     private final float GRAVITY = -(JUMP_FORCE * 2);
     private boolean wasSpacePressed = false;
 
@@ -534,6 +534,7 @@ public class Player {
     }
 
     public void drawShadow(SpriteBatch batch, float offsetX, float offsetY) {
-        batch.draw(getFrame(), x + offsetX, y + offsetY);
-    }
+        batch.setColor(0, 0, 0, 0.4f);
+        batch.draw(manager.image.whitePixel, x + 4, y - 2, bounds.width - 8, 4);
+        batch.setColor(1f, 1f, 1f, 1f);    }
 }

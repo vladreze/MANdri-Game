@@ -97,25 +97,37 @@ public class ImageManager {
     public TextureRegion caveFall_R;
     public TextureRegion caveFall_L;
 
+    public TextureRegion caveEmerald;
+    public TextureRegion caveGeyser;
+    public TextureRegion caveMonster;
+    public TextureRegion caveNumber0;
+    public TextureRegion caveNumber1;
+    public TextureRegion caveNumber3;
+    public TextureRegion caveNumber5;
+    public TextureRegion caveSpider;
+    public TextureRegion caveStalactite;
+    public TextureRegion caveWaterExit;
+
     public Animation<TextureRegion> caveRun_R;
     public Animation<TextureRegion> caveRun_L;
+//cs1
+    public Animation<TextureRegion> cs1Anim;
+    public Animation<TextureRegion> cs2w;
+    public Animation<TextureRegion>cs2e;
+    public Animation<TextureRegion>cs3One;
+    public Animation<TextureRegion>cs3Two;
 
     public void loadImages(){
         manager.load("particles/particle.png", Texture.class);
-//        backgrounds
-//        manager.load("menu_bg.png", Texture.class);
 
 //      hearts
         manager.load("level-ui/hearts.png", Texture.class);
 
         manager.load("space/space-bg.png", Texture.class);
-//        manager.load("forest_bg.png", Texture.class);
-//        manager.load("cave_bg.png", Texture.class);
+
 
 //        space
         manager.load("space/space_front.png", Texture.class);
-//        manager.load("space/space_left.png", Texture.class);
-//        manager.load("space/space_right.png", Texture.class);
         manager.load("space/space_fall_F.png", Texture.class);
         manager.load("space/space_fall_L.png", Texture.class);
         manager.load("space/space_fall_R.png", Texture.class);
@@ -161,6 +173,47 @@ public class ImageManager {
         manager.load("forest/forest_tree.png", Texture.class);
 
 //        cave
+
+//        CUTSCENE
+        manager.load("cutscenes/cutscene1.png", Texture.class);
+        manager.load("cutscenes/cutscene1-1.png", Texture.class);
+        manager.load("cutscenes/cutscene1-2.png", Texture.class);
+        manager.load("cutscenes/cutscene1-3.png", Texture.class);
+        manager.load("cutscenes/cutscene1-9.png", Texture.class);
+        manager.load("cutscenes/cutscene1-10.png", Texture.class);
+        manager.load("cutscenes/cutscene1-11.png", Texture.class);
+        manager.load("cutscenes/dialogue window.png", Texture.class);
+        manager.load("cutscenes/logo.png", Texture.class);
+
+        manager.load("cutscenes/ship window.png", Texture.class);
+        manager.load("cutscenes/ship window-2.png", Texture.class);
+        manager.load("cutscenes/The Earth.png", Texture.class);
+        manager.load("cutscenes/The Earth-2.png", Texture.class);
+
+//        manager.load("cutscenes/cutscene3-1.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-2.png", Texture.class);
+        manager.load("cutscenes/cutscene3-3.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-4.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-5.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-8.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-9.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-10.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-12.png", Texture.class);
+//        manager.load("cutscenes/cutscene3-13.png", Texture.class);
+        manager.load("cutscenes/dialogue window-2.png", Texture.class);
+        manager.load("cutscenes/cutscene3(1).png", Texture.class);
+        manager.load("cutscenes/cutscene3(2).png", Texture.class);
+
+        manager.load("cave/emerald.png", Texture.class);
+        manager.load("cave/geyser.png", Texture.class);
+        manager.load("cave/monster.png", Texture.class);
+        manager.load("cave/number0.png", Texture.class);
+        manager.load("cave/number1.png", Texture.class);
+        manager.load("cave/number3.png", Texture.class);
+        manager.load("cave/number5.png", Texture.class);
+        manager.load("cave/spider.png", Texture.class);
+        manager.load("cave/stalactite.png", Texture.class);
+        manager.load("cave/waterExit.png", Texture.class);
     }
 
     public void initAnimations(){
@@ -189,7 +242,17 @@ public class ImageManager {
         forestHive = new TextureRegion(manager.get("forest/forest_hive.png", Texture.class));
         forestMushroom = new TextureRegion(manager.get("forest/forest_mushroom_1.png", Texture.class));
         forestTree = new TextureRegion(manager.get("forest/forest_tree.png", Texture.class));
-
+//cave
+        caveEmerald = new TextureRegion(manager.get("cave/emerald.png", Texture.class));
+        caveGeyser = new TextureRegion(manager.get("cave/geyser.png", Texture.class));
+        caveMonster = new TextureRegion(manager.get("cave/monster.png", Texture.class));
+        caveNumber0 = new TextureRegion(manager.get("cave/number0.png", Texture.class));
+        caveNumber1 = new TextureRegion(manager.get("cave/number1.png", Texture.class));
+        caveNumber3 = new TextureRegion(manager.get("cave/number3.png", Texture.class));
+        caveNumber5 = new TextureRegion(manager.get("cave/number5.png", Texture.class));
+        caveSpider = new TextureRegion(manager.get("cave/spider.png", Texture.class));
+        caveStalactite = new TextureRegion(manager.get("cave/stalactite.png", Texture.class));
+        caveWaterExit = new TextureRegion(manager.get("cave/waterExit.png", Texture.class));
 //      hearts
         Texture tHearts = manager.get("level-ui/hearts.png", Texture.class);
 
@@ -199,6 +262,27 @@ public class ImageManager {
         poisonHeart = heartFrames[1][0];
         shieldHeart = heartFrames[2][0];
         emptyHeart = heartFrames[3][0];
+
+//        cutscene
+        Texture cs1 = manager.get("cutscenes/cutscene1.png", Texture.class);
+        TextureRegion[][] texCs1 = TextureRegion.split(cs1, 1280, 720);
+        cs1Anim = new Animation<>(0.5f, texCs1[0]);
+
+        Texture cs2W = manager.get("cutscenes/ship window.png", Texture.class);
+        TextureRegion[][] texCs2w = TextureRegion.split(cs2W, 1280, 720);
+        cs2w = new Animation<>(0.5f, texCs2w[0]);
+
+        Texture cs2E = manager.get("cutscenes/The Earth.png", Texture.class);
+        TextureRegion[][] texCs2e = TextureRegion.split(cs2E, 1280, 720);
+        cs2e = new Animation<>(0.5f, texCs2e[0]);
+
+        Texture cs31 = manager.get("cutscenes/cutscene3(1).png", Texture.class);
+        TextureRegion[][] texCs31 = TextureRegion.split(cs31, 1280, 720);
+        cs3One = new Animation<>(0.5f, texCs31[0]);
+
+        Texture cs32 = manager.get("cutscenes/cutscene3(2).png", Texture.class);
+        TextureRegion[][] texCs32 = TextureRegion.split(cs32, 1280, 720);
+        cs3Two = new Animation<>(0.5f, texCs32[0]);
 
 //        run
         Texture tSpaceRunR = manager.get("space/space_run_R.png", Texture.class);
@@ -247,6 +331,47 @@ public class ImageManager {
     }
     public Texture spaceBg(){
         return  manager.get("space/space-bg.png", Texture.class);
+    }
+
+    public Texture cutscene1(int frameNum){
+        Texture texture =  manager.get("cutscenes/cutscene1-1.png", Texture.class);
+        switch (frameNum){
+            case 1: texture = manager.get("cutscenes/cutscene1-1.png", Texture.class);
+                break;
+            case 2: texture = manager.get("cutscenes/cutscene1-2.png", Texture.class);
+                break;
+            case 3: texture = manager.get("cutscenes/cutscene1-3.png", Texture.class);
+                break;
+            case 9: texture = manager.get("cutscenes/cutscene1-9.png", Texture.class);
+                break;
+            case 10: texture = manager.get("cutscenes/cutscene1-10.png", Texture.class);
+                break;
+            case 11: texture = manager.get("cutscenes/cutscene1-11.png", Texture.class);
+                break;
+            case 12 : texture = manager.get("cutscenes/dialogue window.png", Texture.class);
+                break;
+            case 13: texture = manager.get("cutscenes/logo.png", Texture.class);
+            break;
+            case 14: texture = manager.get("cutscenes/cutscene3-3.png", Texture.class);
+                break;
+        }
+        return texture;
+    }
+    public Texture cutscene2(int frameNum){
+        Texture texture =  manager.get("cutscenes/ship window-2.png", Texture.class);
+        switch (frameNum) {
+            case 1:
+                texture = manager.get("cutscenes/ship window-2.png", Texture.class);
+                break;
+            case 2:
+                texture = manager.get("cutscenes/The Earth-2.png", Texture.class);
+                break;
+        }
+        return  texture;
+    }
+
+    public Texture cutscene3(){
+        return manager.get("cutscenes/dialogue window-2.png", Texture.class);
     }
 
     public void disposeImages(){

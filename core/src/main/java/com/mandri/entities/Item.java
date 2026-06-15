@@ -1,7 +1,10 @@
 package com.mandri.entities;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
@@ -14,7 +17,12 @@ public class Item {
     public float width;
     public float height;
     public Rectangle bounds;
+    public boolean isFalling = false;
+    private float velocityX, velocityY;
+    private final float GRAVITY = 150f;
     private final MainAssetsManager manager;
+
+    private ParticleEffect mushroomJumpEffect;
 
     public Item(MainAssetsManager manager, String name, float x, float y) {
         this.name=name;
@@ -31,6 +39,13 @@ public class Item {
             this.height = 25f;
         }
         this.bounds = new Rectangle(x, y, width, height);
+
+        if ("mushroom".equals(name)) {
+            mushroomJumpEffect = new ParticleEffect();
+            mushroomJumpEffect.load(Gdx.files.internal("particles/mushroomJump.p"), Gdx.files.internal("particles/"));
+            mushroomJumpEffect.scaleEffect(.7f);
+            mushroomJumpEffect.setPosition(x + width / 2, y + bounds.height / 1.25f);
+        }
     }
     public void collect(){
         isCollected = true;
@@ -63,5 +78,33 @@ public class Item {
                 batch.draw(frame,x,y,width,height);
             }
         }
+        if (mushroomJumpEffect != null) mushroomJumpEffect.draw(batch);
+    }
+
+    public void update(float delta, float playerX) {
+        if (mushroomJumpEffect != null) mushroomJumpEffect.update(delta);
+        if ("acorn".equals(name)) {
+            float playerAcornX = Math.abs(this.x - playerX);
+            if (playerAcornX < 100f) {
+                isFalling = true;
+            }
+            if (isFalling) {
+                velocityY -= GRAVITY * delta;
+                y += velocityY * delta;
+                bounds.setPosition(x, y);
+            }
+        }
+    }
+
+    public void drawShadow(SpriteBatch batch, MainAssetsManager manager) {
+        if (!isCollected) {
+            batch.setColor(0f, 0f, 0f, 0.4f);
+            batch.draw(manager.image.whitePixel, x + 2, y - 2, width - 4, 3);
+            batch.setColor(1f, 1f, 1f, 1f);
+        }
+    }
+
+    public void playJumpEffect() {
+        if (mushroomJumpEffect != null) mushroomJumpEffect.start();
     }
 }

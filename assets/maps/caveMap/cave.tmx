@@ -215,44 +215,44 @@
   <object id="188" x="4608" y="160" width="48" height="16"/>
  </objectgroup>
  <objectgroup id="6" name="spawns">
-  <object id="5" type="acorn" gid="1073741833" x="160" y="128" width="16" height="16"/>
-  <object id="7" type="acorn" gid="1073741833" x="192" y="128" width="16" height="16"/>
-  <object id="9" type="acorn" gid="1073741833" x="224" y="128" width="16" height="16"/>
-  <object id="11" type="acorn" gid="1073741833" x="256" y="128" width="16" height="16"/>
+  <object id="5" type="stalactite" gid="1073741833" x="160" y="128" width="16" height="16"/>
+  <object id="7" type="stalactite" gid="1073741833" x="192" y="128" width="16" height="16"/>
+  <object id="9" type="stalactite" gid="1073741833" x="224" y="128" width="16" height="16"/>
+  <object id="11" type="stalactite" gid="1073741833" x="256" y="128" width="16" height="16"/>
   <object id="13" type="numb5" gid="3" x="464" y="192" width="16" height="16"/>
   <object id="17" type="spider" gid="7" x="783.5" y="271.5" width="16" height="16"/>
   <object id="18" type="spider" gid="6" x="767.5" y="271.625" width="16" height="16"/>
   <object id="19" type="spider" x="768" y="256" width="32" height="16"/>
   <object id="20" type="emerald" gid="10" x="1168" y="80" width="16" height="16"/>
-  <object id="22" type="acorn" gid="1073741833" x="960" y="208" width="16" height="16"/>
-  <object id="24" type="acorn" gid="1073741833" x="992" y="208" width="16" height="16"/>
-  <object id="26" type="mushroom" gid="13" x="912" y="256" width="16" height="16"/>
-  <object id="36" type="mushroom" gid="13" x="1344" y="240" width="16" height="16"/>
+  <object id="22" type="stalactite" gid="1073741833" x="960" y="208" width="16" height="16"/>
+  <object id="24" type="stalactite" gid="1073741833" x="992" y="208" width="16" height="16"/>
+  <object id="26" type="geyser" gid="13" x="912" y="256" width="16" height="16"/>
+  <object id="36" type="geyser" gid="13" x="1344" y="240" width="16" height="16"/>
   <object id="37" type="spider" gid="7" x="1471.7" y="221.96" width="16" height="16"/>
   <object id="38" type="spider" gid="6" x="1455.7" y="222.085" width="16" height="16"/>
   <object id="39" type="spider" x="1456.2" y="206.46" width="32" height="16"/>
-  <object id="40" type="acorn" gid="1073741833" x="1520" y="160" width="16" height="16"/>
+  <object id="40" type="stalactite" gid="1073741833" x="1520" y="160" width="16" height="16"/>
   <object id="57" type="numb3" gid="5" x="2256" y="128" width="16" height="16"/>
-  <object id="58" type="mushroom" gid="13" x="2160" y="240" width="16" height="16"/>
+  <object id="58" type="geyser" gid="13" x="2160" y="240" width="16" height="16"/>
   <object id="76" gid="6" x="2048" y="240" width="16" height="16"/>
   <object id="77" gid="7" x="2064" y="240" width="16" height="16"/>
   <object id="78" type="spider" x="2048" y="224" width="32" height="16"/>
   <object id="81" type="numb1" gid="17" x="3488" y="240" width="16" height="16"/>
-  <object id="82" type="acorn" gid="1073741833" x="3488" y="160" width="16" height="16"/>
-  <object id="83" type="acorn" gid="1073741833" x="3536" y="160" width="16" height="16"/>
+  <object id="82" type="stalactite" gid="1073741833" x="3488" y="160" width="16" height="16"/>
+  <object id="83" type="stalactite" gid="1073741833" x="3536" y="160" width="16" height="16"/>
   <object id="84" type="numb0" gid="25" x="2879.67" y="143.667" width="16" height="16"/>
   <object id="89" gid="6" x="2736" y="224" width="16" height="16"/>
   <object id="90" gid="7" x="2752" y="224" width="16" height="16"/>
   <object id="91" type="spider" x="2736" y="208" width="32" height="16"/>
-  <object id="97" type="acorn" gid="1073741833" x="2640" y="80" width="16" height="16"/>
-  <object id="98" type="acorn" gid="1073741833" x="2672" y="80" width="16" height="16"/>
-  <object id="99" type="acorn" gid="1073741833" x="2736" y="80" width="16" height="16"/>
-  <object id="101" type="mushroom" gid="13" x="2960" y="240" width="16" height="16"/>
-  <object id="102" type="acorn" gid="1073741833" x="2896" y="176" width="16" height="16"/>
+  <object id="97" type="stalactite" gid="1073741833" x="2640" y="80" width="16" height="16"/>
+  <object id="98" type="stalactite" gid="1073741833" x="2672" y="80" width="16" height="16"/>
+  <object id="99" type="stalactite" gid="1073741833" x="2736" y="80" width="16" height="16"/>
+  <object id="101" type="geyser" gid="13" x="2960" y="240" width="16" height="16"/>
+  <object id="102" type="stalactite" gid="1073741833" x="2896" y="176" width="16" height="16"/>
   <object id="104" gid="6" x="3088" y="256" width="16" height="16"/>
   <object id="105" gid="7" x="3104" y="256" width="16" height="16"/>
   <object id="106" type="spider" x="3088" y="240" width="32" height="16"/>
-  <object id="107" type="acorn" gid="1073741833" x="3424" y="160" width="16" height="16"/>
+  <object id="107" type="stalactite" gid="1073741833" x="3424" y="160" width="16" height="16"/>
   <object id="122" gid="21" x="4862" y="224" width="16" height="16"/>
   <object id="123" gid="21" x="4862" y="208" width="16" height="16"/>
   <object id="124" gid="21" x="4862" y="192" width="16" height="16"/>
@@ -280,14 +280,14 @@
   <object id="149" gid="2147483660" x="4736.25" y="207.5" width="16" height="16"/>
   <object id="150" gid="2147483659" x="4752.25" y="207.5" width="16" height="16"/>
   <object id="153" type="monster" x="4736.25" y="191.5" width="32" height="32"/>
-  <object id="154" type="acorn" gid="1073741833" x="3920" y="128" width="16" height="16"/>
-  <object id="156" type="acorn" gid="1073741833" x="3984" y="128" width="16" height="16"/>
-  <object id="157" type="acorn" gid="1073741833" x="4016" y="112" width="16" height="16"/>
+  <object id="154" type="stalactite" gid="1073741833" x="3920" y="128" width="16" height="16"/>
+  <object id="156" type="stalactite" gid="1073741833" x="3984" y="128" width="16" height="16"/>
+  <object id="157" type="stalactite" gid="1073741833" x="4016" y="112" width="16" height="16"/>
   <object id="158" type="emerald" gid="10" x="1824" y="176" width="16" height="16"/>
   <object id="159" gid="10" x="4208" y="96" width="16" height="16"/>
-  <object id="162" type="mushroom" gid="13" x="4336" y="224" width="16" height="16"/>
-  <object id="164" type="mushroom" gid="13" x="4048" y="224" width="16" height="16"/>
-  <object id="166" type="acorn" gid="1073741833" x="4240" y="144" width="16" height="16"/>
+  <object id="162" type="geyser" gid="13" x="4336" y="224" width="16" height="16"/>
+  <object id="164" type="geyser" gid="13" x="4048" y="224" width="16" height="16"/>
+  <object id="166" type="stalactite" gid="1073741833" x="4240" y="144" width="16" height="16"/>
   <object id="189" type="exitWater" x="4928" y="224" width="160" height="16"/>
  </objectgroup>
 </map>

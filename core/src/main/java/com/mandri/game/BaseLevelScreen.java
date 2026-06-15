@@ -29,11 +29,12 @@ import com.mandri.entities.Enemy;
 import com.mandri.entities.InventoryLogic;
 import com.mandri.entities.Item;
 import com.mandri.entities.Player;
+import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
 import com.mandri.ui.ButtonActions;
 import com.mandri.ui.FontCreator;
 
-public abstract class BaseLevelScreen extends PlayScreen implements Screen {
+public abstract class BaseLevelScreen implements Screen {
     protected SpriteBatch batch;
     protected OrthographicCamera camera;
     protected OrthographicCamera hudCamera;
@@ -73,11 +74,14 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     protected boolean isFadingIn = true;
     protected boolean isFadingOut = false;
     protected boolean isLevelFinished = false;
+    protected float shaderTime = 0f;
 
     protected boolean isPaused = false;
     protected Table pauseTable;
     protected Texture dimBackground;
     protected boolean isInitialized = false;
+
+    protected Table exitConfirmTable;
 
     protected InventoryLogic inventory;
     protected Table hotbarTable;
@@ -89,7 +93,6 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     protected float levelFinishTimer = 0f;
 
     public BaseLevelScreen(Main game, MainAssetsManager manager) {
-        super(game, manager);
         this.game = game;
         this.manager = manager;
     }
@@ -183,7 +186,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         Label pauseButton = new Label("||", textPauseStyle);
         pauseButton.setSize(30, 30);
         pauseButton.setPosition(hudCameraWidth - 40, hudCameraHeight - 40);
-        ButtonActions.pauseScreen(pauseButton, this);
+        ButtonActions.pauseScreen(pauseButton, this, game);
         ButtonActions.addHover(pauseButton);
         hudStage.addActor(pauseButton);
 
@@ -208,13 +211,35 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         Label.LabelStyle textStyle = new Label.LabelStyle();
         textStyle.font = fontText;
 
+        exitConfirmTable = new Table();
+        exitConfirmTable.setFillParent(true);
+        exitConfirmTable.setVisible(false);
+        exitConfirmTable.setBackground(new TextureRegionDrawable(dimBackground));
+
+        Label warningLabel = new Label("ARE YOU SURE YOU WANT TO EXIT?\nALL PROGRESS WILL BE LOST", labelPauseTextStyle);
+        warningLabel.setWrap(true);
+        warningLabel.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        Label yesBtn = new Label("YES", textStyle);
+        Label noBtn = new Label("NO", textStyle);
+
+        ButtonActions.openMainMenu(yesBtn, game);
+        ButtonActions.abortExit(noBtn, pauseTable, exitConfirmTable,game);
+
+        ButtonActions.addHover(yesBtn);
+        ButtonActions.addHover(noBtn);
+
+        exitConfirmTable.add(warningLabel).width(500).colspan(2).padBottom(30).row();
+        exitConfirmTable.add(yesBtn).padRight(40);
+        exitConfirmTable.add(noBtn);
+
         Label resumeTextBtn = new Label("RESUME", textStyle);
         Label settingsTextBtn = new Label("SETTINGS", textStyle);
         Label exitTextBtn = new Label("EXIT", textStyle);
 
-        ButtonActions.resumeScreen(resumeTextBtn, this);
+        ButtonActions.resumeScreen(resumeTextBtn, this, game);
         ButtonActions.openSettings(settingsTextBtn, game, this);
-        ButtonActions.openMainMenu(exitTextBtn, game);
+        ButtonActions.exitScreen(exitTextBtn, pauseTable, exitConfirmTable, game);
         ButtonActions.addHover(resumeTextBtn);
         ButtonActions.addHover(settingsTextBtn);
         ButtonActions.addHover(exitTextBtn);
@@ -268,6 +293,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         hudStage.addActor(hotbarTable);
         hudStage.addActor(mainInventoryTable);
         hudStage.addActor(pauseTable);
+        hudStage.addActor(exitConfirmTable);
     }
 
     @Override
@@ -275,6 +301,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            manager.getMusic().playGamePauseSound();
             if (isPaused) resumeGame(); else pauseGame();
         }
 
@@ -291,6 +318,15 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
                     enemies.removeIndex(i);
                     continue;
                 }
+                float playerBeeAbsX = Math.abs(e.bounds.getX() - player.bounds.getX());
+                float playerBeeAbsY = Math.abs(e.bounds.getY() - player.bounds.getY());
+
+                if (playerBeeAbsX < 70f &&  playerBeeAbsY < 50f) {
+                    e.beeAngry();
+                } else {
+                    e.beeNormal();
+                }
+
                 e.update(delta, collisionLayer, camera);
                 if (player.bounds.overlaps(e.bounds) && !e.isDead) {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > e.bounds.y) {
@@ -316,19 +352,50 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        float parallaxSpeed = 0.2f;
-        float bgU = (camera.position.x * parallaxSpeed) / bgTexture.getWidth();
-        float bgHeight = playerCameraHeight;
-        float bgWidth = playerCameraWidth;
-        float backgroundStartX = camera.position.x - (playerCameraWidth / 2);
-        float backgroundStartY = camera.position.y - (playerCameraHeight / 2);
-
-        batch.draw(bgTexture, backgroundStartX, backgroundStartY, bgWidth, bgHeight,
-            bgU, 0, bgU + (bgWidth / bgTexture.getWidth()), 1);
-        batch.end();
+        shaderTime += delta;
 
         vignetteShader.bind();
         vignetteShader.setUniformf("u_resolution", Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
+        float intensity = (getLevelTheme().equals("space") || getLevelTheme().equals("cave")) ? 0f : 1f;
+        vignetteShader.setUniformf("u_rays_intensity", intensity);
+        vignetteShader.setUniformf("u_time", shaderTime);
+        vignetteShader.setUniformf("u_density", 5.0f);
+        float fogIntensity = getLevelTheme().equals("forest") ? 1f : 0f;
+        vignetteShader.setUniformf("u_fog_intensity", fogIntensity);
+        float starsIntensity = getLevelTheme().equals("space") ? 1f : 0f;
+        vignetteShader.setUniformf("u_stars_intensity", starsIntensity);
+
+        Texture noiseTexture = getNoiseTexture();
+        if (noiseTexture != null) {
+            noiseTexture.bind(1);
+            vignetteShader.setUniformi("u_noise_texture", 1);
+            Gdx.gl.glActiveTexture(Gdx.gl.GL_TEXTURE0);
+        }
+
+        batch.end();
+
+        renderer.setView(camera);
+        batch.setProjectionMatrix(camera.combined);
+        batch.setShader(vignetteShader);
+        batch.begin();
+
+        float parallaxSpeedX = 0.075f;
+        float parallaxSpeedY = 0.075f;
+
+        float bgWidth = playerCameraWidth;
+        float bgHeight = playerCameraHeight;
+        float backgroundStartX = camera.position.x - (playerCameraWidth / 2);
+        float backgroundStartY = camera.position.y - (playerCameraHeight / 2);
+
+        float bgU = (camera.position.x * parallaxSpeedX) / bgTexture.getWidth();
+        float bgU2 = bgU + (bgWidth / bgTexture.getWidth());
+
+        float bgV = (camera.position.y * parallaxSpeedY) / bgTexture.getHeight();
+        float bgV2 = bgV + (bgHeight / bgTexture.getHeight());
+
+        batch.draw(bgTexture, backgroundStartX, backgroundStartY, bgWidth, bgHeight, bgU, bgV, bgU2, bgV2);
+        batch.end();
+
         renderer.render();
 
         batch.setProjectionMatrix(camera.combined);
@@ -336,7 +403,6 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         batch.begin();
 
         float shadowOffset = 2.0f;
-        batch.setShader(shadowShader);
 
         drawLevelSpecificShadows(shadowOffset);
 
@@ -347,7 +413,6 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
             player.drawShadow(batch, shadowOffset, -shadowOffset);
         }
 
-        batch.setShader(null);
 
         drawLevelSpecifics();
         for (Enemy e : enemies) { e.draw(batch); }
@@ -488,7 +553,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         } else if (isFadingOut) {
             transitionAlpha += delta * .5f;
             if (transitionAlpha >= 1f) {
-                game.setScreen(getRestartScreen());
+                game.setScreen(new GameOverScreen(game, getRestartScreen()));
                 manager.music.playGameOverSound();
                 return;
             }
@@ -505,7 +570,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
                 transitionAlpha = 1f;
                 if (levelFinishTimer >= 3f) {
                     manager.getMusic().stopMusic();
-                    game.setScreen(new ForestScreen(game, manager));
+                    game.setScreen(getNextScreen());
                 }
             }
         }
@@ -573,6 +638,10 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     protected abstract String getLevelTheme();
 
     protected abstract Screen getRestartScreen();
+
+    protected abstract Screen getNextScreen();
+
+    protected abstract Texture getNoiseTexture();
 
     @Override
     public void dispose() {
