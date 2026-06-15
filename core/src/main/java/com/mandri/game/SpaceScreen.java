@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.mandri.entities.Item;
 import com.mandri.entities.Rocket;
+import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
 
 public class SpaceScreen extends BaseLevelScreen {
@@ -214,6 +215,11 @@ public class SpaceScreen extends BaseLevelScreen {
     @Override
     protected Screen getRestartScreen() {
         return new SpaceScreen(game, manager);
+    }
+
+    @Override
+    protected Screen getNextScreen() {
+        return  new CutsceneManager(game, manager).cs2();
     }
 
     @Override
