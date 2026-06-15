@@ -97,6 +97,17 @@ public class ImageManager {
     public TextureRegion caveFall_R;
     public TextureRegion caveFall_L;
 
+    public TextureRegion caveEmerald;
+    public TextureRegion caveGeyser;
+    public TextureRegion caveMonster;
+    public TextureRegion caveNumber0;
+    public TextureRegion caveNumber1;
+    public TextureRegion caveNumber3;
+    public TextureRegion caveNumber5;
+    public TextureRegion caveSpider;
+    public TextureRegion caveStalactite;
+    public TextureRegion caveWaterExit;
+
     public Animation<TextureRegion> caveRun_R;
     public Animation<TextureRegion> caveRun_L;
 //cs1
@@ -202,6 +213,17 @@ public class ImageManager {
         manager.load("cutscenes/dialogue window-2.png", Texture.class);
         manager.load("cutscenes/cutscene3(1).png", Texture.class);
         manager.load("cutscenes/cutscene3(2).png", Texture.class);
+
+        manager.load("cave/emerald.png", Texture.class);
+        manager.load("cave/geyser.png", Texture.class);
+        manager.load("cave/monster.png", Texture.class);
+        manager.load("cave/number0.png", Texture.class);
+        manager.load("cave/number1.png", Texture.class);
+        manager.load("cave/number3.png", Texture.class);
+        manager.load("cave/number5.png", Texture.class);
+        manager.load("cave/spider.png", Texture.class);
+        manager.load("cave/stalactite.png", Texture.class);
+        manager.load("cave/waterExit.png", Texture.class);
     }
 
     public void initAnimations(){
@@ -230,7 +252,17 @@ public class ImageManager {
         forestHive = new TextureRegion(manager.get("forest/forest_hive.png", Texture.class));
         forestMushroom = new TextureRegion(manager.get("forest/forest_mushroom_1.png", Texture.class));
         forestTree = new TextureRegion(manager.get("forest/forest_tree.png", Texture.class));
-
+//cave
+        caveEmerald = new TextureRegion(manager.get("cave/emerald.png", Texture.class));
+        caveGeyser = new TextureRegion(manager.get("cave/geyser.png", Texture.class));
+        caveMonster = new TextureRegion(manager.get("cave/monster.png", Texture.class));
+        caveNumber0 = new TextureRegion(manager.get("cave/number0.png", Texture.class));
+        caveNumber1 = new TextureRegion(manager.get("cave/number1.png", Texture.class));
+        caveNumber3 = new TextureRegion(manager.get("cave/number3.png", Texture.class));
+        caveNumber5 = new TextureRegion(manager.get("cave/number5.png", Texture.class));
+        caveSpider = new TextureRegion(manager.get("cave/spider.png", Texture.class));
+        caveStalactite = new TextureRegion(manager.get("cave/stalactite.png", Texture.class));
+        caveWaterExit = new TextureRegion(manager.get("cave/waterExit.png", Texture.class));
 //      hearts
         Texture tHearts = manager.get("level-ui/hearts.png", Texture.class);
 
