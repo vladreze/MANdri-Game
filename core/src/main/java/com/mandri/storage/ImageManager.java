@@ -119,6 +119,7 @@ public class ImageManager {
     public Animation<TextureRegion>cs2e;
     public Animation<TextureRegion>cs3One;
     public Animation<TextureRegion>cs3Two;
+    public Animation<TextureRegion>cs4Anim;
 
     public void loadImages(){
         manager.load("particles/particle.png", Texture.class);
@@ -216,6 +217,9 @@ public class ImageManager {
         manager.load("cutscenes/dialogue window-2.png", Texture.class);
         manager.load("cutscenes/cutscene3(1).png", Texture.class);
         manager.load("cutscenes/cutscene3(2).png", Texture.class);
+        manager.load("cutscenes/cs4.png", Texture.class);
+        manager.load("cutscenes/credits-bg.png", Texture.class);
+
 
         manager.load("cave/emerald.png", Texture.class);
         manager.load("cave/geyser.png", Texture.class);
@@ -301,6 +305,19 @@ public class ImageManager {
         TextureRegion[][] texCs32 = TextureRegion.split(cs32, 1280, 720);
         cs3Two = new Animation<>(0.5f, texCs32[0]);
 
+        Texture cs4 = manager.get("cutscenes/cs4.png", Texture.class);
+        TextureRegion[][] texCs4 = TextureRegion.split(cs4, 1280, 720);
+        TextureRegion[] frames = new TextureRegion[13];
+        int index = 0;
+        for (int i = 0; i < texCs4.length; i++) {
+            for (int j = 0; j < texCs4[i].length; j++) {
+                if (index < 13) {
+                    frames[index++] = texCs4[i][j];
+                }
+            }
+        }
+        cs4Anim = new Animation<>(0.7f, frames);
+
 //        run
         Texture tSpaceRunR = manager.get("space/space_run_R.png", Texture.class);
         TextureRegion[][] texRunR = TextureRegion.split(tSpaceRunR, 32, 32);
@@ -368,8 +385,8 @@ public class ImageManager {
         caveFall_L = new TextureRegion(manager.get("cave/cave_fall_L.png", Texture.class));
 
     }
-    public Texture spaceBg(){
-        return  manager.get("space/space-bg.png", Texture.class);
+    public Texture creditsBg(){
+        return  manager.get("cutscenes/credits-bg.png", Texture.class);
     }
 
     public Texture cutscene1(int frameNum){
