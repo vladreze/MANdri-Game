@@ -24,7 +24,7 @@ public class CutsceneManager {
             manager.image.cutscene1(11),
             manager.image.cutscene1(12),
             manager.image.cutscene1(12),
-            manager.image.cutscene3(3),
+            manager.image.cutscene1(14),
             manager.image.cutscene1(13)
             };
 
@@ -86,7 +86,7 @@ public class CutsceneManager {
     }
     public Screen cs3(){
         Texture[] texture = new Texture[]{
-            manager.image.cutscene3(11) //dialogue
+            manager.image.cutscene3() //dialogue
         };
 
         String[] text = new String[]{

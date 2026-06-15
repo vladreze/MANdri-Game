@@ -181,7 +181,7 @@ public class ImageManager {
 
 //        manager.load("cutscenes/cutscene3-1.png", Texture.class);
 //        manager.load("cutscenes/cutscene3-2.png", Texture.class);
-//        manager.load("cutscenes/cutscene3-3.png", Texture.class);
+        manager.load("cutscenes/cutscene3-3.png", Texture.class);
 //        manager.load("cutscenes/cutscene3-4.png", Texture.class);
 //        manager.load("cutscenes/cutscene3-5.png", Texture.class);
 //        manager.load("cutscenes/cutscene3-8.png", Texture.class);
@@ -319,6 +319,9 @@ public class ImageManager {
             case 12 : texture = manager.get("cutscenes/dialogue window.png", Texture.class);
                 break;
             case 13: texture = manager.get("cutscenes/logo.png", Texture.class);
+            break;
+            case 14: texture = manager.get("cutscenes/cutscene3-3.png", Texture.class);
+                break;
         }
         return texture;
     }
@@ -335,33 +338,8 @@ public class ImageManager {
         return  texture;
     }
 
-    public Texture cutscene3(int frameNum){
-        Texture texture =  manager.get("cutscenes/dialogue window-2.png", Texture.class);
-        switch (frameNum){
-//            case 1: texture = manager.get("cutscenes/cutscene3-1.png", Texture.class);
-//                break;
-//            case 2: texture = manager.get("cutscenes/cutscene3-2.png", Texture.class);
-//                break;
-//            case 3: texture = manager.get("cutscenes/cutscene3-3.png", Texture.class);
-//                break;
-//            case 4: texture = manager.get("cutscenes/cutscene3-4.png", Texture.class);
-//                break;
-//            case 5: texture = manager.get("cutscenes/cutscene3-5.png", Texture.class);
-//                break;
-//            case 6: texture = manager.get("cutscenes/cutscene3-8.png", Texture.class);
-//                break;
-//            case 7: texture = manager.get("cutscenes/cutscene3-9.png", Texture.class);
-//                break;
-//            case 8: texture = manager.get("cutscenes/cutscene3-10.png", Texture.class);
-//                break;
-//            case 9: texture = manager.get("cutscenes/cutscene3-12.png", Texture.class);
-//                break;
-//            case 10: texture = manager.get("cutscenes/cutscene3-13.png", Texture.class);
-//                break;
-            case 11: texture = manager.get("cutscenes/dialogue window-2.png", Texture.class);
-                break;
-        }
-        return texture;
+    public Texture cutscene3(){
+        return manager.get("cutscenes/dialogue window-2.png", Texture.class);
     }
 
     public void disposeImages(){
