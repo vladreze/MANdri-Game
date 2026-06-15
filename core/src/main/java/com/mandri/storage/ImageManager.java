@@ -97,6 +97,17 @@ public class ImageManager {
     public TextureRegion caveFall_R;
     public TextureRegion caveFall_L;
 
+    public TextureRegion caveEmerald;
+    public TextureRegion caveGeyser;
+    public TextureRegion caveMonster;
+    public TextureRegion caveNumber0;
+    public TextureRegion caveNumber1;
+    public TextureRegion caveNumber3;
+    public TextureRegion caveNumber5;
+    public TextureRegion caveSpider;
+    public TextureRegion caveStalactite;
+    public TextureRegion caveWaterExit;
+
     public Animation<TextureRegion> caveRun_R;
     public Animation<TextureRegion> caveRun_L;
 //cs1
@@ -162,7 +173,17 @@ public class ImageManager {
         manager.load("forest/forest_tree.png", Texture.class);
 
 //        cave
-
+        manager.load("cave/cave_fall_F.png", Texture.class);
+        manager.load("cave/cave_fall_L.png", Texture.class);
+        manager.load("cave/cave_fall_R.png", Texture.class);
+        manager.load("cave/cave_front.png", Texture.class);
+        manager.load("cave/cave_jump_F.png", Texture.class);
+        manager.load("cave/cave_jump_L.png", Texture.class);
+        manager.load("cave/cave_jump_R.png", Texture.class);
+        manager.load("cave/cave_left.png", Texture.class);
+        manager.load("cave/cave_right.png", Texture.class);
+        manager.load("cave/cave_run_L.png", Texture.class);
+        manager.load("cave/cave_run_R.png", Texture.class);
 //        CUTSCENE
         manager.load("cutscenes/cutscene1.png", Texture.class);
         manager.load("cutscenes/cutscene1-1.png", Texture.class);
@@ -192,6 +213,17 @@ public class ImageManager {
         manager.load("cutscenes/dialogue window-2.png", Texture.class);
         manager.load("cutscenes/cutscene3(1).png", Texture.class);
         manager.load("cutscenes/cutscene3(2).png", Texture.class);
+
+        manager.load("cave/emerald.png", Texture.class);
+        manager.load("cave/geyser.png", Texture.class);
+        manager.load("cave/monster.png", Texture.class);
+        manager.load("cave/number0.png", Texture.class);
+        manager.load("cave/number1.png", Texture.class);
+        manager.load("cave/number3.png", Texture.class);
+        manager.load("cave/number5.png", Texture.class);
+        manager.load("cave/spider.png", Texture.class);
+        manager.load("cave/stalactite.png", Texture.class);
+        manager.load("cave/waterExit.png", Texture.class);
     }
 
     public void initAnimations(){
@@ -220,7 +252,17 @@ public class ImageManager {
         forestHive = new TextureRegion(manager.get("forest/forest_hive.png", Texture.class));
         forestMushroom = new TextureRegion(manager.get("forest/forest_mushroom_1.png", Texture.class));
         forestTree = new TextureRegion(manager.get("forest/forest_tree.png", Texture.class));
-
+//cave
+        caveEmerald = new TextureRegion(manager.get("cave/emerald.png", Texture.class));
+        caveGeyser = new TextureRegion(manager.get("cave/geyser.png", Texture.class));
+        caveMonster = new TextureRegion(manager.get("cave/monster.png", Texture.class));
+        caveNumber0 = new TextureRegion(manager.get("cave/number0.png", Texture.class));
+        caveNumber1 = new TextureRegion(manager.get("cave/number1.png", Texture.class));
+        caveNumber3 = new TextureRegion(manager.get("cave/number3.png", Texture.class));
+        caveNumber5 = new TextureRegion(manager.get("cave/number5.png", Texture.class));
+        caveSpider = new TextureRegion(manager.get("cave/spider.png", Texture.class));
+        caveStalactite = new TextureRegion(manager.get("cave/stalactite.png", Texture.class));
+        caveWaterExit = new TextureRegion(manager.get("cave/waterExit.png", Texture.class));
 //      hearts
         Texture tHearts = manager.get("level-ui/hearts.png", Texture.class);
 
@@ -295,6 +337,28 @@ public class ImageManager {
         forestFall_F = new TextureRegion(manager.get("forest/forest_fall_F.png", Texture.class));
         forestFall_R = new TextureRegion(manager.get("forest/forest_fall_R.png", Texture.class));
         forestFall_L = new TextureRegion(manager.get("forest/forest_fall_L.png", Texture.class));
+
+        // run cave
+        Texture tCaveRunR = manager.get("cave/cave_run_R.png", Texture.class);
+        TextureRegion[][] texCaveRunR = TextureRegion.split(tCaveRunR, 32, 32);
+        caveRun_R = new Animation<>(0.15f, texCaveRunR[0]);
+
+        Texture tCaveRunL = manager.get("cave/cave_run_L.png", Texture.class);
+        TextureRegion[][] texCaveRunL = TextureRegion.split(tCaveRunL, 32, 32);
+        caveRun_L = new Animation<>(0.15f, texCaveRunL[0]);
+
+        // idle cave
+        Texture tCaveIdle = manager.get("cave/cave_front.png", Texture.class);
+        TextureRegion[][] texCaveIdle = TextureRegion.split(tCaveIdle, 32, 32);
+        caveIdle_F = new Animation<>(0.24f, texCaveIdle[0]);
+
+        // jump & fall cave
+        caveJump_F = new TextureRegion(manager.get("cave/cave_jump_F.png", Texture.class));
+        caveJump_R = new TextureRegion(manager.get("cave/cave_jump_R.png", Texture.class));
+        caveJump_L = new TextureRegion(manager.get("cave/cave_jump_L.png", Texture.class));
+        caveFall_F = new TextureRegion(manager.get("cave/cave_fall_F.png", Texture.class));
+        caveFall_R = new TextureRegion(manager.get("cave/cave_fall_R.png", Texture.class));
+        caveFall_L = new TextureRegion(manager.get("cave/cave_fall_L.png", Texture.class));
 
     }
     public Texture spaceBg(){

@@ -86,8 +86,8 @@ public class Enemy {
             this.isFlying = false;
         }
         else if("bat".equals(type)) {
-            this.aliveTexture = new TextureRegion(manager.image.forestBeeAlive);
-            this.deadTexture = new TextureRegion(manager.image.forestBeeDead);
+            this.aliveTexture = new TextureRegion(manager.image.forestBatAlive);
+            this.deadTexture = new TextureRegion(manager.image.forestBatDead);
             this.speed = 30f;
             this.isFlying = true;
         }

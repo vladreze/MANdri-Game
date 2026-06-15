@@ -93,7 +93,7 @@ public class CutsceneManager {
             "[You]:Damn, I've fallen somewhere again. \n Well, let's see where this road leads..."
         };
 
-        Screen screen = new SpaceScreen(main, manager); //CAVE LEVEL
+        Screen screen = new CaveScreen(main, manager); //CAVE LEVEL
         Vector2[] textPositions = new Vector2[] {
             new Vector2(300,200)
         };
