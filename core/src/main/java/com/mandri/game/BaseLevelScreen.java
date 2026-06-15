@@ -73,6 +73,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     protected boolean isFadingIn = true;
     protected boolean isFadingOut = false;
     protected boolean isLevelFinished = false;
+    protected float shaderTime = 0f;
 
     protected boolean isPaused = false;
     protected Table pauseTable;
@@ -144,7 +145,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
 
                     if (x != null && y != null) {
                         if ("Mob".equals(type) || "Mob".equals(className)) {
-                            enemies.add(new Enemy(x, y, manager));
+                            enemies.add(new Enemy(x, y, manager, type));
                         } else {
                             handleCustomSpawn(object, type, x, y);
                         }
@@ -343,17 +344,37 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
 
         float parallaxSpeed = 0.2f;
         float bgU = (camera.position.x * parallaxSpeed) / bgTexture.getWidth();
-        float bgHeight = playerCameraHeight;
+//        float bgHeight = playerCameraHeight;
         float bgWidth = playerCameraWidth;
         float backgroundStartX = camera.position.x - (playerCameraWidth / 2);
-        float backgroundStartY = camera.position.y - (playerCameraHeight / 2);
+//        float backgroundStartY = camera.position.y - (playerCameraHeight / 2);
+        float bgHeight = mapHeight;
+        float backgroundStartY = 0f;
 
         batch.draw(bgTexture, backgroundStartX, backgroundStartY, bgWidth, bgHeight,
             bgU, 0, bgU + (bgWidth / bgTexture.getWidth()), 1);
         batch.end();
 
+        shaderTime += delta;
+
         vignetteShader.bind();
         vignetteShader.setUniformf("u_resolution", Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
+        float intensity = (getLevelTheme().equals("space") || getLevelTheme().equals("cave")) ? 0f : 1f;
+        vignetteShader.setUniformf("u_rays_intensity", intensity);
+        vignetteShader.setUniformf("u_time", shaderTime);
+        vignetteShader.setUniformf("u_density", 5.0f);
+        float fogIntensity = getLevelTheme().equals("forest") ? 1f : 0f;
+        vignetteShader.setUniformf("u_fog_intensity", fogIntensity);
+        float starsIntensity = getLevelTheme().equals("space") ? 1f : 0f;
+        vignetteShader.setUniformf("u_stars_intensity", starsIntensity);
+
+        Texture noiseTexture = getNoiseTexture();
+        if (noiseTexture != null) {
+            noiseTexture.bind(1);
+            vignetteShader.setUniformi("u_noise_texture", 1);
+            Gdx.gl.glActiveTexture(Gdx.gl.GL_TEXTURE0);
+        }
+
         renderer.render();
 
         batch.setProjectionMatrix(camera.combined);
@@ -361,7 +382,6 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         batch.begin();
 
         float shadowOffset = 2.0f;
-        batch.setShader(shadowShader);
 
         drawLevelSpecificShadows(shadowOffset);
 
@@ -372,7 +392,6 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
             player.drawShadow(batch, shadowOffset, -shadowOffset);
         }
 
-        batch.setShader(null);
 
         drawLevelSpecifics();
         for (Enemy e : enemies) { e.draw(batch); }
@@ -581,6 +600,9 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         if (itemName.equals("RocketPart1")) return manager.image.rocketPart1;
         if (itemName.equals("RocketPart2")) return manager.image.rocketPart2;
         if (itemName.equals("RocketPart3")) return manager.image.rocketPart3;
+        if (itemName.equals("acorn")) return manager.image.forestAcorn;
+        if (itemName.equals("mushroom")) return manager.image.forestMushroom;
+        if (itemName.equals("axe")) return manager.image.forestAxe;
         return manager.image.whitePixel;
     }
 
@@ -595,6 +617,8 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     protected abstract String getLevelTheme();
 
     protected abstract Screen getRestartScreen();
+
+    protected abstract Texture getNoiseTexture();
 
     @Override
     public void dispose() {

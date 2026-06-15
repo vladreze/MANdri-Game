@@ -19,7 +19,7 @@ public class Enemy {
     private float spawnX, spawnY;
 
     public float velocityX, velocityY;
-    private final float SPEED = 50f;
+    private float speed;
     private final float GRAVITY = -600f;
     private final float PATROL_DISTANCE = 50f;
 
@@ -41,8 +41,16 @@ public class Enemy {
     private float walkTimer = 0f;
 
     private ParticleEffect deathEffect;
+    private ParticleEffect slimeWalkEffect;
 
-    public Enemy(float startX, float startY, MainAssetsManager manager) {
+    private String type;
+    private boolean isFlying;
+    private TextureRegion aliveTexture;
+    private TextureRegion deadTexture;
+    private TextureRegion angryTexture;
+    private boolean isAngry=false;
+
+    public Enemy(float startX, float startY, MainAssetsManager manager, String type) {
         this.x = startX;
         this.y = startY;
         this.spawnX = startX;
@@ -50,7 +58,38 @@ public class Enemy {
         this.currentState = State.ALIVE;
         this.bounds = new Rectangle(x, y, 15, 15);
         this.manager = manager;
+        this.type = type;
 
+        this.speed = 50f;
+        this.isFlying = false;
+        this.aliveTexture = new TextureRegion(manager.image.spaceMobAlive);
+        this.deadTexture = new TextureRegion(manager.image.spaceMobDead);
+
+        if("bee".equals(type)) {
+            this.aliveTexture = new TextureRegion(manager.image.forestBeeAlive);
+            this.angryTexture = new TextureRegion(manager.image.forestBeeAngr);
+            this.deadTexture = new TextureRegion(manager.image.forestBeeDead);
+            this.speed = 35f;
+            this.isFlying = true;
+        }
+        else if("hive".equals(type)) {
+            this.aliveTexture = new TextureRegion(manager.image.forestHive);
+            this.deadTexture = new TextureRegion(manager.image.forestHive);
+            this.speed = 0f;
+            this.isFlying = true;
+        }
+        else if("fox".equals(type)) {
+            this.aliveTexture = new TextureRegion(manager.image.forestFox);
+            this.deadTexture = new TextureRegion(manager.image.forestFox);
+            this.speed = 30f;
+            this.isFlying = false;
+        }
+        else if("bat".equals(type)) {
+            this.aliveTexture = new TextureRegion(manager.image.forestBeeAlive);
+            this.deadTexture = new TextureRegion(manager.image.forestBeeDead);
+            this.speed = 30f;
+            this.isFlying = true;
+        }
         damageShader = new ShaderProgram(
             Gdx.files.internal("shaders/default.vsh"),
             Gdx.files.internal("shaders/damage.fsh")
@@ -65,16 +104,33 @@ public class Enemy {
         );
 
         deathEffect.setPosition(x + bounds.width / 2, y + bounds.height);
-    }
 
+        slimeWalkEffect = new ParticleEffect();
+
+        slimeWalkEffect.load(
+            Gdx.files.internal("particles/slimeWalk.p"),
+            Gdx.files.internal("particles/")
+        );
+
+        slimeWalkEffect.scaleEffect(0.4f);
+    }
+    public void beeAngry(){
+        if("bee".equals(type)&&!isDead&&!isAngry) {
+            this.aliveTexture=angryTexture;
+            isAngry=true;
+        }
+    }
     public void update(float delta, TiledMapTileLayer layer, OrthographicCamera camera) {
+        slimeWalkEffect.setPosition(x + bounds.width / 2, y);
         deathEffect.update(delta);
+        slimeWalkEffect.update(delta);
 
         if(currentState==State.DEAD) {
             deathTimer += delta;
             velocityY += GRAVITY * delta;
             y += velocityY * delta;
             this.bounds.setPosition(x, y);
+            slimeWalkEffect.allowCompletion();
             return;
         }
         float camL = camera.position.x - (camera.viewportWidth/2);
@@ -86,10 +142,10 @@ public class Enemy {
             walkTimer = 0f;
         }
         if(runningRight==true){
-            velocityX=SPEED;
+            velocityX=speed;
         }
         else{
-            velocityX=-SPEED;
+            velocityX=-speed;
         }
 
         float oldX = x;
@@ -111,7 +167,9 @@ public class Enemy {
         }
 
         float oldY = y;
-        velocityY += GRAVITY * delta;
+        if (!isFlying) {
+            velocityY += GRAVITY * delta;
+        }
         y += velocityY * delta;
         bounds.setPosition(x, y);
 
@@ -119,6 +177,14 @@ public class Enemy {
             y = oldY;
             bounds.setPosition(x, y);
             velocityY = 0;
+        }
+
+        if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)) {
+            if (velocityX != 0 && slimeWalkEffect.isComplete()) {
+                slimeWalkEffect.start();
+            }
+        } else {
+            slimeWalkEffect.allowCompletion();
         }
     }
 
@@ -141,16 +207,22 @@ public class Enemy {
     public void draw(SpriteBatch batch) {
         TextureRegion frame;
         if(currentState==State.ALIVE) {
-        frame=manager.image.spaceMobAlive;
+            frame = aliveTexture;
         //напрямок руху
             if((!runningRight&&!frame.isFlipX())|| (runningRight&&frame.isFlipX())){
                 frame.flip(true,false);
+            }
+            if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)) {
+                slimeWalkEffect.draw(batch);
             }
             batch.draw(frame, x, y);
         }
         else{
             deathEffect.draw(batch);
-            frame = manager.image.spaceMobDead;
+            if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)) {
+                slimeWalkEffect.draw(batch);
+            }
+            frame = deadTexture;
             batch.setShader(damageShader);
             damageShader.setUniformf("damage_color", enemyDamageRed, enemyDamageGreen, enemyDamageBlue);
             if (!frame.isFlipY()) {
@@ -170,6 +242,9 @@ public class Enemy {
         if (deathEffect != null) {
             deathEffect.dispose();
         }
+        if (slimeWalkEffect != null) {
+            slimeWalkEffect.dispose();
+        }
     }
 
     public void drawShadow(SpriteBatch batch, float offsetX, float offsetY) {
@@ -185,7 +260,9 @@ public class Enemy {
                 frame.flip(false, true);
             }
         }
-        batch.draw(frame, x + offsetX, y + offsetY);
+        batch.setColor(0, 0, 0, 0.4f);
+        batch.draw(manager.image.whitePixel, x + 4, y - 2, bounds.width - 8, 4);
+        batch.setColor(1f, 1f, 1f, 1f);
     }
 
     public void die() {

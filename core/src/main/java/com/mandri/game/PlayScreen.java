@@ -158,7 +158,7 @@ public class PlayScreen implements Screen {
 
                     if (x != null && y != null) {
                         if ("Mob".equals(type) || "Mob".equals(className)) {
-                            enemies.add(new Enemy(x, y, manager));
+                            enemies.add(new Enemy(x, y, manager, type));
                         } else if ("RocketPart1".equals(type) || "RocketPart2".equals(type) || "RocketPart3".equals(type)) {
                             rocketParts.add(new Item(manager, type, x, y));
                         } else if ("LevelExit".equals(type) || "LevelExit".equals(className)) {
