@@ -61,35 +61,13 @@ public class CutsceneManager {
         return cutsceneScreen;
     }
     public Screen cs2(){
-    //3
-////            manager.image.cutscene3(1),
-////            manager.image.cutscene3(2),
-////            manager.image.cutscene3(3),
-////            manager.image.cutscene3(5),
-////            manager.image.cutscene3(4),
-////            manager.image.cutscene3(5),
-////            manager.image.cutscene3(3),
-////            manager.image.cutscene3(6),
-////            manager.image.cutscene3(5),
-////            manager.image.cutscene3(6),
-////            manager.image.cutscene3(7),
-////            manager.image.cutscene3(8),
-////            manager.image.cutscene3(9),
-////            manager.image.cutscene3(3)
-//        };
-
-//            //2
-//            "[You]:Finally I'm flying home...",
-//            //3
-//            "[You]:Damn, I've fallen somewhere again. \n Well, let's see where this road leads..."
-//        };
-//
         Texture[] texture = new Texture[]{
 
         };
 
         String[] text = new String[]{
-
+            "[You]:Finally I'm flying...",
+            "[You]: Home"
         };
 
         Screen screen = new ForestScreen(main, manager);
@@ -106,11 +84,24 @@ public class CutsceneManager {
     }
     public Screen cs3(){
         Texture[] texture = new Texture[]{
-
+            manager.image.cutscene3(1),
+            manager.image.cutscene3(2),
+            manager.image.cutscene3(3),
+            manager.image.cutscene3(5),
+            manager.image.cutscene3(4),
+            manager.image.cutscene3(5),
+            manager.image.cutscene3(3),
+            manager.image.cutscene3(6),
+            manager.image.cutscene3(5),
+            manager.image.cutscene3(6),
+            manager.image.cutscene3(7),
+            manager.image.cutscene3(8),
+            manager.image.cutscene3(9),
+            manager.image.cutscene3(3)
         };
 
         String[] text = new String[]{
-
+            "[You]:Damn, I've fallen somewhere again. \n Well, let's see where this road leads..."
         };
 
         Screen screen = new SpaceScreen(main, manager);

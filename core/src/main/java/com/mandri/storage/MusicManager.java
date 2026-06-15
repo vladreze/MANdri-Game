@@ -25,6 +25,7 @@ public class MusicManager {
         manager.load("music/music-menu.mp3", Music.class);
 
         manager.load("music/logo-music.mp3", Music.class);
+        manager.load("music/cs2-bg-music.mp3", Music.class);
 
         //sounds
         manager.load("sounds/walking.mp3", Sound.class);
@@ -43,6 +44,7 @@ public class MusicManager {
 
         manager.load("sounds/spaceship.mp3", Sound.class);
         manager.load("sounds/rocket-break.mp3", Sound.class);
+        manager.load("sounds/rocket-fly-sound.mp3", Sound.class);
 
         manager.load("sounds/bonus.mp3", Sound.class);
         manager.load("sounds/bonus-big.mp3", Sound.class);
@@ -78,6 +80,14 @@ public class MusicManager {
         music = manager.get("music/music-space.mp3", Music.class);
         music.setVolume(soundEffectsvolume);
         music.play();
+    }
+    public void playCs2BgMusic(){
+        music = manager.get("music/cs2-bg-music.mp3", Music.class);
+        music.setVolume(volume);
+        music.play();
+    }
+    public void playEngineSound(){
+        manager.get("sounds/rocket-fly-sound.mp3", Sound.class).play(soundEffectsvolume);
     }
 
     public void playGameOverSound(){
