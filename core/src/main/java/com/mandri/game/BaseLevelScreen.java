@@ -556,6 +556,9 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         if (itemName.equals("RocketPart1")) return manager.image.rocketPart1;
         if (itemName.equals("RocketPart2")) return manager.image.rocketPart2;
         if (itemName.equals("RocketPart3")) return manager.image.rocketPart3;
+        if (itemName.equals("acorn")) return manager.image.forestAcorn;
+        if (itemName.equals("mushroom")) return manager.image.forestMushroom;
+        if (itemName.equals("axe")) return manager.image.forestAxe;
         return manager.image.whitePixel;
     }
 
