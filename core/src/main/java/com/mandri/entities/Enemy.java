@@ -91,6 +91,12 @@ public class Enemy {
             this.speed = 30f;
             this.isFlying = true;
         }
+        else if("spider".equals(type)) {
+            this.aliveTexture = new TextureRegion(manager.image.caveSpider);
+            this.deadTexture = new TextureRegion(manager.image.caveSpider);
+            this.speed = 25f;
+            this.isFlying = false;
+        }
         damageShader = new ShaderProgram(
             Gdx.files.internal("shaders/default.vsh"),
             Gdx.files.internal("shaders/damage.fsh")
@@ -244,7 +250,7 @@ public class Enemy {
             } else if (!runningRight && frame.isFlipX()) {
                 frame.flip(true, false);
             }
-            if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)) {
+            if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)&&!"spider".equals(type)) {
                 slimeWalkEffect.draw(batch);
             }
             if ("bee".equals(type)) {
@@ -254,7 +260,7 @@ public class Enemy {
         }
         else{
             deathEffect.draw(batch);
-            if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)) {
+            if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)&& !"spider".equals(type)) {
                 slimeWalkEffect.draw(batch);
             }
             frame = deadTexture;
