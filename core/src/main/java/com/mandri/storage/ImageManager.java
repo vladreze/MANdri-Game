@@ -107,6 +107,9 @@ public class ImageManager {
     public TextureRegion caveSpider;
     public TextureRegion caveStalactite;
     public TextureRegion caveWaterExit;
+    public TextureRegion caveDoneTable;
+    public TextureRegion caveEmptyTable;
+
 
     public Animation<TextureRegion> caveRun_R;
     public Animation<TextureRegion> caveRun_L;
@@ -224,6 +227,8 @@ public class ImageManager {
         manager.load("cave/spider.png", Texture.class);
         manager.load("cave/stalactite.png", Texture.class);
         manager.load("cave/waterExit.png", Texture.class);
+        manager.load("cave/doneTable.png", Texture.class);
+        manager.load("cave/emptyTable.png", Texture.class);
     }
 
     public void initAnimations(){
@@ -263,6 +268,8 @@ public class ImageManager {
         caveSpider = new TextureRegion(manager.get("cave/spider.png", Texture.class));
         caveStalactite = new TextureRegion(manager.get("cave/stalactite.png", Texture.class));
         caveWaterExit = new TextureRegion(manager.get("cave/waterExit.png", Texture.class));
+        caveDoneTable= new TextureRegion(manager.get("cave/doneTable.png", Texture.class));
+        caveEmptyTable= new TextureRegion(manager.get("cave/emptyTable.png", Texture.class));
 //      hearts
         Texture tHearts = manager.get("level-ui/hearts.png", Texture.class);
 

@@ -31,6 +31,11 @@ public class Acorn {
         }
     }
     public void draw(SpriteBatch batch) {
-        batch.draw(manager.image.forestAcorn, x, y, width, height);
+        if("acorn".equals(type)) {
+            batch.draw(manager.image.forestAcorn, x, y, width, height);
+        }
+        else{
+            batch.draw(manager.image.caveStalactite, x, y, width, height);
+        }
     }
 }

@@ -30,7 +30,7 @@ public class Item {
         this.x = x;
         this.y = y;
         this.isCollected = false;
-        if (name.equals("acorn") || name.equals("mushroom") || name.equals("axe")) {
+        if (name.equals("acorn") || name.equals("mushroom") || name.equals("axe")|| name.equals("emerald")||name.equals("geyser")) {
             this.width = 16f;
             this.height = 16f;
         }
@@ -40,7 +40,7 @@ public class Item {
         }
         this.bounds = new Rectangle(x, y, width, height);
 
-        if ("mushroom".equals(name)) {
+        if ("mushroom".equals(name)||"geyser".equals(name)) {
             mushroomJumpEffect = new ParticleEffect();
             mushroomJumpEffect.load(Gdx.files.internal("particles/mushroomJump.p"), Gdx.files.internal("particles/"));
             mushroomJumpEffect.scaleEffect(.7f);
@@ -74,6 +74,24 @@ public class Item {
             else if ("axe".equals(name)){
                 frame=manager.image.forestAxe;
             }
+            else if ("emerald".equals(name)){
+                frame=manager.image.caveEmerald;
+            }
+            else if ("geyser".equals(name)){
+                frame=manager.image.caveGeyser;
+            }
+            else if ("numb0".equals(name)){
+                frame=manager.image.caveNumber0;
+            }
+            else if ("numb1".equals(name)){
+                frame=manager.image.caveNumber1;
+            }
+            else if ("numb3".equals(name)){
+                frame=manager.image.caveNumber3;
+            }
+            else if ("numb5".equals(name)){
+                frame=manager.image.caveNumber5;
+            }
             if(frame!=null){
                 batch.draw(frame,x,y,width,height);
             }
@@ -83,7 +101,7 @@ public class Item {
 
     public void update(float delta, float playerX) {
         if (mushroomJumpEffect != null) mushroomJumpEffect.update(delta);
-        if ("acorn".equals(name)) {
+        if ("acorn".equals(name)||"stalactite".equals(name)) {
             float playerAcornX = Math.abs(this.x - playerX);
             if (playerAcornX < 100f) {
                 isFalling = true;
