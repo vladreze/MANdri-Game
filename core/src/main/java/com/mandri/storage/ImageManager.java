@@ -49,52 +49,20 @@ public class ImageManager {
     public TextureRegion rocketPart3;
 
 
-//    forest
-    public Animation<TextureRegion> forestIdle_F;
-    public Animation<TextureRegion> forestIdle_L;
-    public Animation<TextureRegion> forestIdle_R;
-
-    public TextureRegion forestJump_F;
-    public TextureRegion forestJump_R;
-    public TextureRegion forestJump_L;
-    public TextureRegion forestFall_F;
-    public TextureRegion forestFall_R;
-    public TextureRegion forestFall_L;
-
-    public Animation<TextureRegion> forestRun_R;
-    public Animation<TextureRegion> forestRun_L;
-
-//    cave
-    public Animation<TextureRegion> caveIdle_F;
-    public Animation<TextureRegion> caveIdle_R;
-    public Animation<TextureRegion> caveIdle_L;
-
-    public TextureRegion caveJump_F;
-    public TextureRegion caveJump_R;
-    public TextureRegion caveJump_L;
-    public TextureRegion caveFall_F;
-    public TextureRegion caveFall_R;
-    public TextureRegion caveFall_L;
-
-    public Animation<TextureRegion> caveRun_R;
-    public Animation<TextureRegion> caveRun_L;
+//cs1
+    public Animation<TextureRegion> cs1Anim;
 
     public void loadImages(){
         manager.load("particles/particle.png", Texture.class);
-//        backgrounds
-//        manager.load("menu_bg.png", Texture.class);
 
 //      hearts
         manager.load("level-ui/hearts.png", Texture.class);
 
         manager.load("space/space-bg.png", Texture.class);
-//        manager.load("forest_bg.png", Texture.class);
-//        manager.load("cave_bg.png", Texture.class);
+
 
 //        space
         manager.load("space/space_front.png", Texture.class);
-//        manager.load("space/space_left.png", Texture.class);
-//        manager.load("space/space_right.png", Texture.class);
         manager.load("space/space_fall_F.png", Texture.class);
         manager.load("space/space_fall_L.png", Texture.class);
         manager.load("space/space_fall_R.png", Texture.class);
@@ -118,6 +86,7 @@ public class ImageManager {
 //        cave
 
 //        CUTSCENE
+        manager.load("cutscenes/cutscene1.png", Texture.class);
         manager.load("cutscenes/cutscene1-1.png", Texture.class);
         manager.load("cutscenes/cutscene1-2.png", Texture.class);
         manager.load("cutscenes/cutscene1-3.png", Texture.class);
@@ -125,6 +94,7 @@ public class ImageManager {
         manager.load("cutscenes/cutscene1-10.png", Texture.class);
         manager.load("cutscenes/cutscene1-11.png", Texture.class);
         manager.load("cutscenes/dialogue window.png", Texture.class);
+        manager.load("cutscenes/logo.png", Texture.class);
 
 //        manager.load("cutscenes/cutscene2-1.png", Texture.class);
 
@@ -164,6 +134,10 @@ public class ImageManager {
         poisonHeart = heartFrames[1][0];
         shieldHeart = heartFrames[2][0];
         emptyHeart = heartFrames[3][0];
+
+        Texture cs1 = manager.get("cutscenes/cutscene1.png", Texture.class);
+        TextureRegion[][] texCs1 = TextureRegion.split(cs1, 1280, 720);
+        cs1Anim = new Animation<>(0.5f, texCs1[0]);
 
 //        run
         Texture tSpaceRunR = manager.get("space/space_run_R.png", Texture.class);
@@ -209,6 +183,7 @@ public class ImageManager {
                 break;
             case 12 : texture = manager.get("cutscenes/dialogue window.png", Texture.class);
                 break;
+            case 13: texture = manager.get("cutscenes/logo.png", Texture.class);
         }
         return texture;
     }

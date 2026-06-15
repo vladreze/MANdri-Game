@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mandri.storage.MainAssetsManager;
 import com.mandri.ui.FontCreator;
@@ -20,6 +21,7 @@ public class CutsceneScreen implements Screen {
     private int currentSlide = 0;
 
     private Screen screen;
+    private Vector2[] textPositions;
 
     private Texture textBg;
 
@@ -42,19 +44,27 @@ public class CutsceneScreen implements Screen {
     private final float TYPING_DELAY = 0.1f;
     private int charIndex = 0;
 
-    public CutsceneScreen(Main main, MainAssetsManager manager){
-//        , Texture[] cutsceneImg, String[] storyText,
-//                          Screen screen, Animation<TextureRegion> anim) {
+    private int id;
+
+    private boolean logoMusicStarted = false;
+    private float musicSafeguardTimer = 0f;
+
+    public CutsceneScreen(Main main, MainAssetsManager manager, Texture[] cutsceneImg, String[] storyText,
+                          Screen screen, Animation<TextureRegion> anim, Vector2[] textPositions, int id) {
         this.main = main;
         this.manager = manager;
         this.printTimer = 0f;
-//        this.storyText = storyText;
-//        this.cutsceneImg = cutsceneImg;
-//        this.screen = screen;
-//        this.animation = anim;
+        this.storyText = storyText;
+        this.cutsceneImg = cutsceneImg;
+        this.screen = screen;
+        this.animation = anim;
+        this.textPositions = textPositions;
+        this.id = id;
 
         if(this.animation != null) this.currentState = State.ANIMATION;
         else this.currentState = State.DIALOGUE;
+        manager.music.playCs1BgMusic();
+
     }
 
     @Override
@@ -62,7 +72,6 @@ public class CutsceneScreen implements Screen {
         batch = new SpriteBatch();
         font = FontCreator.generateTextFont(30, 2f);
         camera = new OrthographicCamera();
-//        camera.setToOrtho(false, 800, 480);
         camera.setToOrtho(false, 1280, 720);
 
         //bg opacity
@@ -71,90 +80,67 @@ public class CutsceneScreen implements Screen {
         pixmap.fill();
         textBg = new Texture(pixmap);
         pixmap.dispose();
-
-        TextureRegion[] frames = new TextureRegion[7];
-        cutsceneImg = new Texture[]{
-          manager.image.cutscene1(1),
-            manager.image.cutscene1(2),
-            manager.image.cutscene1(3),
-            manager.image.cutscene1(2),
-            manager.image.cutscene1(1),
-            manager.image.cutscene1(2),
-            manager.image.cutscene1(3),
-            manager.image.cutscene1(2),
-            manager.image.cutscene1(9),
-            manager.image.cutscene1(10),
-            manager.image.cutscene1(11),
-            manager.image.cutscene1(12)
-
-            //2
-            //3
-//            manager.image.cutscene3(1),
-//            manager.image.cutscene3(2),
-//            manager.image.cutscene3(3),
-//            manager.image.cutscene3(5),
-//            manager.image.cutscene3(4),
-//            manager.image.cutscene3(5),
-//            manager.image.cutscene3(3),
-//            manager.image.cutscene3(6),
-//            manager.image.cutscene3(5),
-//            manager.image.cutscene3(6),
-//            manager.image.cutscene3(7),
-//            manager.image.cutscene3(8),
-//            manager.image.cutscene3(9),
-//            manager.image.cutscene3(3)
-        };
-
-        storyText = new String[]{
-          "[System]: Warning!",
-            "[System]: An unknown object is approaching the ship at high speed. Collision is imminent.",
-            "[System]: Warni...",
-
-            "[You]: Aaah...What happened?\n Where am I?",
-            "[You]:Oh no, my spaceship broke down! \n I need to find the parts that fell off.",
-            "And so my journey began...",
-            //2
-            "[You]:Finally I'm flying home...",
-            //3
-            "[You]:Damn, I've fallen somewhere again. \n Well, let's see where this road leads..."
-        };
-
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
 
-        if(isTyping){
-            timer +=delta;
-            if(timer>= TYPING_DELAY){
-                timer = 0f;
-                if(charIndex< storyText[currentSlide].length()){ //cont to print
-                    charIndex++;
-                    displayedText = storyText[currentSlide].substring(0, charIndex);
+        if (logoMusicStarted) {
+            musicSafeguardTimer += delta;
+            if (musicSafeguardTimer > 0.5f && !manager.music.isLogoMusicPlaying()) {
+                main.setScreen(screen);
+                return;
+            }
+        }
 
-                    printTimer+=delta;
-                    if(printTimer> 0.05f){
-                        manager.music.playTypeSound();
+        if (currentState == State.DIALOGUE) {
+            if(isTyping){
+                timer +=delta;
+                if(timer>= TYPING_DELAY){
+                    timer = 0f;
+                    if(charIndex< storyText[currentSlide].length()){ //cont to print
+                        charIndex++;
+                        displayedText = storyText[currentSlide].substring(0, charIndex);
+
+                        printTimer+=delta;
+                        if(printTimer> 0.05f){
+                            manager.music.playTypeSound();
+                            printTimer = 0;
+                        }
+                    }
+                    else{
+                        isTyping = false; //end print
                         printTimer = 0;
                     }
                 }
-                else{
-                    isTyping = false; //end print
-                    printTimer = 0;
-                }
             }
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if(!isTyping){
-                currentSlide++;
-                if(currentSlide< storyText.length){
-                    displayedText = "";
-                    charIndex = 0;
-                    isTyping = true;
-                }else{
-                    main.setScreen(new PlayScreen(main, manager)); //CHANGE GAME SCREEN
-                    return;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                if(!isTyping){
+                    currentSlide++;
+                    if(currentSlide>= storyText.length){
+                        main.setScreen(screen); //CHANGE GAME SCREEN
+                        return;
+                    }else{
+                        displayedText = "";
+                        charIndex = 0;
+                        isTyping = true;
+
+                        if(id==1){
+                            if(currentSlide == storyText.length-2) manager.music.stopMusic();
+                            if(currentSlide == 3) manager.music.playRocketBreakSound();
+                        }
+                        if (currentSlide == storyText.length-1) {
+                            if(id==1){
+                                manager.music.playLogoMusic();
+                                logoMusicStarted = true;
+                            }
+                        }
+                    }
+                } else {
+                    charIndex = storyText[currentSlide].length();
+                    displayedText = storyText[currentSlide];
+                    isTyping = false;
                 }
             }
         }
@@ -172,11 +158,23 @@ public class CutsceneScreen implements Screen {
         }
         else if(currentState == State.DIALOGUE){
             batch.draw(cutsceneImg[currentSlide], 0, 0, 1280, 720);
-            batch.draw(textBg, 0, 0, 1280, 320);
-            font.draw(batch, displayedText, 50, 200);
 
-            if(!isTyping){
-                if(Math.sin(System.currentTimeMillis()/200.0)>0) font.draw(batch, "press SPACE", 1100, 100);
+            if (id==1){
+                if(currentSlide == 0 || currentSlide ==1 || currentSlide ==2 || currentSlide ==3){
+                    batch.draw(textBg, 0, 0, 1280, 320);
+                }
+            }
+
+            float currentTextX = textPositions[currentSlide].x;
+            float currentTextY = textPositions[currentSlide].y;
+            font.draw(batch, displayedText, currentTextX, currentTextY);
+
+            if(!isTyping ){
+                if(Math.sin(System.currentTimeMillis()/200.0)>0) {
+                    if(currentSlide != storyText.length-1){
+                        font.draw(batch, "[press SPACE]", 1000, 100);
+                    }
+                }
             }
         }
 

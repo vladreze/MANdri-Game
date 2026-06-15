@@ -17,7 +17,9 @@ public class Main extends Game {
         manager.loadResources();
         UIManager.getInstance().loadUI();
 //        this.setScreen(new MainMenuScreen(this));
-        this.setScreen(new CutsceneScreen(this, manager));
+//        this.setScreen(new CutsceneScreen(this, manager));
+        this.setScreen(new CutsceneManager(this, manager).cs1());
+
     }
 
     @Override
