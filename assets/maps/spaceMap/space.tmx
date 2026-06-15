@@ -4,9 +4,9 @@
  <tileset firstgid="33" source="space.tsx"/>
  <tileset firstgid="97" source="info.tsx"/>
  <tileset firstgid="102" source="info.tsx"/>
- <imagelayer id="2" name="Прошарок зображення 1" offsetx="-0.33333" offsety="-11.3333">
-  <image source="bgSpace.png" width="5403" height="320"/>
- </imagelayer>
+<!--  <imagelayer id="2" name="Прошарок зображення 1" offsetx="-0.33333" offsety="-11.3333"> -->
+<!--   <image source="bgSpace.png" width="5403" height="320"/> -->
+<!--  </imagelayer> -->
  <layer id="1" name="ground" width="178" height="19">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
