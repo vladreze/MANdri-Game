@@ -83,7 +83,7 @@ public class MusicManager {
     }
     public void playCs2BgMusic(){
         music = manager.get("music/cs2-bg-music.mp3", Music.class);
-        music.setVolume(volume);
+        music.setVolume(soundEffectsvolume);
         music.play();
     }
     public void playEngineSound(){

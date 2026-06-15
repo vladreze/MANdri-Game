@@ -30,7 +30,9 @@ public class CutsceneScreen implements Screen {
 
     private Animation<TextureRegion> animation;
     private  float animationTimer = 0f;
-    private enum State{ANIMATION, DIALOGUE}
+    private Animation<TextureRegion> animation2;
+    private  float animationTimer2 = 0f;
+    private enum State{ANIMATION, DIALOGUE,ANIM2}
     private State currentState;
 
     private SpriteBatch batch;
@@ -50,7 +52,8 @@ public class CutsceneScreen implements Screen {
     private float musicSafeguardTimer = 0f;
 
     public CutsceneScreen(Main main, MainAssetsManager manager, Texture[] cutsceneImg, String[] storyText,
-                          Screen screen, Animation<TextureRegion> anim, Vector2[] textPositions, int id) {
+                          Screen screen, Animation<TextureRegion> anim,Animation<TextureRegion> anim2,
+                          Vector2[] textPositions, int id) {
         this.main = main;
         this.manager = manager;
         this.printTimer = 0f;
@@ -58,12 +61,17 @@ public class CutsceneScreen implements Screen {
         this.cutsceneImg = cutsceneImg;
         this.screen = screen;
         this.animation = anim;
+        this.animation2 = anim2;
         this.textPositions = textPositions;
         this.id = id;
 
         if(this.animation != null) this.currentState = State.ANIMATION;
         else this.currentState = State.DIALOGUE;
-        manager.music.playCs1BgMusic();
+        if(id==1) manager.music.playCs1BgMusic();
+        if(id==2){
+            manager.music.playCs2BgMusic();
+            manager.music.playEngineSound();
+        }
 
     }
 
@@ -119,7 +127,8 @@ public class CutsceneScreen implements Screen {
                 if(!isTyping){
                     currentSlide++;
                     if(currentSlide>= storyText.length){
-                        main.setScreen(screen); //CHANGE GAME SCREEN
+                        if(animation2 !=null) currentState = State.ANIM2;
+                        else main.setScreen(screen); //CHANGE GAME SCREEN
                         return;
                     }else{
                         displayedText = "";
@@ -164,6 +173,9 @@ public class CutsceneScreen implements Screen {
                     batch.draw(textBg, 0, 0, 1280, 320);
                 }
             }
+            if(id==2){
+                batch.draw(textBg, 0, 0, 1280, 150);
+            }
 
             float currentTextX = textPositions[currentSlide].x;
             float currentTextY = textPositions[currentSlide].y;
@@ -176,6 +188,13 @@ public class CutsceneScreen implements Screen {
                     }
                 }
             }
+        }
+        if(currentState == State.ANIM2){
+            animationTimer2+=delta;
+            TextureRegion frame = animation2.getKeyFrame(animationTimer2);
+            batch.draw(frame, 0, 0, 1280, 720);
+
+            if(animation2.isAnimationFinished(animationTimer2)) main.setScreen(screen);
         }
 
         batch.end();

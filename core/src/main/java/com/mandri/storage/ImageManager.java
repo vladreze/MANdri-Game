@@ -101,6 +101,8 @@ public class ImageManager {
     public Animation<TextureRegion> caveRun_L;
 //cs1
     public Animation<TextureRegion> cs1Anim;
+    public Animation<TextureRegion> cs2w;
+    public Animation<TextureRegion>cs2e;
 
     public void loadImages(){
         manager.load("particles/particle.png", Texture.class);
@@ -170,7 +172,10 @@ public class ImageManager {
         manager.load("cutscenes/dialogue window.png", Texture.class);
         manager.load("cutscenes/logo.png", Texture.class);
 
-//        manager.load("cutscenes/cutscene2-1.png", Texture.class);
+        manager.load("cutscenes/ship window.png", Texture.class);
+        manager.load("cutscenes/ship window-2.png", Texture.class);
+        manager.load("cutscenes/The Earth.png", Texture.class);
+        manager.load("cutscenes/The Earth-2.png", Texture.class);
 
         manager.load("cutscenes/cutscene3-1.png", Texture.class);
         manager.load("cutscenes/cutscene3-2.png", Texture.class);
@@ -221,9 +226,18 @@ public class ImageManager {
         shieldHeart = heartFrames[2][0];
         emptyHeart = heartFrames[3][0];
 
+//        cutscene
         Texture cs1 = manager.get("cutscenes/cutscene1.png", Texture.class);
         TextureRegion[][] texCs1 = TextureRegion.split(cs1, 1280, 720);
         cs1Anim = new Animation<>(0.5f, texCs1[0]);
+
+        Texture cs2W = manager.get("cutscenes/ship window.png", Texture.class);
+        TextureRegion[][] texCs2w = TextureRegion.split(cs2W, 1280, 720);
+        cs2w = new Animation<>(0.5f, texCs2w[0]);
+
+        Texture cs2E = manager.get("cutscenes/The Earth.png", Texture.class);
+        TextureRegion[][] texCs2e = TextureRegion.split(cs2E, 1280, 720);
+        cs2e = new Animation<>(0.5f, texCs2e[0]);
 
 //        run
         Texture tSpaceRunR = manager.get("space/space_run_R.png", Texture.class);
@@ -294,6 +308,18 @@ public class ImageManager {
             case 13: texture = manager.get("cutscenes/logo.png", Texture.class);
         }
         return texture;
+    }
+    public Texture cutscene2(int frameNum){
+        Texture texture =  manager.get("cutscenes/ship window-2.png", Texture.class);
+        switch (frameNum) {
+            case 1:
+                texture = manager.get("cutscenes/ship window-2.png", Texture.class);
+                break;
+            case 2:
+                texture = manager.get("cutscenes/The Earth-2.png", Texture.class);
+                break;
+        }
+        return  texture;
     }
 
     public Texture cutscene3(int frameNum){

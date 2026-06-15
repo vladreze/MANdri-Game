@@ -57,12 +57,13 @@ public class CutsceneManager {
         Animation<TextureRegion> anim = manager.image.cs1Anim;;
 
         int id =1;
-        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim, textPositions, id);
+        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim,null, textPositions, id);
         return cutsceneScreen;
     }
     public Screen cs2(){
         Texture[] texture = new Texture[]{
-
+            manager.image.cutscene2(1),
+            manager.image.cutscene2(2)
         };
 
         String[] text = new String[]{
@@ -72,14 +73,15 @@ public class CutsceneManager {
 
         Screen screen = new ForestScreen(main, manager);
         Vector2[] textPositions = new Vector2[] {
-
-
+            new Vector2(500,100),
+            new Vector2(550, 100)
         };
 
-        Animation<TextureRegion> anim = manager.image.cs1Anim;;
+        Animation<TextureRegion> anim = manager.image.cs2w;
+        Animation<TextureRegion> anim2 = manager.image.cs2e;
 
         int id =2;
-        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim, textPositions, id);
+        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim, anim2,textPositions, id);
         return cutsceneScreen;
     }
     public Screen cs3(){
@@ -113,7 +115,7 @@ public class CutsceneManager {
         Animation<TextureRegion> anim = manager.image.cs1Anim;;
 
         int id =3;
-        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim, textPositions, id);
+        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim, null, textPositions, id);
         return cutsceneScreen;
     }
     public Screen cs4(){
@@ -134,7 +136,7 @@ public class CutsceneManager {
         Animation<TextureRegion> anim = manager.image.cs1Anim;;
 
         int id =4;
-        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim, textPositions, id);
+        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim,null, textPositions, id);
         return cutsceneScreen;
     }
 }
