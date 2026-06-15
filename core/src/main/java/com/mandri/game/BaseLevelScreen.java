@@ -317,6 +317,15 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
                     enemies.removeIndex(i);
                     continue;
                 }
+                float playerBeeAbsX = Math.abs(e.bounds.getX() - player.bounds.getX());
+                float playerBeeAbsY = Math.abs(e.bounds.getY() - player.bounds.getY());
+
+                if (playerBeeAbsX < 70f &&  playerBeeAbsY < 50f) {
+                    e.beeAngry();
+                } else {
+                    e.beeNormal();
+                }
+
                 e.update(delta, collisionLayer, camera);
                 if (player.bounds.overlaps(e.bounds) && !e.isDead) {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > e.bounds.y) {
