@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mandri.entities.Enemy;
 import com.mandri.entities.Item;
 import com.mandri.entities.Player;
+import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
 
 public class ForestScreen extends BaseLevelScreen {
@@ -139,6 +140,11 @@ public class ForestScreen extends BaseLevelScreen {
     @Override
     protected Screen getRestartScreen() {
         return new ForestScreen(game, manager);
+    }
+
+    @Override
+    protected Screen getNextScreen() {
+       return new CutsceneManager(game, manager).cs3();
     }
 
     @Override

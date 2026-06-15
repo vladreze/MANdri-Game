@@ -3,9 +3,7 @@ package com.mandri.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -50,6 +48,10 @@ public class CutsceneScreen implements Screen {
 
     private boolean logoMusicStarted = false;
     private float musicSafeguardTimer = 0f;
+
+    private boolean isFadingOut = false;
+    private float transitionAlpha = 1.0f;
+    private boolean isFadingIn = true;
 
     public CutsceneScreen(Main main, MainAssetsManager manager, Texture[] cutsceneImg, String[] storyText,
                           Screen screen, Animation<TextureRegion> anim,Animation<TextureRegion> anim2,
@@ -130,9 +132,10 @@ public class CutsceneScreen implements Screen {
                 if(!isTyping){
                     currentSlide++;
                     if(currentSlide>= storyText.length){
-                        if(animation2 !=null) currentState = State.ANIM2;
-                        else main.setScreen(screen); //CHANGE GAME SCREEN
-                        return;
+//                        if(animation2 !=null) currentState = State.ANIM2;
+//                        else main.setScreen(screen); //CHANGE GAME SCREEN
+                        currentSlide = storyText.length - 1;
+                        isFadingOut = true;
                     }else{
                         displayedText = "";
                         charIndex = 0;
@@ -202,6 +205,28 @@ public class CutsceneScreen implements Screen {
         }
 
         batch.end();
+
+        if (isFadingIn) {
+            transitionAlpha -= delta * 0.8f;
+            if (transitionAlpha <= 0) {
+                transitionAlpha = 0;
+                isFadingIn = false;
+            }
+        } else if (isFadingOut) {
+            transitionAlpha += delta * 0.8f;
+            if (transitionAlpha >= 1f) {
+                main.setScreen(screen);
+                return;
+            }
+        }
+        if (transitionAlpha > 0) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            batch.begin();
+            batch.setColor(0, 0, 0, transitionAlpha);
+            batch.draw(manager.image.whitePixel, 0, 0, 1280, 720);
+            batch.setColor(Color.WHITE);
+            batch.end();
+        }
     }
 
     @Override
