@@ -239,7 +239,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
 
         ButtonActions.resumeScreen(resumeTextBtn, this);
         ButtonActions.openSettings(settingsTextBtn, game, this);
-        ButtonActions.exitScreen(exitTextBtn, pauseTable, exitConfirmTable);
+        ButtonActions.exitScreen(exitTextBtn, pauseTable, exitConfirmTable, game);
         ButtonActions.addHover(resumeTextBtn);
         ButtonActions.addHover(settingsTextBtn);
         ButtonActions.addHover(exitTextBtn);
