@@ -80,6 +80,8 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
     protected Texture dimBackground;
     protected boolean isInitialized = false;
 
+    protected Table exitConfirmTable;
+
     protected InventoryLogic inventory;
     protected Table hotbarTable;
     protected Table mainInventoryTable;
@@ -209,13 +211,35 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         Label.LabelStyle textStyle = new Label.LabelStyle();
         textStyle.font = fontText;
 
+        exitConfirmTable = new Table();
+        exitConfirmTable.setFillParent(true);
+        exitConfirmTable.setVisible(false);
+        exitConfirmTable.setBackground(new TextureRegionDrawable(dimBackground));
+
+        Label warningLabel = new Label("ARE YOU SURE YOU WANT TO EXIT?\nALL PROGRESS WILL BE LOST", labelPauseTextStyle);
+        warningLabel.setWrap(true);
+        warningLabel.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        Label yesBtn = new Label("YES", textStyle);
+        Label noBtn = new Label("NO", textStyle);
+
+        ButtonActions.openMainMenu(yesBtn, game);
+        ButtonActions.abortExit(noBtn, pauseTable, exitConfirmTable);
+
+        ButtonActions.addHover(yesBtn);
+        ButtonActions.addHover(noBtn);
+
+        exitConfirmTable.add(warningLabel).width(500).colspan(2).padBottom(30).row();
+        exitConfirmTable.add(yesBtn).padRight(40);
+        exitConfirmTable.add(noBtn);
+
         Label resumeTextBtn = new Label("RESUME", textStyle);
         Label settingsTextBtn = new Label("SETTINGS", textStyle);
         Label exitTextBtn = new Label("EXIT", textStyle);
 
         ButtonActions.resumeScreen(resumeTextBtn, this);
         ButtonActions.openSettings(settingsTextBtn, game, this);
-        ButtonActions.openMainMenu(exitTextBtn, game);
+        ButtonActions.exitScreen(exitTextBtn, pauseTable, exitConfirmTable);
         ButtonActions.addHover(resumeTextBtn);
         ButtonActions.addHover(settingsTextBtn);
         ButtonActions.addHover(exitTextBtn);
@@ -269,6 +293,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         hudStage.addActor(hotbarTable);
         hudStage.addActor(mainInventoryTable);
         hudStage.addActor(pauseTable);
+        hudStage.addActor(exitConfirmTable);
     }
 
     @Override
@@ -507,7 +532,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         } else if (isFadingOut) {
             transitionAlpha += delta * .5f;
             if (transitionAlpha >= 1f) {
-                game.setScreen(getRestartScreen());
+                game.setScreen(new GameOverScreen(game));
                 manager.music.playGameOverSound();
                 return;
             }
