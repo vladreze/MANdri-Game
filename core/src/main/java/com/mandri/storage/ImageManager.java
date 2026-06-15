@@ -157,7 +157,7 @@ public class ImageManager {
         manager.load("forest/forest_bee_norm.png", Texture.class);
         manager.load("forest/forest_fox.png", Texture.class);
         manager.load("forest/forest_hive.png", Texture.class);
-        manager.load("forest/forest_mushroom.png", Texture.class);
+        manager.load("forest/forest_mushroom_1.png", Texture.class);
         manager.load("forest/forest_tree.png", Texture.class);
 
 //        cave
@@ -187,7 +187,7 @@ public class ImageManager {
         forestBeeAlive = new TextureRegion(manager.get("forest/forest_bee_norm.png", Texture.class));
         forestFox = new TextureRegion(manager.get("forest/forest_fox.png", Texture.class));
         forestHive = new TextureRegion(manager.get("forest/forest_hive.png", Texture.class));
-        forestMushroom = new TextureRegion(manager.get("forest/forest_mushroom.png", Texture.class));
+        forestMushroom = new TextureRegion(manager.get("forest/forest_mushroom_1.png", Texture.class));
         forestTree = new TextureRegion(manager.get("forest/forest_tree.png", Texture.class));
 
 //      hearts

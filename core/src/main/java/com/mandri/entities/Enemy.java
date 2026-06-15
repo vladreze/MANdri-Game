@@ -57,28 +57,33 @@ public class Enemy {
         this.bounds = new Rectangle(x, y, 15, 15);
         this.manager = manager;
         this.type = type;
+
+        this.speed = 50f;
+        this.isFlying = false;
+        this.aliveTexture = new TextureRegion(manager.image.spaceMobAlive);
+        this.deadTexture = new TextureRegion(manager.image.spaceMobDead);
+
         if("bee".equals(type)) {
-            this.aliveTexture=new TextureRegion(manager.image.forestBeeAlive);
-            this.angryTexture=new TextureRegion(manager.image.forestBeeAngr);
+            this.aliveTexture = new TextureRegion(manager.image.forestBeeAlive);
+            this.angryTexture = new TextureRegion(manager.image.forestBeeAngr);
             this.deadTexture = new TextureRegion(manager.image.forestBeeDead);
             this.speed = 35f;
             this.isFlying = true;
-            this.angryTexture = new TextureRegion(manager.image.forestBeeAngr);
         }
-        if("hive".equals(type)) {
-            this.aliveTexture=new TextureRegion(manager.image.forestHive);
+        else if("hive".equals(type)) {
+            this.aliveTexture = new TextureRegion(manager.image.forestHive);
             this.deadTexture = new TextureRegion(manager.image.forestHive);
             this.speed = 0f;
             this.isFlying = true;
         }
-        if("fox".equals(type)) {
-            this.aliveTexture=new TextureRegion(manager.image.forestFox);
+        else if("fox".equals(type)) {
+            this.aliveTexture = new TextureRegion(manager.image.forestFox);
             this.deadTexture = new TextureRegion(manager.image.forestFox);
             this.speed = 30f;
-            this.isFlying = true;
+            this.isFlying = false;
         }
-        if("bat".equals(type)) {
-            this.aliveTexture=new TextureRegion(manager.image.forestBeeAlive);
+        else if("bat".equals(type)) {
+            this.aliveTexture = new TextureRegion(manager.image.forestBeeAlive);
             this.deadTexture = new TextureRegion(manager.image.forestBeeDead);
             this.speed = 30f;
             this.isFlying = true;
@@ -148,7 +153,9 @@ public class Enemy {
         }
 
         float oldY = y;
-        velocityY += GRAVITY * delta;
+        if (!isFlying) {
+            velocityY += GRAVITY * delta;
+        }
         y += velocityY * delta;
         bounds.setPosition(x, y);
 
@@ -178,7 +185,7 @@ public class Enemy {
     public void draw(SpriteBatch batch) {
         TextureRegion frame;
         if(currentState==State.ALIVE) {
-        frame=manager.image.spaceMobAlive;
+            frame = aliveTexture;
         //напрямок руху
             if((!runningRight&&!frame.isFlipX())|| (runningRight&&frame.isFlipX())){
                 frame.flip(true,false);
@@ -187,7 +194,7 @@ public class Enemy {
         }
         else{
             deathEffect.draw(batch);
-            frame = manager.image.spaceMobDead;
+            frame = deadTexture;
             batch.setShader(damageShader);
             damageShader.setUniformf("damage_color", enemyDamageRed, enemyDamageGreen, enemyDamageBlue);
             if (!frame.isFlipY()) {
