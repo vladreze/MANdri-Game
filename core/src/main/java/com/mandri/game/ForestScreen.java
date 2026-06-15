@@ -2,12 +2,18 @@ package com.mandri.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.mandri.entities.Enemy;
 import com.mandri.entities.Item;
+import com.mandri.entities.Player;
+import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
 
 public class ForestScreen extends BaseLevelScreen {
@@ -16,18 +22,19 @@ public class ForestScreen extends BaseLevelScreen {
 
     public ForestScreen(Main game, MainAssetsManager manager) {
         super(game, manager);
-
     }
 
     @Override
     public void show() {
-        forestItems = new Array<>();
+        if (!isInitialized) {
+            forestItems = new Array<>();
 
-        pickupEffect = new ParticleEffect();
-        pickupEffect.load(
-            Gdx.files.internal("assets/particles/collectItem.p"),
-            Gdx.files.internal("assets/particles/")
-        );
+            pickupEffect = new ParticleEffect();
+            pickupEffect.load(
+                Gdx.files.internal("assets/particles/collectItem.p"),
+                Gdx.files.internal("assets/particles/")
+            );
+        }
 
         super.show();
 
@@ -67,18 +74,34 @@ public class ForestScreen extends BaseLevelScreen {
     protected void updateLevelSpecifics(float delta, TiledMapTileLayer collisionLayer) {
         for (int i = 0; i < forestItems.size; i++) {
             Item item = forestItems.get(i);
+            item.update(delta, player.bounds.x);
             if (player.bounds.overlaps(item.bounds)) {
-                item.collect();
-                boolean added = inventory.addItem(item);
-                if (added) {
-                    manager.music.playBonusSound();
+                if ("axe".equals(item.getName())) {
+                    item.collect();
+                    boolean added = inventory.addItem(item);
+                    if (added) {
+                        manager.music.playBonusSound();
 
-                    pickupEffect.setPosition(item.bounds.x + item.bounds.width / 2, item.bounds.y + item.bounds.height / 2);
-                    pickupEffect.scaleEffect(.85f);
-                    pickupEffect.start();
+                        pickupEffect.setPosition(item.bounds.x + item.bounds.width / 2, item.bounds.y + item.bounds.height / 2);
+                        pickupEffect.scaleEffect(.85f);
+                        pickupEffect.start();
 
-                    forestItems.removeIndex(i);
-                    updateInventoryUI();
+                        forestItems.removeIndex(i);
+                        updateInventoryUI();
+                    }
+                }if ("mushroom".equals(item.getName())) {
+                    if (player.currentState == Player.State.FALLING && player.bounds.y > item.bounds.y) {
+                        player.bounce();
+                        player.velocityY = player.JUMP_FORCE;
+                        item.playJumpEffect();
+                        manager.music.playBonusSound();
+                    }
+                }
+                if ("acorn".equals(item.getName())) {
+                    if (player.bounds.overlaps(item.bounds)) {
+                        player.takeDamage("acorn");
+                        forestItems.removeIndex(i);
+                    }
                 }
             }
         }
@@ -88,7 +111,9 @@ public class ForestScreen extends BaseLevelScreen {
 
     @Override
     protected void drawLevelSpecificShadows(float shadowOffset) {
-
+        for (int i = 0; i < forestItems.size; i++) {
+            forestItems.get(i).drawShadow(batch, manager);
+        }
     }
 
     @Override
@@ -115,5 +140,15 @@ public class ForestScreen extends BaseLevelScreen {
     @Override
     protected Screen getRestartScreen() {
         return new ForestScreen(game, manager);
+    }
+
+    @Override
+    protected Screen getNextScreen() {
+       return new CutsceneManager(game, manager).cs3();
+    }
+
+    @Override
+    protected Texture getNoiseTexture() {
+        return null;
     }
 }

@@ -41,11 +41,11 @@ public class MainMenuScreen implements Screen {
 
         BitmapFont fontForButtonsText = FontCreator.generateTextFont(16, 1f);
 
-        Label titleLabel = new Label("MANDRi", labelMainTextlStyle);
+        Label titleLabel = new Label("MANdri", labelMainTextlStyle);
         titleLabel.setFontScale(1.5f);
 
         PixelButton playButton = new PixelButton("START GAME", skin, fontForButtonsText);
-        ButtonActions.playGame(playButton, game);
+        ButtonActions.playGameWithFade(playButton, table ,game);
 
         PixelButton settingsButton = new PixelButton("SETTINGS", skin, fontForButtonsText);
         ButtonActions.openSettings(settingsButton , game, this);

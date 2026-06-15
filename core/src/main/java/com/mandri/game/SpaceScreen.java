@@ -3,18 +3,24 @@ package com.mandri.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.mandri.entities.Item;
 import com.mandri.entities.Rocket;
+import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
 
 public class SpaceScreen extends BaseLevelScreen {
-
+    private Texture noiseTexture;
     private Array<Item> rocketParts;
     private Rocket rocket;
     private ParticleEffect pickupEffect;
@@ -45,9 +51,23 @@ public class SpaceScreen extends BaseLevelScreen {
 
     @Override
     public void show() {
-        rocketParts = new Array<>();
-        pickupEffect = new ParticleEffect();
-        pickupEffect.load(Gdx.files.internal("assets/particles/collectItem.p"), Gdx.files.internal("assets/particles/"));
+        if (!isInitialized) {
+            rocketParts = new Array<>();
+            pickupEffect = new ParticleEffect();
+            pickupEffect.load(Gdx.files.internal("assets/particles/collectItem.p"), Gdx.files.internal("assets/particles/"));
+
+            Pixmap pixmap = new Pixmap(320, 180, Pixmap.Format.RGBA8888);
+            for (int y = 0; y < pixmap.getHeight(); y++) {
+                for (int x = 0; x < pixmap.getWidth(); x++) {
+                    float noise = MathUtils.random();
+                    pixmap.setColor(noise, noise, noise, 1f);
+                    pixmap.drawPixel(x, y);
+                }
+            }
+            noiseTexture = new Texture(pixmap);
+            noiseTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+            pixmap.dispose();
+        }
 
         super.show();
     }
@@ -145,8 +165,8 @@ public class SpaceScreen extends BaseLevelScreen {
 
     @Override
     protected void drawLevelSpecificShadows(float shadowOffset) {
-        if (rocket != null && !rocket.isFlying()) {
-
+        for  (int i = 0; i < rocketParts.size; i++) {
+            rocketParts.get(i).drawShadow(batch, manager);
         }
     }
 
@@ -195,6 +215,16 @@ public class SpaceScreen extends BaseLevelScreen {
     @Override
     protected Screen getRestartScreen() {
         return new SpaceScreen(game, manager);
+    }
+
+    @Override
+    protected Screen getNextScreen() {
+        return  new CutsceneManager(game, manager).cs2();
+    }
+
+    @Override
+    protected Texture getNoiseTexture() {
+        return noiseTexture;
     }
 
     @Override
