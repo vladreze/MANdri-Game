@@ -206,7 +206,7 @@ public class PlayScreen implements Screen {
             Label pauseButton = new Label("||", textPauseStyle);
             pauseButton.setSize(30, 30);
             pauseButton.setPosition(hudCameraWidth - 40, hudCameraHeight - 40);
-            ButtonActions.pauseScreen(pauseButton, this);
+            ButtonActions.pauseScreen(pauseButton, this, game);
             ButtonActions.addHover(pauseButton);
             hudStage.addActor(pauseButton);
 
@@ -235,7 +235,7 @@ public class PlayScreen implements Screen {
             Label settingsTextBtn = new Label("SETTINGS", textForButtonStyle);
             Label exitTextBtn = new Label("EXIT", textForButtonStyle);
 
-            ButtonActions.resumeScreen(resumeTextBtn, this);
+            ButtonActions.resumeScreen(resumeTextBtn, this, game);
             ButtonActions.openSettings(settingsTextBtn, game, this);
             ButtonActions.exitScreen(exitTextBtn, pauseTable, exitConfirmTable, game);
 
@@ -316,7 +316,7 @@ public class PlayScreen implements Screen {
             Label noBtn = new Label("NO", textForButtonStyle);
 
             ButtonActions.openMainMenu(yesBtn, game);
-            ButtonActions.abortExit(noBtn, pauseTable, exitConfirmTable);
+            ButtonActions.abortExit(noBtn, pauseTable, exitConfirmTable, game);
 
             ButtonActions.addHover(yesBtn);
             ButtonActions.addHover(noBtn);
@@ -347,6 +347,7 @@ public class PlayScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            manager.getMusic().playGamePauseSound();
             if (isPaused) resumeGame();
             else pauseGame();
         }

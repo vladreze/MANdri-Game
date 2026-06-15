@@ -186,7 +186,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         Label pauseButton = new Label("||", textPauseStyle);
         pauseButton.setSize(30, 30);
         pauseButton.setPosition(hudCameraWidth - 40, hudCameraHeight - 40);
-        ButtonActions.pauseScreen(pauseButton, this);
+        ButtonActions.pauseScreen(pauseButton, this, game);
         ButtonActions.addHover(pauseButton);
         hudStage.addActor(pauseButton);
 
@@ -224,7 +224,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         Label noBtn = new Label("NO", textStyle);
 
         ButtonActions.openMainMenu(yesBtn, game);
-        ButtonActions.abortExit(noBtn, pauseTable, exitConfirmTable);
+        ButtonActions.abortExit(noBtn, pauseTable, exitConfirmTable,game);
 
         ButtonActions.addHover(yesBtn);
         ButtonActions.addHover(noBtn);
@@ -237,7 +237,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         Label settingsTextBtn = new Label("SETTINGS", textStyle);
         Label exitTextBtn = new Label("EXIT", textStyle);
 
-        ButtonActions.resumeScreen(resumeTextBtn, this);
+        ButtonActions.resumeScreen(resumeTextBtn, this, game);
         ButtonActions.openSettings(settingsTextBtn, game, this);
         ButtonActions.exitScreen(exitTextBtn, pauseTable, exitConfirmTable, game);
         ButtonActions.addHover(resumeTextBtn);
@@ -301,6 +301,7 @@ public abstract class BaseLevelScreen extends PlayScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            manager.getMusic().playGamePauseSound();
             if (isPaused) resumeGame(); else pauseGame();
         }
 

@@ -41,9 +41,9 @@ public class AnimationActions {
 
     public static void fadeOutAndSwitchScreen(Table table, Screen screenToSet, Main game) {
         table.addAction(Actions.sequence(
-            Actions.delay(0.9f),
-            Actions.fadeIn(1.0f),
-            Actions.fadeOut(0.7f),
+            Actions.delay(0.5f),
+            Actions.fadeIn(0.5f),
+            Actions.fadeOut(0.5f),
             Actions.run(new Runnable() {
                 @Override
                 public void run() {

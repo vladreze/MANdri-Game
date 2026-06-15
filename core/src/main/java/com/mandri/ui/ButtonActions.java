@@ -54,6 +54,9 @@ public class ButtonActions {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (previousScreen instanceof PlayScreen) {
+                    game.getManager().getMusic().playGamePauseSound();
+                }
                 game.setScreen(new SettingsMenu(game, previousScreen));
             }
         });
@@ -128,19 +131,21 @@ public class ButtonActions {
         });
     }
 
-    public static void pauseScreen(Actor button, PlayScreen screen) {
+    public static void pauseScreen(Actor button, PlayScreen screen, Main game) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.getManager().getMusic().playGamePauseSound();
                 screen.pauseGame();
             }
         });
     }
 
-    public static void resumeScreen(Actor button, PlayScreen screen) {
+    public static void resumeScreen(Actor button, PlayScreen screen, Main game) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.getManager().getMusic().playGamePauseSound();
                 screen.resumeGame();
             }
         });
@@ -150,16 +155,18 @@ public class ButtonActions {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.getManager().getMusic().playGamePauseSound();
                 pause.setVisible(false);
                 confirm.setVisible(true);
             }
         });
     }
 
-    public static void abortExit(Actor button, Table pause, Table confirm){
+    public static void abortExit(Actor button, Table pause, Table confirm, Main game){
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.getManager().getMusic().playGamePauseSound();
                 pause.setVisible(true);
                 confirm.setVisible(false);
             }
