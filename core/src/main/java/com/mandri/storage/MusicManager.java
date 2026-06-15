@@ -18,11 +18,13 @@ public class MusicManager {
         //music
         manager.load("music/music-cave.mp3", Music.class);
         manager.load("music/music-forest.mp3", Music.class);
-//        manager.load("music/music-space.mp3", Music.class);
+        manager.load("music/music-space.mp3", Music.class);
 
         manager.load("music/music-space-1.mp3", Music.class);
 
         manager.load("music/music-menu.mp3", Music.class);
+
+        manager.load("music/logo-music.mp3", Music.class);
 
         //sounds
         manager.load("sounds/walking.mp3", Sound.class);
@@ -53,6 +55,9 @@ public class MusicManager {
 //        manager.load("sounds/text-type(long).mp3", Sound.class);
         manager.load("sounds/text-type.mp3", Sound.class);
 
+        manager.load("sounds/pause-sound.mp3", Sound.class);
+        manager.load("sounds/start-sound.mp3", Sound.class);
+
 
     }
     public void playMenuMusic(){
@@ -61,6 +66,20 @@ public class MusicManager {
         music.setVolume(volume);
         music.play();
     }
+    public void playLogoMusic(){
+        music = manager.get("music/logo-music.mp3", Music.class);
+        music.setVolume(soundEffectsvolume);
+        music.play();
+    }
+    public boolean isLogoMusicPlaying() {
+        return music != null && music.isPlaying();
+    }
+    public void playCs1BgMusic(){
+        music = manager.get("music/music-space.mp3", Music.class);
+        music.setVolume(soundEffectsvolume);
+        music.play();
+    }
+
     public void playGameOverSound(){
         manager.get("sounds/game-over.mp3", Sound.class).play(soundEffectsvolume);
     }
@@ -155,6 +174,14 @@ public class MusicManager {
     public void playBigBonusSound(){
         manager.get("sounds/bonus-big.mp3", Sound.class).play(soundEffectsvolume);
     }
+
+    public void playGameStartSound(){
+        manager.get("sounds/start-sound.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playGamePauseSound(){
+        manager.get("sounds/pause-sound.mp3", Sound.class).play(soundEffectsvolume);
+    }
+
 
     public void disposeMusic(){
         manager.dispose();

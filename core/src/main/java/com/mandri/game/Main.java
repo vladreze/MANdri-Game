@@ -1,6 +1,7 @@
 package com.mandri.game;
 
 import com.badlogic.gdx.Game;
+import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
 import com.mandri.storage.UIManager;
 
@@ -13,7 +14,10 @@ public class Main extends Game {
         manager = new MainAssetsManager();
         manager.loadResources();
         UIManager.getInstance().loadUI();
-        this.setScreen(new IntroScreen(this));
+//this.setScreen(new MainMenuScreen(this));
+        //this.setScreen(new IntroScreen(this));
+        this.setScreen(new CutsceneManager(this, manager).cs1());
+
     }
 
     @Override
