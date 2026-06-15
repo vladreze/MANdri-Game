@@ -9,15 +9,12 @@ import com.mandri.storage.UIManager;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
     private MainAssetsManager manager;
-    private CutsceneManager cutsceneManager;
-    private CutsceneScreen cutsceneScreen;
     @Override
     public void create() {
         manager = new MainAssetsManager();
         manager.loadResources();
         UIManager.getInstance().loadUI();
 //        this.setScreen(new MainMenuScreen(this));
-//        this.setScreen(new CutsceneScreen(this, manager));
         this.setScreen(new CutsceneManager(this, manager).cs1());
 
     }

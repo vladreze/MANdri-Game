@@ -55,6 +55,9 @@ public class MusicManager {
 //        manager.load("sounds/text-type(long).mp3", Sound.class);
         manager.load("sounds/text-type.mp3", Sound.class);
 
+        manager.load("sounds/pause-sound.mp3", Sound.class);
+        manager.load("sounds/start-sound.mp3", Sound.class);
+
 
     }
     public void playMenuMusic(){
@@ -171,6 +174,14 @@ public class MusicManager {
     public void playBigBonusSound(){
         manager.get("sounds/bonus-big.mp3", Sound.class).play(soundEffectsvolume);
     }
+
+    public void playGameStartSound(){
+        manager.get("sounds/start-sound.mp3", Sound.class).play(soundEffectsvolume);
+    }
+    public void playGamePauseSound(){
+        manager.get("sounds/pause-sound.mp3", Sound.class).play(soundEffectsvolume);
+    }
+
 
     public void disposeMusic(){
         manager.dispose();
