@@ -50,7 +50,7 @@ public abstract class BaseLevelScreen implements Screen {
     protected final MainAssetsManager manager;
     protected final Main game;
 
-    protected float playerStartX = 170f;
+    protected float playerStartX = 100f;
     protected float playerStartY = 105f;
 
     protected ShaderProgram vignetteShader;
