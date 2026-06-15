@@ -570,7 +570,7 @@ public abstract class BaseLevelScreen implements Screen {
                 transitionAlpha = 1f;
                 if (levelFinishTimer >= 3f) {
                     manager.getMusic().stopMusic();
-                    game.setScreen(new  CutsceneManager(game, manager).cs2());
+                    game.setScreen(getNextScreen());
                 }
             }
         }
@@ -638,6 +638,8 @@ public abstract class BaseLevelScreen implements Screen {
     protected abstract String getLevelTheme();
 
     protected abstract Screen getRestartScreen();
+
+    protected abstract Screen getNextScreen();
 
     protected abstract Texture getNoiseTexture();
 
