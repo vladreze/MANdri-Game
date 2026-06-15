@@ -75,6 +75,10 @@ public class CutsceneScreen implements Screen {
         if(id==3){
             manager.music.playCs3BgMusic();
         }
+        if(id==4){
+            manager.music.playSplashSound();
+            manager.music.playCs4BgMusic();
+        }
 
     }
 
@@ -166,7 +170,13 @@ public class CutsceneScreen implements Screen {
             TextureRegion frame = animation.getKeyFrame(animationTimer);
             batch.draw(frame, 0, 0, 1280, 720);
 
-            if(animation.isAnimationFinished(animationTimer)) currentState = State.DIALOGUE;
+            if(animation.isAnimationFinished(animationTimer)) {
+                if(id!=4) currentState = State.DIALOGUE;
+                else{
+                    main.setScreen(screen);
+                    return;
+                }
+            }
         }
         else if(currentState == State.DIALOGUE){
             batch.draw(cutsceneImg[currentSlide], 0, 0, 1280, 720);
