@@ -41,6 +41,8 @@ public class Enemy {
     private float walkTimer = 0f;
 
     private ParticleEffect deathEffect;
+    private ParticleEffect slimeWalkEffect;
+
     private String type;
     private boolean isFlying;
     private TextureRegion aliveTexture;
@@ -102,6 +104,15 @@ public class Enemy {
         );
 
         deathEffect.setPosition(x + bounds.width / 2, y + bounds.height);
+
+        slimeWalkEffect = new ParticleEffect();
+
+        slimeWalkEffect.load(
+            Gdx.files.internal("particles/slimeWalk.p"),
+            Gdx.files.internal("particles/")
+        );
+
+        slimeWalkEffect.scaleEffect(0.4f);
     }
     public void beeAngry(){
         if("bee".equals(type)&&!isDead&&!isAngry) {
@@ -110,13 +121,16 @@ public class Enemy {
         }
     }
     public void update(float delta, TiledMapTileLayer layer, OrthographicCamera camera) {
+        slimeWalkEffect.setPosition(x + bounds.width / 2, y);
         deathEffect.update(delta);
+        slimeWalkEffect.update(delta);
 
         if(currentState==State.DEAD) {
             deathTimer += delta;
             velocityY += GRAVITY * delta;
             y += velocityY * delta;
             this.bounds.setPosition(x, y);
+            slimeWalkEffect.allowCompletion();
             return;
         }
         float camL = camera.position.x - (camera.viewportWidth/2);
@@ -164,6 +178,14 @@ public class Enemy {
             bounds.setPosition(x, y);
             velocityY = 0;
         }
+
+        if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)) {
+            if (velocityX != 0 && slimeWalkEffect.isComplete()) {
+                slimeWalkEffect.start();
+            }
+        } else {
+            slimeWalkEffect.allowCompletion();
+        }
     }
 
     private boolean checkCollision(Rectangle rect, TiledMapTileLayer layer) {
@@ -190,10 +212,16 @@ public class Enemy {
             if((!runningRight&&!frame.isFlipX())|| (runningRight&&frame.isFlipX())){
                 frame.flip(true,false);
             }
+            if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)) {
+                slimeWalkEffect.draw(batch);
+            }
             batch.draw(frame, x, y);
         }
         else{
             deathEffect.draw(batch);
+            if (!"bee".equals(type) && !"fox".equals(type) && !"hive".equals(type) && !"bat".equals(type)) {
+                slimeWalkEffect.draw(batch);
+            }
             frame = deadTexture;
             batch.setShader(damageShader);
             damageShader.setUniformf("damage_color", enemyDamageRed, enemyDamageGreen, enemyDamageBlue);
@@ -213,6 +241,9 @@ public class Enemy {
         }
         if (deathEffect != null) {
             deathEffect.dispose();
+        }
+        if (slimeWalkEffect != null) {
+            slimeWalkEffect.dispose();
         }
     }
 
