@@ -110,7 +110,7 @@ public class PlayScreen implements Screen {
 
     private ParticleEffect pickupEffect;
 
-    private Table exitConfirmTable = new Table();;
+    private Table exitConfirmTable = new Table();
 
     public PlayScreen(Main game, MainAssetsManager manager) {
         this.game = game;
@@ -309,6 +309,7 @@ public class PlayScreen implements Screen {
             exitConfirmTable.setBackground(new TextureRegionDrawable(dimBackground));
 
             Label warningLabel = new Label("ARE YOU SURE YOU WANT TO EXIT?\nALL PROGRESS WILL BE LOST", labelPauseTextStyle);
+            warningLabel.setWrap(true);
             warningLabel.setAlignment(com.badlogic.gdx.utils.Align.center);
 
             Label yesBtn = new Label("YES", textForButtonStyle);
@@ -320,7 +321,7 @@ public class PlayScreen implements Screen {
             ButtonActions.addHover(yesBtn);
             ButtonActions.addHover(noBtn);
 
-            exitConfirmTable.add(warningLabel).colspan(2).padBottom(30).row();
+            exitConfirmTable.add(warningLabel).width(500).colspan(2).padBottom(30).row();
             exitConfirmTable.add(yesBtn).padRight(40);
             exitConfirmTable.add(noBtn);
 
