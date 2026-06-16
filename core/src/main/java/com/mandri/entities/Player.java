@@ -46,7 +46,6 @@ public class Player {
     private float stateTimer;
 
     private int jumpCount = 0;
-    private final int MAX_JUMPS = 2;
 
     private float playerDamageRed;
     private float playerDamageGreen;

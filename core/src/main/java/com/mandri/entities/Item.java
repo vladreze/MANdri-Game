@@ -30,7 +30,7 @@ public class Item {
         this.x = x;
         this.y = y;
         this.isCollected = false;
-        if (name.equals("acorn") || name.equals("mushroom") || name.equals("axe")|| name.equals("emerald")||name.equals("geyser")) {
+        if (name.equals("acorn") || name.equals("mushroom") || name.equals("axe")|| name.equals("emerald")||name.equals("geyser")||name.equals("stalactite")) {
             this.width = 16f;
             this.height = 16f;
         }
@@ -55,50 +55,40 @@ public class Item {
     }
     public void draw(SpriteBatch batch, MainAssetsManager  manager) {
         if (!isCollected) {
-            TextureRegion frame=null;
-            if("RocketPart1".equals(name)){
-                frame=manager.image.rocketPart1;
+            TextureRegion frame = null;
+            if ("RocketPart1".equals(name)) {
+                frame = manager.image.rocketPart1;
+            } else if ("RocketPart2".equals(name)) {
+                frame = manager.image.rocketPart2;
+            } else if ("RocketPart3".equals(name)) {
+                frame = manager.image.rocketPart3;
+            } else if ("acorn".equals(name)) {
+                frame = manager.image.forestAcorn;
+            } else if ("stalactite".equals(name)) {
+                frame = manager.image.caveStalactite;
+            } else if ("mushroom".equals(name)) {
+                frame = manager.image.forestMushroom;
+            } else if ("axe".equals(name)) {
+                frame = manager.image.forestAxe;
+            } else if ("emerald".equals(name)) {
+                frame = manager.image.caveEmerald;
+            } else if ("geyser".equals(name)) {
+                frame = manager.image.caveGeyser;
+            } else if ("number0".equalsIgnoreCase(name) || "numb0".equalsIgnoreCase(name)) {
+                frame = manager.image.caveNumber0;
+            } else if ("number1".equalsIgnoreCase(name) || "numb1".equalsIgnoreCase(name)) {
+                frame = manager.image.caveNumber1;
+            } else if ("number3".equalsIgnoreCase(name) || "numb3".equalsIgnoreCase(name)) {
+                frame = manager.image.caveNumber3;
+            } else if ("number5".equalsIgnoreCase(name) || "numb5".equalsIgnoreCase(name)) {
+                frame = manager.image.caveNumber5;
             }
-            else if("RocketPart2".equals(name)){
-                frame=manager.image.rocketPart2;
+            if (frame != null) {
+                batch.draw(frame, x, y, width, height);
             }
-            else if("RocketPart3".equals(name)){
-                frame=manager.image.rocketPart3;
-            }
-            else if ("acorn".equals(name)){
-                frame=manager.image.forestAcorn;
-            }
-            else if ("mushroom".equals(name)){
-                frame=manager.image.forestMushroom;
-            }
-            else if ("axe".equals(name)){
-                frame=manager.image.forestAxe;
-            }
-            else if ("emerald".equals(name)){
-                frame=manager.image.caveEmerald;
-            }
-            else if ("geyser".equals(name)){
-                frame=manager.image.caveGeyser;
-            }
-            else if ("numb0".equals(name)){
-                frame=manager.image.caveNumber0;
-            }
-            else if ("numb1".equals(name)){
-                frame=manager.image.caveNumber1;
-            }
-            else if ("numb3".equals(name)){
-                frame=manager.image.caveNumber3;
-            }
-            else if ("numb5".equals(name)){
-                frame=manager.image.caveNumber5;
-            }
-            if(frame!=null){
-                batch.draw(frame,x,y,width,height);
-            }
+            if (mushroomJumpEffect != null) mushroomJumpEffect.draw(batch);
         }
-        if (mushroomJumpEffect != null) mushroomJumpEffect.draw(batch);
     }
-
     public void update(float delta, float playerX) {
         if (mushroomJumpEffect != null) mushroomJumpEffect.update(delta);
         if ("acorn".equals(name)||"stalactite".equals(name)) {

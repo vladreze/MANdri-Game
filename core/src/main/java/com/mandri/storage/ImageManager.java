@@ -103,6 +103,9 @@ public class ImageManager {
     public TextureRegion caveWaterExit;
     public TextureRegion caveDoneTable;
     public TextureRegion caveEmptyTable;
+    public TextureRegion caveHappyMonster;
+
+    public TextureRegion caveGate;
 
 
     public Animation<TextureRegion> caveRun_R;
@@ -182,6 +185,8 @@ public class ImageManager {
         manager.load("cave/cave_right.png", Texture.class);
         manager.load("cave/cave_run_L.png", Texture.class);
         manager.load("cave/cave_run_R.png", Texture.class);
+        manager.load("cave/monsterHappy.png", Texture.class);
+        manager.load("cave/cave_gate.png", Texture.class);
 //        CUTSCENE
         manager.load("cutscenes/cutscene1.png", Texture.class);
         manager.load("cutscenes/cutscene1-1.png", Texture.class);
@@ -259,6 +264,8 @@ public class ImageManager {
         caveWaterExit = new TextureRegion(manager.get("cave/waterExit.png", Texture.class));
         caveDoneTable= new TextureRegion(manager.get("cave/doneTable.png", Texture.class));
         caveEmptyTable= new TextureRegion(manager.get("cave/emptyTable.png", Texture.class));
+        caveHappyMonster= new TextureRegion(manager.get("cave/monsterHappy.png", Texture.class));
+        caveGate = new TextureRegion(manager.get("cave/cave_gate.png", Texture.class));
 //      hearts
         Texture tHearts = manager.get("level-ui/hearts.png", Texture.class);
 
