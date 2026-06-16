@@ -24,8 +24,12 @@ public class CaveScreen extends BaseLevelScreen {
     private boolean isDoorOpened = false;
     private Rectangle door;
     private Rectangle tablePassword;
+    private Rectangle levelExit;
 
     private Monster monster;
+    private boolean allItemsAdded = false;
+    private int itemCount = 0;
+    private int insertedItemCount = 0;
 
     public CaveScreen(Main game, MainAssetsManager manager) {
         super(game, manager);
@@ -50,13 +54,18 @@ public class CaveScreen extends BaseLevelScreen {
                 String type = object.getProperties().get("type", String.class);
                 if (type == null) continue;
 
-                if ("gateExit".equals(type) || "LevelExit".equals(type) || "exitWater".equals(type)) {
-                    Float x = object.getProperties().get("x", Float.class);
-                    Float y = object.getProperties().get("y", Float.class);
-                    Float w = object.getProperties().get("width", Float.class);
-                    Float h = object.getProperties().get("height", Float.class);
+                Float x = object.getProperties().get("x", Float.class);
+                Float y = object.getProperties().get("y", Float.class);
+                Float w = object.getProperties().get("width", Float.class);
+                Float h = object.getProperties().get("height", Float.class);
+
+                if ("gateExit".equals(type)) {
                     if (x != null && y != null) {
                         door = new Rectangle(x, y, w != null ? w : 64, h != null ? h : 128);
+                    }
+                } else if ("LevelExit".equals(type) || "exitWater".equals(type)) {
+                    if (x != null && y != null) {
+                        levelExit = new Rectangle(x, y, w != null ? w : 64, h != null ? h : 128);
                     }
                 }
             }
@@ -99,12 +108,17 @@ public class CaveScreen extends BaseLevelScreen {
             type.toLowerCase().contains("number")) {
             caveItems.add(new Item(manager, type, x, y));
         }
-        else if ("gateExit".equals(type) || "LevelExit".equals(type) || "pitExit".equals(type) || "exitWater".equals(type)) {
+        else if ("gateExit".equals(type)) {
             Float w = object.getProperties().get("width", Float.class);
             Float h = object.getProperties().get("height", Float.class);
             door = new Rectangle(x, y, w != null ? w : 64, h != null ? h : 128);
         }
-        else if ("Table".equalsIgnoreCase(type)) {
+        else if ("LevelExit".equals(type) || "pitExit".equals(type) || "exitWater".equals(type)) {
+            Float w = object.getProperties().get("width", Float.class);
+            Float h = object.getProperties().get("height", Float.class);
+            levelExit = new Rectangle(x, y, w != null ? w : 64, h != null ? h : 128);
+        }
+        else if ("table".equalsIgnoreCase(type)) {
             Float w = object.getProperties().get("width", Float.class);
             Float h = object.getProperties().get("height", Float.class);
             tablePassword = new Rectangle(x, y, w != null ? w : 32, h != null ? h : 16);
@@ -116,10 +130,22 @@ public class CaveScreen extends BaseLevelScreen {
         for (int i = 0; i < caveItems.size; i++) {
             Item item = caveItems.get(i);
             item.update(delta, player.bounds.x);
+            String itemName = item.getName();
+
+//            if (!allItemsAdded) {
+//                if (itemCount == 4) allItemsAdded = true;
+//                if ("numb1".equals(itemName) || "numb3".equals(itemName) ||
+//                    "numb5".equals(itemName) || "numb0".equals(itemName)) {
+//                    boolean added = inventory.addItem(item);
+//                    updateInventoryUI();
+//                    itemCount++;
+//                    if (added) {
+//                        manager.music.playBonusSound();
+//                    }
+//                }
+//            }
 
             if (player.bounds.overlaps(item.bounds)) {
-                String itemName = item.getName();
-
                 if ("emerald".equals(itemName) || "numb1".equals(itemName) || "numb3".equals(itemName) ||
                     "numb5".equals(itemName) || "numb0".equals(itemName)) {
                     item.collect();
@@ -177,6 +203,10 @@ public class CaveScreen extends BaseLevelScreen {
 
         pickupEffect.update(delta);
 
+        if (isDoorOpened && levelExit != null && player.bounds.overlaps(levelExit)) {
+            isLevelFinished = true;
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             Rectangle reachBounds = new Rectangle(player.bounds.x - 15, player.bounds.y, player.bounds.width + 30, player.bounds.height);
 
@@ -185,21 +215,47 @@ public class CaveScreen extends BaseLevelScreen {
 
             if (isNearTerminal) {
                 if (!isDoorOpened) {
-                    if (inventory.hasItem("numb0") && inventory.hasItem("numb1") &&
-                        inventory.hasItem("numb3") && inventory.hasItem("numb5")) {
+                    boolean itemIsInserted = false;
 
-                        inventory.consumeItem("numb0");
-                        inventory.consumeItem("numb1");
-                        inventory.consumeItem("numb3");
-                        inventory.consumeItem("numb5");
+                    if (inventory.consumeItem("numb0")) itemIsInserted = true;
+                    else if (inventory.consumeItem("numb1")) itemIsInserted = true;
+                    else if (inventory.consumeItem("numb3")) itemIsInserted = true;
+                    else if (inventory.consumeItem("numb5")) itemIsInserted = true;
 
-                        manager.music.playBigBonusSound();
-                        isDoorOpened = true;
-                        isLevelFinished = true;
+                    if (itemIsInserted) {
+                        insertedItemCount++;
                         updateInventoryUI();
+                        manager.music.playBonusSound();
+
+                        if (insertedItemCount == 4) {
+                            manager.music.playBigBonusSound();
+                            isDoorOpened = true;
+                        }
+                    } else if (insertedItemCount < 4) {
+                        manager.music.playHurtSound(1);
                     }
                 } else {
                     manager.music.playJumpSound();
+
+                    if (door != null) {
+                        int startX = (int) (door.x / 16);
+                        int startY = (int) (door.y / 16);
+                        int endX = (int) ((door.x + door.width - 1) / 16);
+                        int endY = (int) ((door.y + door.height - 1) / 16);
+
+                        for (MapLayer mapLayer : map.getLayers()) {
+                            if (mapLayer instanceof TiledMapTileLayer) {
+                                TiledMapTileLayer tileLayer = (TiledMapTileLayer) mapLayer;
+                                for (int tx = startX; tx <= endX; tx++) {
+                                    for (int ty = startY; ty <= endY; ty++) {
+                                        tileLayer.setCell(tx, ty, null);
+                                    }
+                                }
+                            }
+                        }
+                        door = null;
+                    }
+                    tablePassword = null;
                 }
             }
         }
