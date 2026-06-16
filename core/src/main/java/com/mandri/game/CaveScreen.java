@@ -138,11 +138,14 @@ public class CaveScreen extends BaseLevelScreen {
         pickupEffect.update(delta);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-            if (door != null && player.bounds.overlaps(door)) {
+            boolean isNearTerminal = (tablePassword != null && player.bounds.overlaps(tablePassword)) ||
+                (door != null && player.bounds.overlaps(door));
 
+            if (isNearTerminal) {
                 if (!isDoorOpened) {
                     if (inventory.hasItem("numb0") && inventory.hasItem("numb1") &&
                         inventory.hasItem("numb3") && inventory.hasItem("numb5")) {
+
                         inventory.consumeItem("numb0");
                         inventory.consumeItem("numb1");
                         inventory.consumeItem("numb3");
@@ -151,6 +154,20 @@ public class CaveScreen extends BaseLevelScreen {
                         manager.music.playBigBonusSound();
                         isDoorOpened = true;
                         updateInventoryUI();
+
+                        if (door != null) {
+                            int startX = (int) (door.x / collisionLayer.getTileWidth());
+                            int startY = (int) (door.y / collisionLayer.getTileHeight());
+                            int endX = (int) ((door.x + door.width) / collisionLayer.getTileWidth());
+                            int endY = (int) ((door.y + door.height) / collisionLayer.getTileHeight());
+
+                            for (int x = startX; x <= endX; x++) {
+                                for (int y = startY; y <= endY; y++) {
+                                    collisionLayer.setCell(x, y, null);
+                                }
+                            }
+                        }
+
                     } else {
                         manager.music.playHurtSound(1);
                     }
@@ -171,9 +188,7 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected void drawLevelSpecifics() {
-        if (door != null && !isDoorOpened) {
-            batch.draw(manager.image.caveGate, door.x, door.y, door.width, door.height);
-        }
+
         if (tablePassword != null) {
             if (!isDoorOpened) {
                 batch.draw(manager.image.caveEmptyTable, tablePassword.x, tablePassword.y, tablePassword.width, tablePassword.height);
@@ -183,7 +198,7 @@ public class CaveScreen extends BaseLevelScreen {
         }
         for (int i = 0; i < caveItems.size; i++) {
             caveItems.get(i).draw(batch, manager);
-            }
+        }
         if (monster != null) {
             monster.draw(batch);
         }
