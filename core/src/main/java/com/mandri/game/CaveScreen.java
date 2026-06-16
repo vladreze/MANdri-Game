@@ -195,26 +195,11 @@ public class CaveScreen extends BaseLevelScreen {
 
                         manager.music.playBigBonusSound();
                         isDoorOpened = true;
+                        isLevelFinished = true;
                         updateInventoryUI();
-
-                        if (door != null) {
-                            int startX = (int) (door.x / collisionLayer.getTileWidth());
-                            int startY = (int) (door.y / collisionLayer.getTileHeight());
-                            int endX = (int) ((door.x + door.width - 1) / collisionLayer.getTileWidth());
-                            int endY = (int) ((door.y + door.height - 1) / collisionLayer.getTileHeight());
-
-                            for (int x = startX; x <= endX; x++) {
-                                for (int y = startY; y <= endY; y++) {
-                                    collisionLayer.setCell(x, y, null);
-                                }
-                            }
-                        }
-                    } else {
-                        manager.music.playHurtSound(1);
                     }
                 } else {
                     manager.music.playJumpSound();
-                    isLevelFinished = true;
                 }
             }
         }
