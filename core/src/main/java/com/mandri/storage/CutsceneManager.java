@@ -39,7 +39,7 @@ public class CutsceneManager {
             ""
             };
 
-        Screen screen = new CaveScreen(main, manager);
+        Screen screen = new SpaceScreen(main, manager);
         Vector2[] textPositions = new Vector2[] {
             new Vector2(50, 200),
             new Vector2(50, 200),
