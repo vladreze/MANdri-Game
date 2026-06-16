@@ -166,6 +166,12 @@ public class CaveScreen extends BaseLevelScreen {
                     updateInventoryUI();
                     manager.music.playBonusSound();
                 }
+                if(player.bounds.x < monster.x){
+                    player.bounds.x = monster.x - player.bounds.width;
+                }
+                else{
+                    player.bounds.x = monster.x + monster.width;
+                }
             }
         }
 

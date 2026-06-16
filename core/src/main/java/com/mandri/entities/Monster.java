@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mandri.storage.MainAssetsManager;
 
 public class Monster {
-    public enum State { EMPTY, DONE, HAPPY }
+    public enum State { EMPTY, HAPPY }
     public Monster.State curState;
 
     public float x, y;
@@ -37,7 +37,7 @@ public class Monster {
 
     public void update(float delta) {
         if (curState == Monster.State.HAPPY) {
-            velX += 80f * delta;
+            velX -= 80f * delta;
             x += velX * delta;
             bounds.setPosition(x, y);
         }
