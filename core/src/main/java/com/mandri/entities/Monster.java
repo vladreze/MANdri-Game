@@ -29,7 +29,7 @@ public class Monster {
     public void giveEmerald() {
         if (curState != State.HAPPY) {
             partsInserted++;
-            if (partsInserted >= 3) {
+            if (partsInserted >= 2) {
                 curState = State.HAPPY;
             }
         }
