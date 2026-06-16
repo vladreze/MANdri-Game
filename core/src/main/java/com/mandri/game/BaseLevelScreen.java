@@ -336,7 +336,7 @@ public abstract class BaseLevelScreen implements Screen {
                         e.velocityY = player.JUMP_FORCE / 1.5f;
                         manager.music.playPunchSound();
                     } else {
-                        player.takeDamage("mob");
+                        //player.takeDamage("mob");
                     }
                 }
             }

@@ -95,6 +95,7 @@ public class Enemy {
             this.aliveTexture = new TextureRegion(manager.image.caveSpider);
             this.deadTexture = new TextureRegion(manager.image.caveSpider);
             this.speed = 25f;
+            this.bounds = new Rectangle(x, y, 30, 15);
             this.isFlying = false;
         }
         damageShader = new ShaderProgram(
