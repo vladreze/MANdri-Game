@@ -39,7 +39,7 @@ public class CutsceneManager {
             ""
             };
 
-        Screen screen = new CaveScreen(main, manager);
+        Screen screen = new SpaceScreen(main, manager);
         Vector2[] textPositions = new Vector2[] {
             new Vector2(50, 200),
             new Vector2(50, 200),
@@ -93,7 +93,7 @@ public class CutsceneManager {
             "[You]:Damn, I've fallen somewhere again. \n Well, let's see where this road leads..."
         };
 
-        Screen screen = new CaveScreen(main, manager); //CAVE LEVEL
+        Screen screen = new CaveScreen(main, manager);
         Vector2[] textPositions = new Vector2[] {
             new Vector2(300,200)
         };
@@ -106,24 +106,12 @@ public class CutsceneManager {
         return cutsceneScreen;
     }
     public Screen cs4(){
-        Texture[] texture = new Texture[]{
+        Screen screen = new CreditsScreen(main, manager);
 
-        };
-
-        String[] text = new String[]{
-
-        };
-
-        Screen screen = new SpaceScreen(main, manager);
-        Vector2[] textPositions = new Vector2[] {
-
-
-        };
-
-        Animation<TextureRegion> anim = manager.image.cs1Anim;;
+        Animation<TextureRegion> anim = manager.image.cs4Anim;;
 
         int id =4;
-        cutsceneScreen = new CutsceneScreen(main, manager, texture,text, screen, anim,null, textPositions, id);
+        cutsceneScreen = new CutsceneScreen(main, manager, null,null, screen, anim,null, null, id);
         return cutsceneScreen;
     }
 }

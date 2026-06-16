@@ -29,6 +29,7 @@ public class MusicManager {
         manager.load("music/cs3-bg-music.mp3", Music.class);
 //        manager.load("music/cs4-bg-music.mp3", Music.class);
         manager.load("music/credits-music.mp3", Music.class);
+        manager.load("music/cs4-bg-music.mp3", Music.class);
 
         //sounds
         manager.load("sounds/walking.mp3", Sound.class);
@@ -59,6 +60,7 @@ public class MusicManager {
 
 //        manager.load("sounds/text-type(long).mp3", Sound.class);
         manager.load("sounds/text-type.mp3", Sound.class);
+        manager.load("sounds/splash.mp3", Sound.class);
 
         manager.load("sounds/pause-sound.mp3", Sound.class);
         manager.load("sounds/start-sound.mp3", Sound.class);
@@ -94,10 +96,18 @@ public class MusicManager {
         music.setVolume(soundEffectsvolume);
         music.play();
     }
+    public void playCs4BgMusic(){
+        music = manager.get("music/cs4-bg-music.mp3", Music.class);
+        music.setVolume(soundEffectsvolume);
+        music.play();
+    }
     public void playCreditsMusic(){
         music = manager.get("music/credits-music.mp3", Music.class);
         music.setVolume(soundEffectsvolume);
         music.play();
+    }
+    public void playSplashSound(){
+        manager.get("sounds/splash.mp3", Sound.class).play(soundEffectsvolume);
     }
     public void playEngineSound(){
         manager.get("sounds/rocket-fly-sound.mp3", Sound.class).play(soundEffectsvolume);

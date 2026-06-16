@@ -161,7 +161,7 @@ private Monster monster;
 
     @Override
     protected Screen getNextScreen() {
-        return new CutsceneManager(game, manager).cs3();
+        return new CutsceneManager(game, manager).cs4();
     }
 
     @Override
