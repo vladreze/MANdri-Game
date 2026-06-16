@@ -14,8 +14,7 @@ public class Main extends Game {
         manager = new MainAssetsManager();
         manager.loadResources();
         UIManager.getInstance().loadUI();
-        this.setScreen(new IntroScreen(this));
-
+        this.setScreen(new ForestScreen(this, manager));
     }
 
     @Override

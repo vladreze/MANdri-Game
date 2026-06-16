@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -17,6 +18,7 @@ import com.mandri.entities.Item;
 import com.mandri.entities.Player;
 import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
+
 
 public class ForestScreen extends BaseLevelScreen {
     private Array<Item> forestItems;
@@ -67,8 +69,6 @@ public class ForestScreen extends BaseLevelScreen {
         }
         else if ("acorn".equals(type) || "axe".equals(type) || "mushroom".equals(type)) {
             forestItems.add(new Item(manager, type, x, y));
-        }
-        else if ("LevelExit".equals(type) || "pitExit".equals(type)) {
         }
     }
 
@@ -168,6 +168,11 @@ public class ForestScreen extends BaseLevelScreen {
             }
         }
         pickupEffect.update(delta);
+        if (player.bounds.y < 32) {
+            if (!isLevelFinished) {
+                isLevelFinished = true;
+            }
+        }
     }
 
     @Override
