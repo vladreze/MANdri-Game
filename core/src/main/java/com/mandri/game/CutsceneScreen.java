@@ -136,10 +136,12 @@ public class CutsceneScreen implements Screen {
                 if(!isTyping){
                     currentSlide++;
                     if(currentSlide>= storyText.length){
-//                        if(animation2 !=null) currentState = State.ANIM2;
-//                        else main.setScreen(screen); //CHANGE GAME SCREEN
                         currentSlide = storyText.length - 1;
-                        isFadingOut = true;
+                        if (animation2 != null) {
+                            currentState = State.ANIM2;
+                        } else {
+                            isFadingOut = true;
+                        }
                     }else{
                         displayedText = "";
                         charIndex = 0;
@@ -211,7 +213,9 @@ public class CutsceneScreen implements Screen {
             TextureRegion frame = animation2.getKeyFrame(animationTimer2);
             batch.draw(frame, 0, 0, 1280, 720);
 
-            if(animation2.isAnimationFinished(animationTimer2)) main.setScreen(screen);
+            if (animation2.isAnimationFinished(animationTimer2)) {
+                isFadingOut = true;
+            }
         }
 
         batch.end();

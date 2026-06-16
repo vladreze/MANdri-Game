@@ -67,7 +67,15 @@ public class HelpScreen implements Screen {
 
         Label pauseLabel = new Label("ESC - Pause Game", textStyle);
         pauseLabel.setFontScale(0.7f);
-        table.add(pauseLabel).padBottom(15).row();
+        table.add(pauseLabel).padBottom(8).row();
+
+        Label inventoryLabel = new Label("E -  Open / Close Inventory", textStyle);
+        inventoryLabel.setFontScale(0.7f);
+        table.add(inventoryLabel).padBottom(8).row();
+
+        Label interactLabel = new Label("F -  Interact with Objects", textStyle);
+        interactLabel.setFontScale(0.7f);
+        table.add(interactLabel).padBottom(8).row();
 
         Label tipLabel = new Label("Avoid enemies and collect bonuses to unlock new biomes ( levels )", textStyle);
         tipLabel.setFontScale(0.6f);
