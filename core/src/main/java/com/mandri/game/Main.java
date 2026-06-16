@@ -14,7 +14,7 @@ public class Main extends Game {
         manager = new MainAssetsManager();
         manager.loadResources();
         UIManager.getInstance().loadUI();
-        this.setScreen(new CaveScreen(this, manager));
+        this.setScreen(new IntroScreen(this));
     }
 
     @Override

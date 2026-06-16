@@ -19,6 +19,10 @@ uniform float u_stars_intensity;
 uniform vec3 u_shadow_color;
 uniform vec3 u_light_color;
 
+uniform vec2 u_vignette_range;
+uniform vec3 u_flashlight_color;
+uniform float u_flashlight_intensity;
+
 void main() {
     vec4 color = texture2D(u_texture, v_texCoord0) * v_color;
 
@@ -49,9 +53,11 @@ void main() {
     color.rgb = mix(color.rgb, fogColor, opacity);
 
     float len = length(relativePosition);
-    float vignette = smoothstep(0.5, 0.4, len);
-    vec3 vignetteColor = vec3(0.02, 0.02, 0.08);
-    vec3 coloredVignette = mix(vignetteColor, color.rgb, vignette);
+    float vignette = smoothstep(u_vignette_range.x, u_vignette_range.y, len);
+    float halo = sin(vignette * 3.14159);
+    vec3 baseVignetteColor = vec3(0.01, 0.01, 0.03);
+    vec3 dynamicVignetteColor = mix(baseVignetteColor, u_flashlight_color, halo * u_flashlight_intensity);
+    vec3 coloredVignette = mix(dynamicVignetteColor, color.rgb, vignette);
     color.rgb = mix(color.rgb, coloredVignette, 0.5);
 
     vec4 noiseColor = texture2D(u_noise_texture, uv * 1.0);

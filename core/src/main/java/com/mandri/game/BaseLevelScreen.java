@@ -336,7 +336,7 @@ public abstract class BaseLevelScreen implements Screen {
                         e.velocityY = player.JUMP_FORCE / 1.5f;
                         manager.music.playPunchSound();
                     } else {
-                        //player.takeDamage("mob");
+                        player.takeDamage("mob");
                     }
                 }
             }
@@ -361,6 +361,10 @@ public abstract class BaseLevelScreen implements Screen {
 
         String theme = getLevelTheme();
 
+        float vigX = 0.5f;
+        float vigY = 0.4f;
+        float flashIntensity = 0.0f;
+        float flashR = 0f, flashG = 0f, flashB = 0f;
         float raysIntensity = 0f;
         float fogIntensity = 0f;
         float starsIntensity = 0f;
@@ -375,6 +379,8 @@ public abstract class BaseLevelScreen implements Screen {
             shadowR = 0.54f; shadowG = 0.17f; shadowB = 0.89f;
             lightR = 0.99f; lightG = 0.87f; lightB = 0.42f;
 
+            vigX = 0.5f; vigY = 0.4f;
+
         } else if ("cave".equals(theme)) {
             raysIntensity = 0.0f;
             fogIntensity = 0.6f;
@@ -383,6 +389,16 @@ public abstract class BaseLevelScreen implements Screen {
             shadowR = 0.10f; shadowG = 0.05f; shadowB = 0.20f;
             lightR = 0.60f; lightG = 0.80f; lightB = 0.85f;
 
+            float breathing = MathUtils.sin(shaderTime * 1.5f) * 0.025f;
+            float pulse = breathing;
+
+            vigX = 0.35f + pulse;
+            vigY = 0.22f + pulse;
+
+            flashIntensity = 0.85f + (pulse * 2f);
+
+            flashR = 0.95f; flashG = 0.9f; flashB = 0.7f;
+
         } else if ("space".equals(theme)) {
             raysIntensity = 0.0f;
             fogIntensity = 0.0f;
@@ -390,6 +406,8 @@ public abstract class BaseLevelScreen implements Screen {
 
             shadowR = 0.54f; shadowG = 0.17f; shadowB = 0.89f;
             lightR = 0.99f; lightG = 0.87f; lightB = 0.42f;
+
+            vigX = 0.5f; vigY = 0.4f;
         }
 
         vignetteShader.setUniformf("u_rays_intensity", raysIntensity);
@@ -397,6 +415,9 @@ public abstract class BaseLevelScreen implements Screen {
         vignetteShader.setUniformf("u_stars_intensity", starsIntensity);
         vignetteShader.setUniformf("u_shadow_color", shadowR, shadowG, shadowB);
         vignetteShader.setUniformf("u_light_color", lightR, lightG, lightB);
+        vignetteShader.setUniformf("u_vignette_range", vigX, vigY);
+        vignetteShader.setUniformf("u_flashlight_color", flashR, flashG, flashB);
+        vignetteShader.setUniformf("u_flashlight_intensity", flashIntensity);
 
         Texture noiseTexture = getNoiseTexture();
         if (noiseTexture != null) {

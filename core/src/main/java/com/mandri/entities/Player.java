@@ -45,6 +45,8 @@ public class Player {
     private boolean runningRight = true;
     private float stateTimer;
 
+    private int jumpCount = 0;
+
     private float playerDamageRed;
     private float playerDamageGreen;
     private float playerDamageBlue;
@@ -64,7 +66,6 @@ public class Player {
     private TextureRegion jumpF, jumpR, jumpL;
     private TextureRegion fallF, fallR, fallL;
     private Animation<TextureRegion> runR, runL, idleF;
-    private int jumpCount = 0;
 
     private class ActiveBreakable {
         RectangleMapObject object;
