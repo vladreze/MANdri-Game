@@ -46,7 +46,7 @@ public class Monster {
     public void draw(SpriteBatch batch) {
         TextureRegion frame = manager.image.caveMonster;
         if (curState == Monster.State.HAPPY) {
-            frame = manager.image.rocketFlying;
+            frame = manager.image.caveHappyMonster;
         }
         if (frame != null) {
             batch.draw(frame, x, y, width, height);

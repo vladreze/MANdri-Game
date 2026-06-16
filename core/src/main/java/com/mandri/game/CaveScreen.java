@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Array;
 import com.mandri.entities.Enemy;
 import com.mandri.entities.Item;
+import com.mandri.entities.Monster;
 import com.mandri.entities.Player;
 import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
@@ -16,7 +17,7 @@ import com.mandri.storage.MainAssetsManager;
 public class CaveScreen extends BaseLevelScreen {
     private Array<Item> caveItems;
     private ParticleEffect pickupEffect;
-
+private Monster monster;
     public CaveScreen(Main game, MainAssetsManager manager) {
         super(game, manager);
     }
@@ -25,7 +26,6 @@ public class CaveScreen extends BaseLevelScreen {
     public void show() {
         if (!isInitialized) {
             caveItems = new Array<>();
-
             pickupEffect = new ParticleEffect();
             pickupEffect.load(
                 Gdx.files.internal("assets/particles/collectItem.p"),
@@ -62,6 +62,9 @@ public class CaveScreen extends BaseLevelScreen {
         }
         if ("spider".equals(type)) {
             enemies.add(new Enemy(x, y, manager, type));
+        }
+        else if ("monster".equals(type)) {
+            monster=new  Monster(x, y, manager);
         }
         else if ("stalactite".equalsIgnoreCase(type) || "emerald".equalsIgnoreCase(type) ||
             "geyser".equalsIgnoreCase(type) || type.toLowerCase().contains("numb") || type.toLowerCase().contains("number")) {
@@ -106,6 +109,16 @@ public class CaveScreen extends BaseLevelScreen {
                 }
             }
         }
+        if(monster != null) {
+            monster.update(delta);
+            if (player.bounds.overlaps(monster.bounds) && monster.curState != Monster.State.HAPPY) {
+                if (inventory.consumeItem("emerald")) {
+                    monster.giveEmerald();
+                    updateInventoryUI();
+                    manager.music.playBonusSound();
+                }
+            }
+        }
 
         pickupEffect.update(delta);
     }
@@ -121,6 +134,9 @@ public class CaveScreen extends BaseLevelScreen {
     protected void drawLevelSpecifics() {
         for (int i = 0; i < caveItems.size; i++) {
             caveItems.get(i).draw(batch, manager);
+            }
+        if (monster != null) {
+            monster.draw(batch);
         }
 
         pickupEffect.draw(batch);
