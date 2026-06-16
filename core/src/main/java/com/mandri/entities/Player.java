@@ -27,8 +27,8 @@ public class Player {
     private float spawnX, spawnY;
 
     public float velocityX, velocityY;
-    private final float SPEED = 250f;
-    public final float JUMP_FORCE = 450f;
+    private final float SPEED = 150f;
+    public final float JUMP_FORCE = 350f;
     private final float GRAVITY = -(JUMP_FORCE * 2);
     private boolean wasSpacePressed = false;
 
@@ -44,9 +44,6 @@ public class Player {
     private boolean isGrounded = false;
     private boolean runningRight = true;
     private float stateTimer;
-
-    private int jumpCount = 0;
-    private final int MAX_JUMPS = 2;
 
     private float playerDamageRed;
     private float playerDamageGreen;
@@ -318,14 +315,14 @@ public class Player {
                         trapRect.height
                     );
 
-//                    if (this.bounds.overlaps(adjustedTraRect)) {
-//                        if (type.equals("trap-poison")) {
-//                            takeDamage("trap-poison");
-//                        }
-//                        else if (type.equals("trap-thorn")) {
-//                            takeDamage("trap-thorn");
-//                        }
-//                    }
+                    if (this.bounds.overlaps(adjustedTraRect)) {
+                        if (type.equals("trap-poison")) {
+                            takeDamage("trap-poison");
+                        }
+                        else if (type.equals("trap-thorn")) {
+                            takeDamage("trap-thorn");
+                        }
+                    }
                 }
             }
         }
