@@ -1,11 +1,13 @@
 package com.mandri.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.mandri.entities.Enemy;
 import com.mandri.entities.Item;
@@ -13,9 +15,14 @@ import com.mandri.entities.Player;
 import com.mandri.storage.CutsceneManager;
 import com.mandri.storage.MainAssetsManager;
 
+
 public class CaveScreen extends BaseLevelScreen {
     private Array<Item> caveItems;
     private ParticleEffect pickupEffect;
+
+    private boolean isDoorOpened = false;
+    private Rectangle door;
+    private Rectangle tablePassword;
 
     public CaveScreen(Main game, MainAssetsManager manager) {
         super(game, manager);
@@ -68,6 +75,10 @@ public class CaveScreen extends BaseLevelScreen {
             caveItems.add(new Item(manager, type, x, y));
         }
         else if ("LevelExit".equals(type) || "pitExit".equals(type)||"exitWater".equals(type)) {
+            door = new Rectangle(x, y, 64, 128);
+        }
+        else if("Table".equalsIgnoreCase(type)){
+            tablePassword = new Rectangle(x, y, 32, 16);
         }
     }
 
@@ -89,6 +100,7 @@ public class CaveScreen extends BaseLevelScreen {
 
                         caveItems.removeIndex(i);
                         updateInventoryUI();
+                        break;
                     }
                 }if ("geyser".equals(item.getName())) {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > item.bounds.y) {
@@ -108,6 +120,30 @@ public class CaveScreen extends BaseLevelScreen {
         }
 
         pickupEffect.update(delta);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            if (door != null && player.bounds.overlaps(door)) {
+
+                if (!isDoorOpened) {
+                    if (inventory.hasItem("numb0") && inventory.hasItem("numb1") &&
+                        inventory.hasItem("numb3") && inventory.hasItem("numb5")) {
+                        inventory.consumeItem("numb0");
+                        inventory.consumeItem("numb1");
+                        inventory.consumeItem("numb3");
+                        inventory.consumeItem("numb5");
+
+                        manager.music.playBigBonusSound();
+                        isDoorOpened = true;
+                        updateInventoryUI();
+                    } else {
+                        manager.music.playHurtSound(1);
+                    }
+                } else {
+                    manager.music.playJumpSound();
+                    isLevelFinished = true;
+                }
+            }
+        }
     }
 
     @Override
@@ -119,11 +155,22 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected void drawLevelSpecifics() {
+        if (door != null && !isDoorOpened) {
+            batch.draw(manager.image.caveGate, door.x, door.y, door.width, door.height);
+        }
+        if (tablePassword != null) {
+            if (!isDoorOpened) {
+                batch.draw(manager.image.caveEmptyTable, tablePassword.x, tablePassword.y, tablePassword.width, tablePassword.height);
+            } else {
+                batch.draw(manager.image.caveDoneTable, tablePassword.x, tablePassword.y, tablePassword.width, tablePassword.height);
+            }
+        }
         for (int i = 0; i < caveItems.size; i++) {
             caveItems.get(i).draw(batch, manager);
         }
-
-        pickupEffect.draw(batch);
+        if (!pickupEffect.isComplete()) {
+            pickupEffect.draw(batch);
+        }
     }
 
     @Override
