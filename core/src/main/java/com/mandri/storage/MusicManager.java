@@ -193,7 +193,6 @@ public class MusicManager {
     }
     public void playBeeSound(){
         manager.get("sounds/bee.mp3", Sound.class).play(soundEffectsvolume);
-
     }
     public void playSpaceshipSound(){
         manager.get("sounds/spaceship.mp3", Sound.class).play(soundEffectsvolume);

@@ -23,6 +23,7 @@ public class Item {
     private final MainAssetsManager manager;
 
     private ParticleEffect mushroomJumpEffect;
+    private ParticleEffect geyserJumpEffect;
 
     public Item(MainAssetsManager manager, String name, float x, float y) {
         this.name=name;
@@ -30,7 +31,10 @@ public class Item {
         this.x = x;
         this.y = y;
         this.isCollected = false;
-        if (name.equals("acorn") || name.equals("mushroom") || name.equals("axe")|| name.equals("emerald")||name.equals("geyser")||name.equals("stalactite")) {
+        if (name.equals("acorn") || name.equals("mushroom")
+            || name.equals("axe")|| name.equals("emerald")
+            ||name.equals("geyser")||name.equals("stalactite")
+            || name.equals("numb0") || name.equals("numb1") ||name.equals("numb3") ||name.equals("numb5")) {
             this.width = 16f;
             this.height = 16f;
         }
@@ -40,11 +44,17 @@ public class Item {
         }
         this.bounds = new Rectangle(x, y, width, height);
 
-        if ("mushroom".equals(name)||"geyser".equals(name)) {
+        if ("mushroom".equals(name)) {
             mushroomJumpEffect = new ParticleEffect();
             mushroomJumpEffect.load(Gdx.files.internal("particles/mushroomJump.p"), Gdx.files.internal("particles/"));
             mushroomJumpEffect.scaleEffect(.7f);
             mushroomJumpEffect.setPosition(x + width / 2, y + bounds.height / 1.25f);
+        }
+        if ("geyser".equals(name)) {
+            geyserJumpEffect = new ParticleEffect();
+            geyserJumpEffect.load(Gdx.files.internal("particles/geyserJump.p"), Gdx.files.internal("particles/"));
+            geyserJumpEffect.scaleEffect(.7f);
+            geyserJumpEffect.setPosition(x + width / 2, y + bounds.height / 1.25f);
         }
     }
     public void collect(){
@@ -87,10 +97,12 @@ public class Item {
                 batch.draw(frame, x, y, width, height);
             }
             if (mushroomJumpEffect != null) mushroomJumpEffect.draw(batch);
+            if (geyserJumpEffect != null) geyserJumpEffect.draw(batch);
         }
     }
     public void update(float delta, float playerX) {
         if (mushroomJumpEffect != null) mushroomJumpEffect.update(delta);
+        if (geyserJumpEffect != null) geyserJumpEffect.update(delta);
         if ("acorn".equals(name)||"stalactite".equals(name)) {
             float playerAcornX = Math.abs(this.x - playerX);
             if (playerAcornX < 100f) {
@@ -112,7 +124,11 @@ public class Item {
         }
     }
 
-    public void playJumpEffect() {
-        if (mushroomJumpEffect != null) mushroomJumpEffect.start();
+    public void playJumpEffect(String itemName) {
+        if ("geyser".equals(itemName)) {
+            if (geyserJumpEffect != null) geyserJumpEffect.start();
+        } else if("mushroom".equals(itemName)) {
+            if (mushroomJumpEffect != null) mushroomJumpEffect.start();
+        }
     }
 }

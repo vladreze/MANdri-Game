@@ -95,7 +95,7 @@ public class ForestScreen extends BaseLevelScreen {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > item.bounds.y) {
                         player.bounce();
                         player.velocityY = player.JUMP_FORCE;
-                        item.playJumpEffect();
+                        item.playJumpEffect("mushroom");
                         manager.music.playBonusSound();
                     }
                 }
@@ -108,7 +108,9 @@ public class ForestScreen extends BaseLevelScreen {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F) && inventory.hasItem("axe")) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)
+            && inventory.hasItem("axe")
+            && inventory.getSelectedItem().getName().equals("axe")) {
             MapLayer spawnLayer = map.getLayers().get("spawns");
             if (spawnLayer != null) {
                 for (int i = spawnLayer.getObjects().getCount() - 1; i >= 0; i--) {
