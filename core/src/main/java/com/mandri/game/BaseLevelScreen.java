@@ -50,7 +50,7 @@ public abstract class BaseLevelScreen implements Screen {
     protected final MainAssetsManager manager;
     protected final Main game;
 
-    protected float playerStartX = 110f;
+    protected float playerStartX = 100f;
     protected float playerStartY = 125f;
 
     protected ShaderProgram vignetteShader;
@@ -321,7 +321,7 @@ public abstract class BaseLevelScreen implements Screen {
                 float playerBeeAbsX = Math.abs(e.bounds.getX() - player.bounds.getX());
                 float playerBeeAbsY = Math.abs(e.bounds.getY() - player.bounds.getY());
 
-                if (playerBeeAbsX < 70f &&  playerBeeAbsY < 50f) {
+                if (playerBeeAbsX < 80f &&  playerBeeAbsY < 70f) {
                     e.beeAngry();
                 } else {
                     e.beeNormal();
@@ -367,7 +367,9 @@ public abstract class BaseLevelScreen implements Screen {
         float flashR = 0f, flashG = 0f, flashB = 0f;
         float raysIntensity = 0f;
         float fogIntensity = 0f;
+        float cloudIntensity = 0f;
         float starsIntensity = 0f;
+        float caveLightsIntensity = 0f;
         float shadowR = 0f, shadowG = 0f, shadowB = 0f;
         float lightR = 1f, lightG = 1f, lightB = 1f;
 
@@ -375,6 +377,8 @@ public abstract class BaseLevelScreen implements Screen {
             raysIntensity = 1.0f;
             fogIntensity = 1.0f;
             starsIntensity = 0.0f;
+            cloudIntensity = 1.0f;
+            caveLightsIntensity = 0.0f;
 
             shadowR = 0.54f; shadowG = 0.17f; shadowB = 0.89f;
             lightR = 0.99f; lightG = 0.87f; lightB = 0.42f;
@@ -383,8 +387,10 @@ public abstract class BaseLevelScreen implements Screen {
 
         } else if ("cave".equals(theme)) {
             raysIntensity = 0.0f;
-            fogIntensity = 0.6f;
+            fogIntensity = 1f;
             starsIntensity = 0.0f;
+            cloudIntensity = 0.0f;
+            caveLightsIntensity = 1.0f;
 
             shadowR = 0.10f; shadowG = 0.05f; shadowB = 0.20f;
             lightR = 0.60f; lightG = 0.80f; lightB = 0.85f;
@@ -403,6 +409,8 @@ public abstract class BaseLevelScreen implements Screen {
             raysIntensity = 0.0f;
             fogIntensity = 0.0f;
             starsIntensity = 1.0f;
+            cloudIntensity = 0.0f;
+            caveLightsIntensity = 0.0f;
 
             shadowR = 0.54f; shadowG = 0.17f; shadowB = 0.89f;
             lightR = 0.99f; lightG = 0.87f; lightB = 0.42f;
@@ -412,7 +420,9 @@ public abstract class BaseLevelScreen implements Screen {
 
         vignetteShader.setUniformf("u_rays_intensity", raysIntensity);
         vignetteShader.setUniformf("u_fog_intensity", fogIntensity);
+        vignetteShader.setUniformf("u_cloud_intensity", cloudIntensity);
         vignetteShader.setUniformf("u_stars_intensity", starsIntensity);
+        vignetteShader.setUniformf("u_lights_intensity", caveLightsIntensity);
         vignetteShader.setUniformf("u_shadow_color", shadowR, shadowG, shadowB);
         vignetteShader.setUniformf("u_light_color", lightR, lightG, lightB);
         vignetteShader.setUniformf("u_vignette_range", vigX, vigY);

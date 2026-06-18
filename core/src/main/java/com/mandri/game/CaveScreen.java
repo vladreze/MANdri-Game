@@ -3,11 +3,13 @@ package com.mandri.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.mandri.entities.Enemy;
@@ -31,6 +33,8 @@ public class CaveScreen extends BaseLevelScreen {
     private int itemCount = 0;
     private int insertedItemCount = 0;
 
+    private Texture noiseTexture;
+
     public CaveScreen(Main game, MainAssetsManager manager) {
         super(game, manager);
     }
@@ -44,6 +48,18 @@ public class CaveScreen extends BaseLevelScreen {
                 Gdx.files.internal("assets/particles/collectItem.p"),
                 Gdx.files.internal("assets/particles/")
             );
+
+            Pixmap pixmap = new Pixmap(320, 180, Pixmap.Format.RGBA8888);
+            for (int y = 0; y < pixmap.getHeight(); y++) {
+                for (int x = 0; x < pixmap.getWidth(); x++) {
+                    float noise = MathUtils.random();
+                    pixmap.setColor(noise, noise, noise, 1f);
+                    pixmap.drawPixel(x, y);
+                }
+            }
+            noiseTexture = new Texture(pixmap);
+            noiseTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+            pixmap.dispose();
         }
 
         super.show();
@@ -168,7 +184,7 @@ public class CaveScreen extends BaseLevelScreen {
                     if (player.currentState == Player.State.FALLING && player.bounds.y > item.bounds.y) {
                         player.bounce();
                         player.velocityY = player.JUMP_FORCE * 1.2f;
-                        item.playJumpEffect();
+                        item.playJumpEffect("geyser");
                         manager.music.playBonusSound();
                     }
                 }
@@ -216,11 +232,14 @@ public class CaveScreen extends BaseLevelScreen {
             if (isNearTerminal) {
                 if (!isDoorOpened) {
                     boolean itemIsInserted = false;
+                    Item selectedItem = inventory.getSelectedItem();
 
-                    if (inventory.consumeItem("numb0")) itemIsInserted = true;
-                    else if (inventory.consumeItem("numb1")) itemIsInserted = true;
-                    else if (inventory.consumeItem("numb3")) itemIsInserted = true;
-                    else if (inventory.consumeItem("numb5")) itemIsInserted = true;
+                    if (selectedItem != null) {
+                        if (selectedItem.getName().contains("numb")) {
+                            inventory.getSlots()[inventory.getGlobalSelectedIndex()] = null;
+                            itemIsInserted = true;
+                        }
+                    }
 
                     if (itemIsInserted) {
                         insertedItemCount++;
@@ -313,6 +332,6 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected Texture getNoiseTexture() {
-        return null;
+        return noiseTexture;
     }
 }

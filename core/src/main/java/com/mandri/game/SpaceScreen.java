@@ -119,9 +119,14 @@ public class SpaceScreen extends BaseLevelScreen {
             if (rocket != null && player.bounds.overlaps(rocket.bounds)) {
                 if (rocket.curState == Rocket.State.BROKEN) {
                     boolean partConsumed = false;
-                    if (inventory.consumeItem("RocketPart1")) partConsumed = true;
-                    else if (inventory.consumeItem("RocketPart2")) partConsumed = true;
-                    else if (inventory.consumeItem("RocketPart3")) partConsumed = true;
+                    Item selectedItem = inventory.getSelectedItem();
+
+                    if (selectedItem != null) {
+                        if (selectedItem.getName().contains("RocketPart")) {
+                            inventory.getSlots()[inventory.getGlobalSelectedIndex()] = null;
+                            partConsumed = true;
+                        }
+                    }
 
                     if (partConsumed) {
                         rocket.insetPart(); updateInventoryUI(); manager.music.playBonusSound();

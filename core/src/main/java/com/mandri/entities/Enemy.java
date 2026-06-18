@@ -136,6 +136,7 @@ public class Enemy {
         if("bee".equals(type)&&!isDead&&!isAngry) {
             this.aliveTexture=angryTexture;
             isAngry=true;
+            manager.getMusic().playBeeSound();
         }
     }
 
