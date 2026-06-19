@@ -121,9 +121,6 @@ public class ForestScreen extends BaseLevelScreen {
                             Float treeY = obj.getProperties().get("y", Float.class);
 
                             if (treeX != null && treeY != null) {
-//                            boolean isFacingRight = player.isRunningRight();
-//                            if (isFacingRight && treeX < player.bounds.x) continue;
-//                            if (!isFacingRight && treeX > player.bounds.x) continue;
 
                                 float distance = Math.abs((player.bounds.x + player.bounds.width / 2) - (treeX + 8));
 

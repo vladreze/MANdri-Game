@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -34,6 +35,11 @@ public class CaveScreen extends BaseLevelScreen {
     private int insertedItemCount = 0;
 
     private Texture noiseTexture;
+
+    private float PART_ANIMATION_DELAY = .2f;
+    private float partAnimationTimer = 0f;
+    private boolean isAnimating = false;
+    private int animatingPartIndex = -1;
 
     public CaveScreen(Main game, MainAssetsManager manager) {
         super(game, manager);
@@ -193,8 +199,6 @@ public class CaveScreen extends BaseLevelScreen {
                     if (player.bounds.overlaps(item.bounds)) {
                         player.takeDamage("stalactite");
                         caveItems.removeIndex(i);
-                        i--;
-                        continue;
                     }
                 }
             }
@@ -312,7 +316,37 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected void drawLevelSpecificUI() {
+        float cavePartX = 480f;
+        float cavePartSize = 20f;
+        float cavePartSpacing = 6f;
+        float cavePartsStartY = hudCameraHeight - cavePartSize * 2;
 
+        for (int i = 0; i < 4; i++) {
+            float currentPartSize = cavePartSize;
+            if (isAnimating && i == animatingPartIndex) {
+                currentPartSize = cavePartSize + (14f * MathUtils.sin(partAnimationTimer * (MathUtils.PI / PART_ANIMATION_DELAY)));
+            }
+
+            float drawX = cavePartX + i * (cavePartSize + cavePartSpacing) - (currentPartSize - cavePartSize) / 2f;
+            float drawY = cavePartsStartY - (currentPartSize - cavePartSize) / 2f;
+
+            String partName = switch (i) {
+                case 0 -> "numb5";
+                case 1 -> "numb3";
+                case 2 -> "numb0";
+                case 3 -> "numb1";
+                default -> "";
+            };
+
+            if (inventory.hasItem(partName)) {
+                batch.setColor(1f, 1f, 1f, 1f);
+            } else {
+                batch.setColor(.5f, .5f, .5f, .8f);
+            }
+
+            TextureRegion tex = getTextureForItemByName(partName);
+            if (tex != null) batch.draw(tex, drawX, drawY, currentPartSize, cavePartSize);
+        }
     }
 
     @Override
