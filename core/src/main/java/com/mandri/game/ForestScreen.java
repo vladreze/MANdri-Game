@@ -108,61 +108,57 @@ public class ForestScreen extends BaseLevelScreen {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F)
-            && inventory.hasItem("axe")
-            && inventory.getSelectedItem().getName().equals("axe")) {
-            MapLayer spawnLayer = map.getLayers().get("spawns");
-            if (spawnLayer != null) {
-                for (int i = spawnLayer.getObjects().getCount() - 1; i >= 0; i--) {
-                    MapObject obj = spawnLayer.getObjects().get(i);
-                    String type = obj.getProperties().get("type", String.class);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            if (inventory.getSelectedItem() != null && inventory.getSelectedItem().getName().equals("axe")) {
+                MapLayer spawnLayer = map.getLayers().get("spawns");
+                if (spawnLayer != null) {
+                    for (int i = spawnLayer.getObjects().getCount() - 1; i >= 0; i--) {
+                        MapObject obj = spawnLayer.getObjects().get(i);
+                        String type = obj.getProperties().get("type", String.class);
 
-                    if ("tree".equals(type)) {
-                        Float treeX = obj.getProperties().get("x", Float.class);
-                        Float treeY = obj.getProperties().get("y", Float.class);
+                        if ("tree".equals(type)) {
+                            Float treeX = obj.getProperties().get("x", Float.class);
+                            Float treeY = obj.getProperties().get("y", Float.class);
 
-                        if (treeX != null && treeY != null) {
-//                            boolean isFacingRight = player.isRunningRight();
-//                            if (isFacingRight && treeX < player.bounds.x) continue;
-//                            if (!isFacingRight && treeX > player.bounds.x) continue;
+                            if (treeX != null && treeY != null) {
 
-                            float distance = Math.abs((player.bounds.x + player.bounds.width / 2) - (treeX + 8));
+                                float distance = Math.abs((player.bounds.x + player.bounds.width / 2) - (treeX + 8));
 
-                            if (distance < 30f && player.bounds.y >= treeY - 32f && player.bounds.y <= treeY + 128f) {
-                                Integer health = obj.getProperties().get("health", Integer.class);
-                                if (health == null) health = 2;
+                                if (distance < 30f && player.bounds.y >= treeY - 32f && player.bounds.y <= treeY + 128f) {
+                                    Integer health = obj.getProperties().get("health", Integer.class);
+                                    if (health == null) health = 2;
 
-                                health--;
-                                obj.getProperties().put("health", health);
+                                    health--;
+                                    obj.getProperties().put("health", health);
 
-                                int tileX = (int) (treeX / 16);
-                                int baseTileY = (int) ((player.bounds.y + 4f) / 16);
+                                    int tileX = (int) (treeX / 16);
+                                    int baseTileY = (int) ((player.bounds.y + 4f) / 16);
 
-                                if (health == 1) {
-                                    for (MapLayer mapLayer : map.getLayers()) {
-                                        if (mapLayer instanceof TiledMapTileLayer) {
-                                            TiledMapTileLayer tileLayer = (TiledMapTileLayer) mapLayer;
-                                            tileLayer.setCell(tileX, baseTileY + 1, null);
-                                        }
-                                    }
-                                    manager.music.playCrackingBlockSound();
-                                }
-                                else if (health <= 0) {
-                                    for (MapLayer mapLayer : map.getLayers()) {
-                                        if (mapLayer instanceof TiledMapTileLayer) {
-                                            TiledMapTileLayer tileLayer = (TiledMapTileLayer) mapLayer;
-                                            for (int h = 0; h < 10; h++) {
-                                                tileLayer.setCell(tileX, baseTileY + h, null);
+                                    if (health == 1) {
+                                        for (MapLayer mapLayer : map.getLayers()) {
+                                            if (mapLayer instanceof TiledMapTileLayer) {
+                                                TiledMapTileLayer tileLayer = (TiledMapTileLayer) mapLayer;
+                                                tileLayer.setCell(tileX, baseTileY + 1, null);
                                             }
                                         }
-                                    }
-                                    manager.music.playCrackingBlockSound();
+                                        manager.music.playCrackingBlockSound();
+                                    } else if (health <= 0) {
+                                        for (MapLayer mapLayer : map.getLayers()) {
+                                            if (mapLayer instanceof TiledMapTileLayer) {
+                                                TiledMapTileLayer tileLayer = (TiledMapTileLayer) mapLayer;
+                                                for (int h = 0; h < 10; h++) {
+                                                    tileLayer.setCell(tileX, baseTileY + h, null);
+                                                }
+                                            }
+                                        }
+                                        manager.music.playCrackingBlockSound();
 
-                                    inventory.consumeItem("axe");
-                                    updateInventoryUI();
-                                    spawnLayer.getObjects().remove(obj);
+                                        inventory.consumeItem("axe");
+                                        updateInventoryUI();
+                                        spawnLayer.getObjects().remove(obj);
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
