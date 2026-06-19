@@ -149,6 +149,13 @@ public class CaveScreen extends BaseLevelScreen {
 
     @Override
     protected void updateLevelSpecifics(float delta, TiledMapTileLayer collisionLayer) {
+        if (isAnimating) {
+            partAnimationTimer += delta;
+            if (partAnimationTimer > PART_ANIMATION_DELAY) {
+                isAnimating = false; animatingPartIndex = -1; partAnimationTimer = 0f;
+            }
+        }
+
         for (int i = 0; i < caveItems.size; i++) {
             Item item = caveItems.get(i);
             item.update(delta, player.bounds.x);
@@ -173,6 +180,16 @@ public class CaveScreen extends BaseLevelScreen {
                     item.collect();
                     boolean added = inventory.addItem(item);
                     if (added) {
+                        if (itemName.contains("numb")) isAnimating = true;
+
+                        animatingPartIndex = switch (itemName) {
+                            case "numb5" -> 0;
+                            case "numb3" -> 1;
+                            case "numb0" -> 3;
+                            case "numb1" -> 2;
+                            default -> -1;
+                        };
+
                         manager.music.playBonusSound();
 
                         pickupEffect.setPosition(item.bounds.x + item.bounds.width / 2, item.bounds.y + item.bounds.height / 2);
@@ -199,6 +216,7 @@ public class CaveScreen extends BaseLevelScreen {
                     if (player.bounds.overlaps(item.bounds)) {
                         player.takeDamage("stalactite");
                         caveItems.removeIndex(i);
+                        i--;
                     }
                 }
             }
@@ -341,7 +359,7 @@ public class CaveScreen extends BaseLevelScreen {
             if (inventory.hasItem(partName)) {
                 batch.setColor(1f, 1f, 1f, 1f);
             } else {
-                batch.setColor(.5f, .5f, .5f, .8f);
+                batch.setColor(.5f, .5f, .5f, .9f);
             }
 
             TextureRegion tex = getTextureForItemByName(partName);
